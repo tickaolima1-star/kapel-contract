@@ -25,6 +25,7 @@ import { buildDeterministicContractClauses, interpolateVariables } from '@/lib/e
 import { calculateContractFinancials } from '@/lib/engine/financial';
 import { formatCurrency, formatDateBR, formatDocument, CONTRACT_STATUS_LABELS } from '@/lib/utils';
 import { ResolvedClause } from '@/lib/types';
+import { KapelSignModal } from '@/components/KapelSignModal';
 
 export default function ContractPreviewPage() {
   const params = useParams();
@@ -34,6 +35,7 @@ export default function ContractPreviewPage() {
   const [data, setData] = useState<{ contract: any; company: any } | null>(null);
   const [loading, setLoading] = useState(true);
   const [savingStatus, setSavingStatus] = useState(false);
+  const [isSignModalOpen, setIsSignModalOpen] = useState(false);
   const [editingClause, setEditingClause] = useState<ResolvedClause | null>(null);
   const [clauseText, setClauseText] = useState('');
   const [clauseTitle, setClauseTitle] = useState('');
@@ -257,6 +259,37 @@ export default function ContractPreviewPage() {
                 <option value="CANCELLED">Cancelado</option>
               </select>
 
+              {/* Botão de Assinatura Eletrônica Nativa */}
+              {contract.signature_status === 'SIGNED' ? (
+                <a
+                  href={`/verify/${contract.audit_hash}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 border border-emerald-500/40 font-semibold text-xs transition-all"
+                >
+                  <ShieldCheck className="w-4 h-4" />
+                  <span>KAPEL VERIFIED</span>
+                </a>
+              ) : contract.signature_status === 'PENDING_CLIENT' ? (
+                <button
+                  type="button"
+                  onClick={() => setIsSignModalOpen(true)}
+                  className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-blue-600/20 hover:bg-blue-600/30 text-blue-400 border border-blue-500/40 font-semibold text-xs transition-all"
+                >
+                  <ShieldCheck className="w-4 h-4" />
+                  <span>Link do Cliente</span>
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setIsSignModalOpen(true)}
+                  className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs shadow-lg shadow-blue-600/20 transition-all"
+                >
+                  <ShieldCheck className="w-4 h-4" />
+                  <span>Assinar como KAPEL</span>
+                </button>
+              )}
+
               {/* Botão Duplicar */}
               <button
                 onClick={handleDuplicate}
@@ -277,6 +310,19 @@ export default function ContractPreviewPage() {
               </button>
             </div>
           }
+        />
+
+        {/* Modal de Assinatura KAPEL */}
+        <KapelSignModal
+          contractId={contractId}
+          contractNumber={contract.contract_number}
+          isOpen={isSignModalOpen}
+          onClose={() => setIsSignModalOpen(false)}
+          onSuccess={async () => {
+            await loadContract();
+          }}
+          defaultRepName={company?.legal_representative}
+          defaultCnpj={company?.cnpj}
         />
       </div>
 

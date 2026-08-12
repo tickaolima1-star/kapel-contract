@@ -1,0 +1,1 @@
+feat: modulo de assinatura eletronica nativa KAPEL e framework superpowers

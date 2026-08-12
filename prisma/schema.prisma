@@ -209,6 +209,31 @@ model Contract {
   // Customizações de Cláusulas (Overrides)
   custom_clauses                 String                @default("{}") // JSON: { [clauseCode]: { title, content, is_custom: true } }
 
+  // ==========================================
+  // ASSINATURA ELETRÔNICA NATIVA KAPEL
+  // ==========================================
+  signature_token              String?               @unique
+  signature_status             String                @default("DRAFT") // DRAFT, PENDING_KAPEL, PENDING_CLIENT, SIGNED, CANCELLED
+
+  // Assinante 1: KAPEL (Patrick)
+  signed_kapel_at              DateTime?
+  signed_kapel_ip              String?
+  signed_kapel_user_agent      String?
+  signed_kapel_name            String?
+  signed_kapel_doc             String?
+  signed_kapel_signature_data  String?
+
+  // Assinante 2: CLIENTE
+  signed_client_at             DateTime?
+  signed_client_ip             String?
+  signed_client_user_agent     String?
+  signed_client_name           String?
+  signed_client_doc            String?
+  signed_client_signature_data String?
+
+  // Hash de Auditoria Imutável (SHA-256)
+  audit_hash                   String?               @unique
+
   created_at                     DateTime              @default(now())
   updated_at                     DateTime              @updatedAt
 
