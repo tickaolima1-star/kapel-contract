@@ -1,6 +1,7 @@
+'use me';
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import {
@@ -14,11 +15,19 @@ import {
   Settings,
   LogOut,
   ShieldCheck,
+  Menu,
+  X,
 } from 'lucide-react';
 
 export function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  // Close mobile menu on route change
+  useEffect(() => {
+    setMobileOpen(false);
+  }, [pathname]);
 
   const navItems = [
     { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
@@ -39,10 +48,10 @@ export function Sidebar() {
     }
   };
 
-  return (
-    <aside className="w-64 bg-[#0c121e] border-r border-[#1a2333] flex flex-col h-screen sticky top-0 z-40 select-none">
+  const SidebarContent = () => (
+    <div className="flex flex-col h-full bg-[#0c121e] border-r border-[#1a2333] select-none">
       {/* Brand Header */}
-      <div className="p-6 border-b border-[#1a2333]">
+      <div className="p-5 border-b border-[#1a2333] flex items-center justify-between">
         <Link href="/dashboard" className="flex items-center gap-3 group">
           <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-400 flex items-center justify-center shadow-lg shadow-emerald-500/20 group-hover:scale-105 transition-transform">
             <span className="font-bold text-black font-display text-lg tracking-wider">K</span>
@@ -52,16 +61,25 @@ export function Sidebar() {
               <span className="font-display font-bold text-lg tracking-wider text-white">KAPEL</span>
               <span className="text-[10px] font-semibold tracking-widest text-emerald-400 bg-emerald-950/60 border border-emerald-800/50 px-1.5 py-0.5 rounded">CONTRACT</span>
             </div>
-            <p className="text-[11px] text-slate-400">Inteligência Comercial & Gestão</p>
+            <p className="text-[11px] text-slate-400">Inteligência Comercial</p>
           </div>
         </Link>
+
+        {/* Mobile Close Button */}
+        <button
+          type="button"
+          onClick={() => setMobileOpen(false)}
+          className="lg:hidden p-1 text-slate-400 hover:text-white rounded-lg"
+        >
+          <X className="w-6 h-6" />
+        </button>
       </div>
 
       {/* Action Button: Novo Contrato */}
       <div className="px-4 pt-5 pb-2">
         <Link
           href="/contracts/new"
-          className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-semibold text-sm shadow-lg shadow-emerald-500/20 transition-all hover:shadow-emerald-500/30 hover:-translate-y-0.5"
+          className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-semibold text-sm shadow-lg shadow-emerald-500/20 transition-all hover:shadow-emerald-500/30"
         >
           <PlusCircle className="w-4 h-4 text-black" />
           <span>Novo Contrato</span>
@@ -115,6 +133,45 @@ export function Sidebar() {
           </button>
         </div>
       </div>
-    </aside>
+    </div>
+  );
+
+  return (
+    <>
+      {/* Mobile Top Navbar */}
+      <header className="lg:hidden no-print sticky top-0 z-30 bg-[#0c121e] border-b border-[#1a2333] px-4 py-3 flex items-center justify-between">
+        <Link href="/dashboard" className="flex items-center gap-2">
+          <div className="w-7 h-7 rounded-lg bg-emerald-500 flex items-center justify-center text-black font-bold text-sm">
+            K
+          </div>
+          <span className="font-display font-bold text-base text-white tracking-wider">KAPEL</span>
+        </Link>
+        <button
+          type="button"
+          onClick={() => setMobileOpen(true)}
+          className="p-2 text-slate-300 hover:text-white bg-[#131d2e] rounded-xl border border-[#1a2333]"
+        >
+          <Menu className="w-5 h-5" />
+        </button>
+      </header>
+
+      {/* Desktop Sidebar (Fixed) */}
+      <aside className="hidden lg:block w-64 h-screen sticky top-0 z-40">
+        <SidebarContent />
+      </aside>
+
+      {/* Mobile Sidebar Overlay Drawer */}
+      {mobileOpen && (
+        <div className="lg:hidden fixed inset-0 z-50 flex">
+          <div
+            className="fixed inset-0 bg-black/70 backdrop-blur-sm transition-opacity"
+            onClick={() => setMobileOpen(false)}
+          />
+          <div className="relative w-72 max-w-full h-full z-10 animate-in slide-in-from-left duration-200">
+            <SidebarContent />
+          </div>
+        </div>
+      )}
+    </>
   );
 }

@@ -1,1 +1,1 @@
-fix: geracao de numero de contrato anti-colisao e mensagens de erro detalhadas
+feat: tornar interface totalmente responsiva para dispositivos moveis e celulares

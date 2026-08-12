@@ -326,9 +326,9 @@ export default function ContractPreviewPage() {
         />
       </div>
 
-      {/* A4 Document Paper Container */}
-      <div className="flex justify-center pb-16">
-        <div className="a4-document border border-slate-300 rounded-sm">
+      {/* A4 Document Paper Container (Mobile Scrollable) */}
+      <div className="w-full overflow-x-auto pb-16 flex justify-start lg:justify-center px-2">
+        <div className="a4-document border border-slate-300 rounded-sm shrink-0">
           {/* Document Header Timbrado */}
           <div className="border-b-2 border-slate-900 pb-4 mb-6 text-center">
             <h1 className="text-base font-bold uppercase tracking-wide text-slate-950 font-serif">

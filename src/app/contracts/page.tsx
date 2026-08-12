@@ -174,7 +174,7 @@ export default function ContractsPage() {
       ) : (
         <div className="bg-[#0f172a] border border-[#1e293b] rounded-2xl shadow-xl overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
+            <table className="w-full min-w-[750px] text-left text-xs">
               <thead>
                 <tr className="border-b border-[#1e293b] bg-[#131c2e]/70 text-slate-400 uppercase tracking-wider font-semibold">
                   <th className="py-3.5 px-4">Nº Contrato</th>
