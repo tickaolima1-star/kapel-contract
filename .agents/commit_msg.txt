@@ -1,1 +1,1 @@
-feat: modulo de assinatura eletronica nativa KAPEL e framework superpowers
+fix: geracao de numero de contrato anti-colisao e mensagens de erro detalhadas

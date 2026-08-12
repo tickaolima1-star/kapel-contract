@@ -15,9 +15,25 @@ export async function POST(
       return NextResponse.json({ error: 'Contrato original não encontrado.' }, { status: 404 });
     }
 
-    // Gerar próximo número sequencial
-    const count = await prisma.contract.count();
-    const newContractNumber = String(count + 1).padStart(6, '0');
+    // Gerar próximo número sequencial sem colisão
+    const lastContract = await prisma.contract.findFirst({
+      orderBy: { created_at: 'desc' },
+      select: { contract_number: true },
+    });
+
+    let nextNum = 1;
+    if (lastContract && lastContract.contract_number) {
+      const parsed = parseInt(lastContract.contract_number, 10);
+      if (!isNaN(parsed)) {
+        nextNum = parsed + 1;
+      }
+    }
+
+    let newContractNumber = String(nextNum).padStart(6, '0');
+    while (await prisma.contract.findUnique({ where: { contract_number: newContractNumber } })) {
+      nextNum++;
+      newContractNumber = String(nextNum).padStart(6, '0');
+    }
 
     const duplicated = await prisma.contract.create({
       data: {

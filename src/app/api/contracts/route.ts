@@ -71,9 +71,25 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    // 2. Gerar número sequencial do contrato (ex: 000003)
-    const count = await prisma.contract.count();
-    const contractNumber = String(count + 1).padStart(6, '0');
+    // 2. Gerar próximo número sequencial de contrato sem colisão (ex: 000001)
+    const lastContract = await prisma.contract.findFirst({
+      orderBy: { created_at: 'desc' },
+      select: { contract_number: true },
+    });
+
+    let nextNum = 1;
+    if (lastContract && lastContract.contract_number) {
+      const parsed = parseInt(lastContract.contract_number, 10);
+      if (!isNaN(parsed)) {
+        nextNum = parsed + 1;
+      }
+    }
+
+    let contractNumber = String(nextNum).padStart(6, '0');
+    while (await prisma.contract.findUnique({ where: { contract_number: contractNumber } })) {
+      nextNum++;
+      contractNumber = String(nextNum).padStart(6, '0');
+    }
 
     // 3. Buscar dados da empresa e do cliente
     const [companySettings, client] = await Promise.all([
@@ -268,6 +284,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(contract, { status: 201 });
   } catch (error: any) {
     console.error('Erro ao criar contrato:', error);
-    return NextResponse.json({ error: 'Erro ao criar contrato.' }, { status: 500 });
+    return NextResponse.json({ error: error.message || 'Erro ao criar contrato.' }, { status: 500 });
   }
 }
