@@ -1,0 +1,68 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-inter: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-outfit: 'Outfit', system-ui, -apple-system, sans-serif;
+}
+
+body {
+  background-color: #090d16;
+  color: #f1f5f9;
+  font-family: var(--font-inter);
+  overflow-x: hidden;
+}
+
+/* Custom modern dark scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #090d16;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1e293b;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #334155;
+}
+
+/* Document A4 styles */
+.a4-document {
+  width: 210mm;
+  min-height: 297mm;
+  padding: 20mm 20mm;
+  margin: 0 auto;
+  background: #ffffff;
+  color: #0f172a;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 11pt;
+  line-height: 1.5;
+}
+
+@media print {
+  body {
+    background: transparent !important;
+    color: #000 !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .a4-document {
+    box-shadow: none !important;
+    margin: 0 !important;
+    padding: 15mm !important;
+    width: 100% !important;
+    min-height: auto !important;
+  }
+  .page-break {
+    page-break-after: always;
+  }
+}

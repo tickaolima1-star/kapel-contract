@@ -1,0 +1,267 @@
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model CompanySettings {
+  id                    String   @id @default("default")
+  legal_name            String   @default("67.726.428 PATRICK EDUARDO LIMA SILVA")
+  trade_name            String   @default("KAPEL")
+  cnpj                  String   @default("67.726.428/0001-97")
+  address               String   @default("Av. Paulista, 1000, Sala 501")
+  neighborhood          String   @default("Bela Vista")
+  zip_code              String   @default("01310-100")
+  city                  String   @default("São Paulo")
+  state                 String   @default("SP")
+  legal_representative  String   @default("Patrick Eduardo Lima Silva")
+  rep_cpf               String   @default("000.000.000-00")
+  email                 String   @default("contato@kapel.digital")
+  phone                 String   @default("+55 (11) 99999-9999")
+  jurisdiction_city     String   @default("São Paulo")
+  jurisdiction_state    String   @default("SP")
+  updated_at            DateTime @updatedAt
+}
+
+model User {
+  id         String   @id @default(cuid())
+  email      String   @unique
+  name       String
+  password   String
+  role       String   @default("ADMIN")
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+model Client {
+  id                  String     @id @default(cuid())
+  type                String     @default("PJ") // PJ ou PF
+  legal_name          String     // Razão Social ou Nome Completo
+  trade_name          String?    // Nome Fantasia
+  document            String     // CNPJ ou CPF
+  state_registration  String?    // Inscrição Estadual
+  address             String?
+  address_number      String?
+  neighborhood        String?
+  zip_code            String?
+  city                String?
+  state               String?
+  representative_name String?    // Representante legal
+  representative_cpf  String?
+  representative_role String?    // Cargo
+  email               String?
+  phone               String?
+  whatsapp            String?
+  notes               String?
+  active              Boolean    @default(true)
+  created_at          DateTime   @default(now())
+  updated_at          DateTime   @updatedAt
+  contracts           Contract[]
+}
+
+model ServiceCategory {
+  id          String    @id @default(cuid())
+  name        String
+  slug        String    @unique
+  description String?
+  active      Boolean   @default(true)
+  order       Int       @default(0)
+  services    Service[]
+  created_at  DateTime  @default(now())
+  updated_at  DateTime  @updatedAt
+}
+
+model Service {
+  id              String          @id @default(cuid())
+  category_id     String
+  category        ServiceCategory @relation(fields: [category_id], references: [id])
+  name            String
+  slug            String          @unique
+  description     String
+  default_price   Float           @default(0.0)
+  billing_type    String          @default("MONTHLY_ARREARS")
+  active          Boolean         @default(true)
+  order           Int             @default(0)
+  default_clauses String?         // JSON de cláusulas vinculadas
+  settings        String?         // JSON
+  created_at      DateTime        @default(now())
+  updated_at      DateTime        @updatedAt
+  contract_items  ContractItem[]
+}
+
+model Clause {
+  id         String   @id @default(cuid())
+  code       String   @unique
+  title      String
+  content    String
+  category   String   @default("GERAL") // ESCOPO, FINANCEIRO, GOVERNANCA, JURIDICO, ELEITORAL, CHATBOT
+  version    String   @default("1.0")
+  active     Boolean  @default(true)
+  order      Int      @default(0)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+model ContractTemplate {
+  id           String     @id @default(cuid())
+  type         String     @default("PERFORMANCE") // PERFORMANCE, POLITICAL, STUDIO, CONSULTING, PARTNER
+  name         String
+  version      String     @default("1.0")
+  active       Boolean    @default(true)
+  introduction String?
+  clause_order String     // JSON Array de clause codes
+  created_at   DateTime   @default(now())
+  updated_at   DateTime   @updatedAt
+  contracts    Contract[]
+}
+
+model Contract {
+  id                             String                @id @default(cuid())
+  contract_number                String                @unique // ex: 000001
+  client_id                      String
+  client                         Client                @relation(fields: [client_id], references: [id])
+  template_id                    String
+  template                       ContractTemplate      @relation(fields: [template_id], references: [id])
+  status                         String                @default("DRAFT") // DRAFT, READY, FINALIZED, CANCELLED
+  title                          String
+  
+  // Escopo e Plataformas
+  platforms                      String                @default("[]") // JSON Array: ["Meta Ads", "Google Ads"]
+  landing_page_included          Boolean               @default(false)
+  creatives_included             Boolean               @default(false)
+  dashboard_included             Boolean               @default(false)
+  crm_client_responsibility      Boolean               @default(true)
+  technical_operational_autonomy Boolean               @default(true)
+  portfolio_permission           String                @default("ALLOW") // ALLOW, DENY, CUSTOM
+  portfolio_custom_text          String?
+  meeting_frequency              String                @default("1 reunião mensal")
+  support_channels               String                @default("WhatsApp, e-mail e grupo exclusivo")
+  support_hours                  String                @default("08:00 às 18:00 (dias úteis)")
+  media_budget_payer             String                @default("CLIENT") // Paga diretamente pelo cliente
+  media_budget_notes             String                @default("Paga diretamente pelo Contratante às plataformas")
+  particularities                String?
+
+  // Prazos e Condições Financeiras
+  billing_type                   String                @default("MONTHLY_ARREARS")
+  due_day                        Int                   @default(10)
+  term_months                    Int                   @default(3)
+  notice_days                    Int                   @default(15)
+  early_termination_policy       String                @default("NO_PENALTY") // NO_PENALTY, FIXED_FINE, PERCENTAGE, REMAINING_MONTHS, CUSTOM
+  early_termination_details      String?
+  
+  // Valores Consolidados (Calculados pelo motor financeiro)
+  calculated_mrr                 Float                 @default(0.0)
+  calculated_initial_payment     Float                 @default(0.0)
+  calculated_future_milestones   Float                 @default(0.0)
+  calculated_total_one_time      Float                 @default(0.0)
+  estimated_media_budget         Float                 @default(0.0)
+
+  // ==========================================
+  // CAMPOS ESPECÍFICOS: KAPEL POLITICAL
+  // ==========================================
+  candidate_name                 String?
+  candidate_number               String?
+  candidate_role                 String?               // Prefeito, Vereador, etc.
+  candidate_state                String?
+  party                          String?               // Partido
+  federation_or_coalition        String?               // Federação ou Coligação
+  campaign_cnpj                  String?               // CNPJ da Campanha
+  commercial_contractor_type     String?               @default("CAMPAIGN") // AGENCY, CAMPAIGN, PARTY, FEDERATION, OTHER
+  campaign_start_date            String?
+  campaign_end_date              String?
+  
+  // Responsáveis da Campanha
+  approval_responsible           String?
+  financial_responsible          String?
+  electoral_lawyer               String?
+  accounting_responsible         String?
+
+  // Mídia Eleitoral (SOMENTE INFORMATIVA - NÃO INTEGRA HONORÁRIOS)
+  planned_media_budget           Float                 @default(0.0)
+  media_payment_responsible      String                @default("CAMPAIGN") // CAMPAIGN, CANDIDATE, PARTY, FEDERATION, AUTHORIZED_FINANCIAL_RESPONSIBLE, OTHER
+  
+  // Chatbot Eleitoral
+  chatbot_type                   String?               @default("RULE_BASED") // RULE_BASED, KNOWLEDGE_BASE, GENERATIVE_AI, CUSTOM
+  chatbot_collects_personal_data Boolean               @default(false)
+  chatbot_uses_ai                Boolean               @default(false)
+  chatbot_public_url             String?
+  chatbot_content_approval_responsible String?
+  chatbot_data_retention_notes   String?
+  chatbot_custom_scope           String?
+
+  // Compliance Eleitoral (Alertas Informativos)
+  electoral_legal_review         String                @default("PENDING") // PENDING, APPROVED
+  accounting_review              String                @default("PENDING") // PENDING, APPROVED
+  campaign_content_approval      String                @default("PENDING") // PENDING, APPROVED
+  ai_used                        Boolean               @default(false)
+  personal_data_processed        Boolean               @default(false)
+  mass_messaging                 Boolean               @default(false)
+  synthetic_content_used         Boolean               @default(false)
+
+  // Subcontratação e Equipe
+  subcontracting_permitted       Boolean               @default(true)
+  subcontracting_clause_text     String?
+
+  // Customizações de Cláusulas (Overrides)
+  custom_clauses                 String                @default("{}") // JSON: { [clauseCode]: { title, content, is_custom: true } }
+
+  created_at                     DateTime              @default(now())
+  updated_at                     DateTime              @updatedAt
+
+  items                          ContractItem[]
+  dependencies                   ContractDependency[]
+  snapshot                       ContractSnapshot?
+  audit_logs                     AuditLog[]
+}
+
+model ContractItem {
+  id                    String   @id @default(cuid())
+  contract_id           String
+  contract              Contract @relation(fields: [contract_id], references: [id], onDelete: Cascade)
+  service_id            String?
+  service               Service? @relation(fields: [service_id], references: [id])
+  name                  String
+  description           String?
+  billing_type          String   @default("MONTHLY_ARREARS")
+  unit_price            Float    @default(0.0)
+  quantity              Int      @default(1)
+  discount              Float    @default(0.0)
+  total_price           Float    @default(0.0)
+  milestone_description String?  // Marco jurídico de entrega ou encerramento (ex: "Último dia da campanha", "Entrega do chatbot")
+  duration_days         Int?     // Prazo do serviço em dias (ex: 45 dias)
+  is_addition           Boolean  @default(false)
+}
+
+model ContractDependency {
+  id                String   @id @default(cuid())
+  contract_id       String
+  contract          Contract @relation(fields: [contract_id], references: [id], onDelete: Cascade)
+  name              String
+  responsible_party String   @default("CLIENT") // CLIENT, KAPEL, THIRD_PARTY
+  description       String
+  blocks_delivery   Boolean  @default(true)
+  status            String   @default("PENDING") // PENDING, RESOLVED, WAIVED
+}
+
+model ContractSnapshot {
+  id            String   @id @default(cuid())
+  contract_id   String   @unique
+  contract      Contract @relation(fields: [contract_id], references: [id], onDelete: Cascade)
+  version       String   @default("1.0")
+  snapshot_data String   // JSON com todo o payload congelado
+  created_at    DateTime @default(now())
+}
+
+model AuditLog {
+  id          String    @id @default(cuid())
+  contract_id String?
+  contract    Contract? @relation(fields: [contract_id], references: [id], onDelete: SetNull)
+  user_name   String    @default("Patrick (Admin)")
+  action      String    // CONTRACT_CREATED, VALUE_MODIFIED, CLAUSE_CUSTOMIZED, CONTRACT_FINALIZED, etc.
+  details     String
+  created_at  DateTime  @default(now())
+}
