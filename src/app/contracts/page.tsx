@@ -18,6 +18,10 @@ import {
   TrendingUp,
   Clock,
   Sparkles,
+  UploadCloud,
+  X,
+  Loader2,
+  FileCheck,
 } from 'lucide-react';
 import { formatCurrency, formatDateBR, formatDocument, CONTRACT_STATUS_LABELS } from '@/lib/utils';
 
@@ -28,6 +32,12 @@ export default function ContractsPage() {
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
   const [duplicatingId, setDuplicatingId] = useState<string | null>(null);
+
+  // Estados do Modal de Importação DOCX
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
+  const [importFile, setImportFile] = useState<File | null>(null);
+  const [importing, setImporting] = useState(false);
+  const [importError, setImportError] = useState<string | null>(null);
 
   const loadContracts = async () => {
     try {
@@ -84,13 +94,23 @@ export default function ContractsPage() {
         title="Gestão de Contratos"
         subtitle="Gerador, histórico e versionamento de contratos comerciais da KAPEL."
         actions={
-          <Link
-            href="/contracts/new"
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-semibold text-sm shadow-lg shadow-emerald-500/20 transition-all"
-          >
-            <PlusCircle className="w-4 h-4 text-black" />
-            <span>Novo Contrato</span>
-          </Link>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setIsImportModalOpen(true)}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs shadow-lg shadow-blue-600/20 transition-all"
+            >
+              <UploadCloud className="w-4 h-4" />
+              <span>Importar DOCX</span>
+            </button>
+            <Link
+              href="/contracts/new"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-semibold text-xs shadow-lg shadow-emerald-500/20 transition-all"
+            >
+              <PlusCircle className="w-4 h-4 text-black" />
+              <span>Novo Contrato</span>
+            </Link>
+          </div>
         }
       />
 
@@ -255,6 +275,113 @@ export default function ContractsPage() {
                 })}
               </tbody>
             </table>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de Importação de Contrato por DOCX */}
+      {isImportModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+          <div className="relative w-full max-w-lg bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl overflow-hidden">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-800 bg-slate-950/50">
+              <div className="flex items-center gap-2 text-slate-100 font-semibold text-sm">
+                <UploadCloud className="w-5 h-5 text-blue-400" />
+                Importar Contrato por Documento (DOCX)
+              </div>
+              <button
+                onClick={() => {
+                  setIsImportModalOpen(false);
+                  setImportFile(null);
+                  setImportError(null);
+                }}
+                className="text-slate-400 hover:text-slate-200 p-1 rounded-lg hover:bg-slate-800"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-4">
+              <p className="text-xs text-slate-400">
+                Selecione o arquivo do contrato (<strong className="text-slate-200">.docx</strong>). O sistema extrairá automaticamente a Razão Social, CNPJ, Representante, Cidade e Escopo, cadastrará o Cliente no banco e deixará o contrato pronto para assinatura!
+              </p>
+
+              {importError && (
+                <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-xl text-xs text-red-400">
+                  {importError}
+                </div>
+              )}
+
+              <div className="border-2 border-dashed border-slate-800 hover:border-blue-500/50 rounded-2xl p-6 text-center transition-colors bg-slate-950/50">
+                <input
+                  type="file"
+                  id="docxFile"
+                  accept=".docx"
+                  onChange={(e) => setImportFile(e.target.files?.[0] || null)}
+                  className="hidden"
+                />
+                <label htmlFor="docxFile" className="cursor-pointer flex flex-col items-center space-y-2">
+                  <div className="w-12 h-12 bg-blue-600/10 border border-blue-500/30 rounded-2xl flex items-center justify-center text-blue-400">
+                    <FileCheck className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <span className="text-sm font-semibold text-slate-200 block">
+                      {importFile ? importFile.name : 'Clique para selecionar o arquivo .docx'}
+                    </span>
+                    <span className="text-xs text-slate-500">Documentos do Word (.docx)</span>
+                  </div>
+                </label>
+              </div>
+
+              <div className="pt-2 flex items-center justify-end gap-3">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsImportModalOpen(false);
+                    setImportFile(null);
+                    setImportError(null);
+                  }}
+                  className="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-medium transition-colors"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="button"
+                  disabled={!importFile || importing}
+                  onClick={async () => {
+                    if (!importFile) return;
+                    setImporting(true);
+                    setImportError(null);
+
+                    try {
+                      const formData = new FormData();
+                      formData.append('file', importFile);
+
+                      const res = await fetch('/api/contracts/import', {
+                        method: 'POST',
+                        body: formData,
+                      });
+
+                      const data = await res.json();
+
+                      if (!res.ok) {
+                        throw new Error(data.error || 'Erro ao processar importação.');
+                      }
+
+                      // Redireciona diretamente para a pré-visualização do contrato criado
+                      router.push(data.previewUrl);
+                    } catch (err: any) {
+                      setImportError(err.message);
+                    } finally {
+                      setImporting(false);
+                    }
+                  }}
+                  className="flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-semibold shadow-lg shadow-blue-600/20 transition-all disabled:opacity-50"
+                >
+                  {importing && <Loader2 className="w-4 h-4 animate-spin" />}
+                  Processar & Criar Contrato Próximo
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}

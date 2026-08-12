@@ -1,1 +1,1 @@
-feat: adicionar grafo de arquitetura e conhecimento visual da KAPEL (Graphify)
+feat: importador inteligente de contratos por arquivo DOCX com cadastro automatico de cliente e contrato pronto para assinatura
