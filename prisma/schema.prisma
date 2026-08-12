@@ -234,6 +234,10 @@ model Contract {
   // Hash de Auditoria Imutável (SHA-256)
   audit_hash                   String?               @unique
 
+  // Conteúdo Exato Importado de Documento Externo (DOCX/HTML)
+  is_imported                  Boolean               @default(false)
+  imported_body                String?
+
   created_at                     DateTime              @default(now())
   updated_at                     DateTime              @updatedAt
 

@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { extractTextFromDocxBuffer, parseContractText } from '@/lib/importer';
+import { extractContentFromDocxBuffer, parseContractText } from '@/lib/importer';
 import { generateSignatureToken } from '@/lib/signature';
 import { calculateContractFinancials } from '@/lib/engine/financial';
 
@@ -10,27 +10,30 @@ export async function POST(request: Request) {
     const file = formData.get('file') as File | null;
     const textOverride = formData.get('text') as string | null;
 
-    let contractText = textOverride || '';
+    let rawText = textOverride || '';
+    let rawHtml = '';
 
     if (file) {
       const buffer = Buffer.from(await file.arrayBuffer());
       if (file.name.endsWith('.docx')) {
-        contractText = await extractTextFromDocxBuffer(buffer);
+        const extracted = await extractContentFromDocxBuffer(buffer);
+        rawHtml = extracted.html;
+        rawText = extracted.text;
       } else {
-        contractText = buffer.toString('utf-8');
+        rawText = buffer.toString('utf-8');
       }
     }
 
-    if (!contractText || contractText.trim().length < 50) {
+    if (!rawText || rawText.trim().length < 50) {
       return NextResponse.json(
         { error: 'Por favor, envie um arquivo .docx válido ou insira o texto do contrato.' },
         { status: 400 }
       );
     }
 
-    // 1. Extrair Metadados do Documento via Parser Semântico
-    const parsed = parseContractText(contractText);
-    const { client: clientData, contract: contractData } = parsed;
+    // 1. Extrair Metadados do Documento via Parser Semântico (mantendo o corpo exato)
+    const parsed = parseContractText(rawText, rawHtml);
+    const { client: clientData, contract: contractData, html: exactHtmlBody } = parsed;
 
     // 2. Criar ou Buscar Cliente no Banco de Dados
     let client = await prisma.client.findFirst({
@@ -94,7 +97,7 @@ export async function POST(request: Request) {
     const financials = calculateContractFinancials(contractData.items, 0);
     const signatureToken = generateSignatureToken();
 
-    // 6. Criar Contrato com Status READY e Token de Assinatura Prontos
+    // 6. Criar Contrato Salva o Conteúdo Exato Importado (`imported_body`)
     const contract = await prisma.contract.create({
       data: {
         contract_number: contractNumber,
@@ -107,6 +110,8 @@ export async function POST(request: Request) {
         candidate_name: contractData.candidate_name || null,
         candidate_role: contractData.candidate_role || null,
         candidate_state: contractData.candidate_state || null,
+        is_imported: true,
+        imported_body: exactHtmlBody,
         calculated_mrr: financials.recurrent_mrr,
         calculated_initial_payment: financials.initial_payment,
         calculated_future_milestones: financials.future_milestones,
@@ -130,7 +135,7 @@ export async function POST(request: Request) {
         contract_id: contract.id,
         user_name: 'Patrick (Admin)',
         action: 'CONTRACT_IMPORTED_FROM_DOCX',
-        details: `Contrato #${contractNumber} importado via documento DOCX/Texto. Cliente ${client.legal_name} cadastrado/vinculado com sucesso.`,
+        details: `Contrato #${contractNumber} importado mantendo o texto exato do documento original (.docx). Cliente ${client.legal_name} cadastrado com sucesso.`,
       },
     });
 
@@ -142,7 +147,7 @@ export async function POST(request: Request) {
         clientName: client.legal_name,
         signatureToken: contract.signature_token,
         previewUrl: `/contracts/${contract.id}/preview`,
-        message: `Contrato #${contract.contract_number} e Cliente "${client.legal_name}" criados com sucesso!`,
+        message: `Contrato #${contract.contract_number} importado com o texto exato do arquivo DOCX!`,
       },
       { status: 201 }
     );

@@ -360,42 +360,49 @@ export default function ContractPreviewPage() {
             </p>
           </div>
 
-          {/* Cláusulas Contratuais Numeradas */}
-          <div className="space-y-5 text-[10.5pt] leading-relaxed text-justify font-serif">
-            {resolvedClauses.map((clause) => (
-              <div key={clause.code} className="group relative">
-                {/* Visual badge para cláusula personalizada (oculta no PDF) */}
-                {clause.is_custom && (
-                  <span className="no-print inline-flex items-center gap-1 px-2 py-0.5 rounded text-[9px] font-sans font-bold bg-amber-100 text-amber-800 border border-amber-300 mb-1">
-                    <AlertTriangle className="w-3 h-3" />
-                    Cláusula personalizada
-                  </span>
-                )}
+          {/* Cláusulas Contratuais ou Conteúdo Exato Importado (.docx) */}
+          {contract.is_imported && contract.imported_body ? (
+            <div
+              className="imported-docx-content space-y-4 text-[10.5pt] leading-relaxed text-justify font-serif text-slate-900 border-t border-b border-slate-200 py-6 my-6"
+              dangerouslySetInnerHTML={{ __html: contract.imported_body }}
+            />
+          ) : (
+            <div className="space-y-5 text-[10.5pt] leading-relaxed text-justify font-serif">
+              {resolvedClauses.map((clause) => (
+                <div key={clause.code} className="group relative">
+                  {/* Visual badge para cláusula personalizada (oculta no PDF) */}
+                  {clause.is_custom && (
+                    <span className="no-print inline-flex items-center gap-1 px-2 py-0.5 rounded text-[9px] font-sans font-bold bg-amber-100 text-amber-800 border border-amber-300 mb-1">
+                      <AlertTriangle className="w-3 h-3" />
+                      Cláusula personalizada
+                    </span>
+                  )}
 
-                <div className="flex items-center justify-between">
-                  <h2 className="font-bold text-slate-900 uppercase tracking-wide text-[10.5pt]">
-                    CLÁUSULA {clause.number}ª – {clause.title}
-                  </h2>
+                  <div className="flex items-center justify-between">
+                    <h2 className="font-bold text-slate-900 uppercase tracking-wide text-[10.5pt]">
+                      CLÁUSULA {clause.number}ª – {clause.title}
+                    </h2>
 
-                  <button
-                    onClick={() => {
-                      setEditingClause(clause);
-                      setClauseTitle(clause.title);
-                      setClauseText(clause.content);
-                    }}
-                    className="no-print opacity-0 group-hover:opacity-100 p-1 text-slate-500 hover:text-emerald-600 transition-opacity"
-                    title="Personalizar esta cláusula"
-                  >
-                    <Edit className="w-3.5 h-3.5" />
-                  </button>
+                    <button
+                      onClick={() => {
+                        setEditingClause(clause);
+                        setClauseTitle(clause.title);
+                        setClauseText(clause.content);
+                      }}
+                      className="no-print opacity-0 group-hover:opacity-100 p-1 text-slate-500 hover:text-emerald-600 transition-opacity"
+                      title="Personalizar esta cláusula"
+                    >
+                      <Edit className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+
+                  <div className="whitespace-pre-line text-slate-800 mt-1">
+                    {clause.content}
+                  </div>
                 </div>
-
-                <div className="whitespace-pre-line text-slate-800 mt-1">
-                  {clause.content}
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
 
           {/* Fechamento e Assinaturas */}
           <div className="mt-10 pt-6 text-[10.5pt] leading-relaxed font-serif">

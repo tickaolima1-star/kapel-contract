@@ -1,6 +1,8 @@
 import mammoth from 'mammoth';
 
 export interface ExtractedContractResult {
+  html: string;
+  text: string;
   client: {
     legal_name: string;
     trade_name?: string;
@@ -33,17 +35,23 @@ export interface ExtractedContractResult {
 }
 
 /**
- * Converte um buffer de arquivo DOCX em texto limpo utilizando Mammoth.
+ * Converte um buffer de arquivo DOCX em HTML formatado mantendo o texto exato do documento original.
  */
-export async function extractTextFromDocxBuffer(buffer: Buffer): Promise<string> {
-  const result = await mammoth.extractRawText({ buffer });
-  return result.value;
+export async function extractContentFromDocxBuffer(buffer: Buffer): Promise<{ html: string; text: string }> {
+  const [htmlResult, textResult] = await Promise.all([
+    mammoth.convertToHtml({ buffer }),
+    mammoth.extractRawText({ buffer }),
+  ]);
+  return {
+    html: htmlResult.value,
+    text: textResult.value,
+  };
 }
 
 /**
- * Realiza a análise semântica e expressão regular sobre o texto do contrato para extrair metadados.
+ * Realiza a análise semântica sobre o texto do contrato para extrair os metadados do cliente.
  */
-export function parseContractText(text: string): ExtractedContractResult {
+export function parseContractText(text: string, rawHtml?: string): ExtractedContractResult {
   const cleanText = text.replace(/\s+/g, ' ').trim();
 
   // 1. Extração do CNPJ ou CPF do Cliente (Contratante)
@@ -145,7 +153,12 @@ export function parseContractText(text: string): ExtractedContractResult {
     });
   }
 
+  // Se não houver HTML fornecido, monta parágrafos básicos a partir do texto
+  const finalHtml = rawHtml || cleanText.split('\n\n').map(p => `<p style="margin-bottom: 1em;">${p.trim()}</p>`).join('');
+
   return {
+    html: finalHtml,
+    text: cleanText,
     client: {
       legal_name: legalName,
       trade_name: legalName.split(' ')[0],

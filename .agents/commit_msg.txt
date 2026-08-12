@@ -1,1 +1,1 @@
-feat: importador inteligente de contratos por arquivo DOCX com cadastro automatico de cliente e contrato pronto para assinatura
+feat: suporte a importacao de corpo exato do documento DOCX mantendo texto original para assinatura eletronica
