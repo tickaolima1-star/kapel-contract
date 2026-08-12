@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KAPEL Contract — Grafo de Arquitetura & Conhecimento</title>
+  <script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { background-color: #090d16; color: #f8fafc; font-family: system-ui, -apple-system, sans-serif; }
+    #mynetwork { width: 100%; height: calc(100vh - 110px); background-color: #0b111e; border-radius: 1rem; border: 1px solid #1e293b; }
+  </style>
+</head>
+<body className="p-4 md:p-6 overflow-hidden">
+  <!-- Top Navigation Bar -->
+  <div className="flex flex-col md:flex-row md:items-center justify-between pb-4 mb-4 border-b border-slate-800 gap-3">
+    <div className="flex items-center gap-3">
+      <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center font-bold text-black text-xl shadow-lg shadow-emerald-500/20">
+        K
+      </div>
+      <div>
+        <h1 className="text-lg font-bold text-slate-100 flex items-center gap-2">
+          KAPEL Contract — Grafo de Arquitetura & Conhecimento
+          <span className="text-[10px] font-semibold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded-full">v1.0 Verified</span>
+        </h1>
+        <p className="text-xs text-slate-400">Mapeamento interativo de dependências, rotas, modelos Prisma e fluxo de Assinatura Eletrônica.</p>
+      </div>
+    </div>
+
+    {/* Legend Pills */}
+    <div className="flex flex-wrap items-center gap-2 text-xs">
+      <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-950/60 border border-emerald-500/30 text-emerald-400">
+        <span className="w-2.5 h-2.5 rounded-full bg-emerald-400"></span> Banco & Modelos
+      </span>
+      <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-blue-950/60 border border-blue-500/30 text-blue-400">
+        <span className="w-2.5 h-2.5 rounded-full bg-blue-400"></span> APIs & Motores
+      </span>
+      <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-purple-950/60 border border-purple-500/30 text-purple-400">
+        <span className="w-2.5 h-2.5 rounded-full bg-purple-400"></span> Painel Admin
+      </span>
+      <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-950/60 border border-amber-500/30 text-amber-400">
+        <span className="w-2.5 h-2.5 rounded-full bg-amber-400"></span> Páginas Públicas
+      </span>
+      <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-rose-950/60 border border-rose-500/30 text-rose-400">
+        <span className="w-2.5 h-2.5 rounded-full bg-rose-400"></span> Cripto & Auditoria
+      </span>
+    </div>
+  </div>
+
+  <!-- Main Visual Graph Area -->
+  <div id="mynetwork"></div>
+
+  <script>
+    // Create nodes array
+    const nodes = new vis.DataSet([
+      // Database Models (Green)
+      { id: 'm_contract', label: 'Model: Contract\n(Prisma / Supabase)', group: 'db', shape: 'box', color: { background: '#064e3b', border: '#10b981' }, font: { color: '#ecfdf5', size: 14, face: 'monospace' } },
+      { id: 'm_client', label: 'Model: Client\n(PF / PJ)', group: 'db', shape: 'box', color: { background: '#064e3b', border: '#10b981' }, font: { color: '#ecfdf5', size: 12 } },
+      { id: 'm_company', label: 'Model: CompanySettings\n(KAPEL Digital)', group: 'db', shape: 'box', color: { background: '#064e3b', border: '#10b981' }, font: { color: '#ecfdf5', size: 12 } },
+      { id: 'm_service', label: 'Model: Service & Category\n(Honorários)', group: 'db', shape: 'box', color: { background: '#064e3b', border: '#10b981' }, font: { color: '#ecfdf5', size: 12 } },
+      { id: 'm_audit', label: 'Model: AuditLog\n(Evidências Imutáveis)', group: 'db', shape: 'box', color: { background: '#064e3b', border: '#10b981' }, font: { color: '#ecfdf5', size: 12 } },
+      { id: 'm_snapshot', label: 'Model: ContractSnapshot\n(Congelamento)', group: 'db', shape: 'box', color: { background: '#064e3b', border: '#10b981' }, font: { color: '#ecfdf5', size: 12 } },
+
+      // API Engines & Logic (Blue)
+      { id: 'api_contracts', label: 'API: /api/contracts\n(Criação & Leitura)', group: 'api', shape: 'ellipse', color: { background: '#1e3a8a', border: '#3b82f6' }, font: { color: '#eff6ff', size: 13 } },
+      { id: 'api_sign_kapel', label: 'API: /sign-kapel\n(Visto Representante)', group: 'api', shape: 'ellipse', color: { background: '#1e3a8a', border: '#3b82f6' }, font: { color: '#eff6ff', size: 13 } },
+      { id: 'api_sign_client', label: 'API: /public/sign/[token]\n(Assinatura Cliente)', group: 'api', shape: 'ellipse', color: { background: '#1e3a8a', border: '#3b82f6' }, font: { color: '#eff6ff', size: 13 } },
+      { id: 'api_verify', label: 'API: /public/verify/[hash]\n(Validação Pública)', group: 'api', shape: 'ellipse', color: { background: '#1e3a8a', border: '#3b82f6' }, font: { color: '#eff6ff', size: 13 } },
+      { id: 'lib_signature', label: 'Helper: signature.ts\n(UUID v4 & SHA-256)', group: 'api', shape: 'diamond', color: { background: '#1e3a8a', border: '#60a5fa' }, font: { color: '#eff6ff', size: 12 } },
+      { id: 'lib_financial', label: 'Motor Financeiro\n(financial.ts)', group: 'api', shape: 'diamond', color: { background: '#1e3a8a', border: '#60a5fa' }, font: { color: '#eff6ff', size: 12 } },
+
+      // Admin Interfaces (Purple)
+      { id: 'page_dashboard', label: 'Painel Dashboard\n(/dashboard)', group: 'admin', shape: 'box', color: { background: '#581c87', border: '#a855f7' }, font: { color: '#faf5ff', size: 13 } },
+      { id: 'page_contracts', label: 'Gestão de Contratos\n(/contracts)', group: 'admin', shape: 'box', color: { background: '#581c87', border: '#a855f7' }, font: { color: '#faf5ff', size: 13 } },
+      { id: 'page_new', label: 'Criador de Contrato\n(/contracts/new)', group: 'admin', shape: 'box', color: { background: '#581c87', border: '#a855f7' }, font: { color: '#faf5ff', size: 13 } },
+      { id: 'page_preview', label: 'Pré-visualização A4\n(/preview)', group: 'admin', shape: 'box', color: { background: '#581c87', border: '#a855f7' }, font: { color: '#faf5ff', size: 13 } },
+      { id: 'comp_modal', label: 'Componente:\nKapelSignModal.tsx', group: 'admin', shape: 'box', color: { background: '#581c87', border: '#c084fc' }, font: { color: '#faf5ff', size: 12 } },
+
+      // Public Interfaces (Amber)
+      { id: 'page_public_sign', label: 'Página Pública do Cliente\n(/sign/[token])', group: 'public', shape: 'box', color: { background: '#78350f', border: '#f59e0b' }, font: { color: '#fffbeb', size: 14 } },
+      { id: 'page_public_verify', label: 'Certificado de Validação\n(/verify/[hash])', group: 'public', shape: 'box', color: { background: '#78350f', border: '#f59e0b' }, font: { color: '#fffbeb', size: 14 } },
+      { id: 'comp_canvas', label: 'Componente:\nSignatureCanvas.tsx', group: 'public', shape: 'box', color: { background: '#78350f', border: '#fbbf24' }, font: { color: '#fffbeb', size: 12 } },
+
+      // Security & Legal (Rose)
+      { id: 'sec_legal', label: 'Norma Legal:\nMP 2.200-2 & Lei 14.063/2020', group: 'legal', shape: 'star', color: { background: '#881337', border: '#f43f5e' }, font: { color: '#fff1f2', size: 12 } },
+      { id: 'sec_doc_val', label: 'Validação 4 Dígitos\n(CNPJ/CPF Prefix)', group: 'legal', shape: 'box', color: { background: '#881337', border: '#f43f5e' }, font: { color: '#fff1f2', size: 11 } },
+      { id: 'sec_badge', label: 'Selo KAPEL VERIFIED\n(Audit Trail Imutável)', group: 'legal', shape: 'box', color: { background: '#881337', border: '#f43f5e' }, font: { color: '#fff1f2', size: 12 } },
+    ]);
+
+    // Create edges array (Connections)
+    const edges = new vis.DataSet([
+      // Database Relations
+      { from: 'm_contract', to: 'm_client', label: 'pertence a', color: { color: '#10b981' }, arrows: 'to' },
+      { from: 'm_contract', to: 'm_service', label: 'contém itens', color: { color: '#10b981' }, arrows: 'to' },
+      { from: 'm_contract', to: 'm_audit', label: 'registra logs', color: { color: '#10b981' }, arrows: 'to' },
+      { from: 'm_contract', to: 'm_snapshot', label: 'gera versão', color: { color: '#10b981' }, arrows: 'to' },
+
+      // APIs & Business Logic
+      { from: 'page_new', to: 'api_contracts', label: 'POST payload', color: { color: '#3b82f6' }, arrows: 'to' },
+      { from: 'api_contracts', to: 'm_contract', label: 'cria registro', color: { color: '#3b82f6' }, arrows: 'to' },
+      { from: 'api_contracts', to: 'lib_financial', label: 'calcula MRR', color: { color: '#3b82f6' }, arrows: 'to' },
+
+      // Signature Flow
+      { from: 'page_preview', to: 'comp_modal', label: 'abre modal', color: { color: '#a855f7' }, arrows: 'to' },
+      { from: 'comp_modal', to: 'api_sign_kapel', label: 'assina KAPEL', color: { color: '#a855f7' }, arrows: 'to' },
+      { from: 'api_sign_kapel', to: 'lib_signature', label: 'gera token UUID v4', color: { color: '#3b82f6' }, arrows: 'to' },
+      { from: 'api_sign_kapel', to: 'm_contract', label: 'atualiza status PENDING_CLIENT', color: { color: '#10b981' }, arrows: 'to' },
+
+      // Client Public Signature
+      { from: 'page_public_sign', to: 'comp_canvas', label: 'desenha visto', color: { color: '#f59e0b' }, arrows: 'to' },
+      { from: 'page_public_sign', to: 'sec_doc_val', label: 'valida 4 dígitos', color: { color: '#f43f5e' }, arrows: 'to' },
+      { from: 'page_public_sign', to: 'api_sign_client', label: 'POST assinatura', color: { color: '#f59e0b' }, arrows: 'to' },
+      { from: 'api_sign_client', to: 'lib_signature', label: 'calcula SHA-256', color: { color: '#3b82f6' }, arrows: 'to' },
+      { from: 'api_sign_client', to: 'm_contract', label: 'atualiza status SIGNED', color: { color: '#10b981' }, arrows: 'to' },
+
+      // Public Verification
+      { from: 'api_sign_client', to: 'page_public_verify', label: 'redireciona para certificado', color: { color: '#f59e0b' }, arrows: 'to' },
+      { from: 'page_public_verify', to: 'api_verify', label: 'GET evidencias', color: { color: '#f59e0b' }, arrows: 'to' },
+      { from: 'page_public_verify', to: 'sec_badge', label: 'exibe selo', color: { color: '#f43f5e' }, arrows: 'to' },
+      { from: 'sec_badge', to: 'sec_legal', label: 'garante conformidade', color: { color: '#f43f5e' }, arrows: 'to' },
+    ]);
+
+    // Container and Options
+    const container = document.getElementById('mynetwork');
+    const graphData = { nodes: nodes, edges: edges };
+    const options = {
+      nodes: {
+        borderWidth: 2,
+        shadow: true,
+        font: { face: 'system-ui' }
+      },
+      edges: {
+        width: 2,
+        shadow: true,
+        font: { size: 10, align: 'middle', color: '#94a3b8' },
+        smooth: { type: 'continuous' }
+      },
+      physics: {
+        barnesHut: {
+          gravitationalConstant: -3000,
+          centralGravity: 0.3,
+          springLength: 120
+        }
+      },
+      interaction: {
+        hover: true,
+        tooltipDelay: 150
+      }
+    };
+
+    const network = new vis.Network(container, graphData, options);
+  </script>
+</body>
+</html>

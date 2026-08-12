@@ -18,6 +18,7 @@ Bem-vindo ao seu painel de bordo gamificado! Aqui você acompanha sua evolução
 - [x] **Quest 1.1:** Instalar o repositório `obra/superpowers` em `.agents/skills`.
 - [x] **Quest 1.2:** Escanear a stack tecnológica (Next.js 14 App Router, Prisma ORM, PostgreSQL/Supabase, Lucide, Vitest).
 - [x] **Quest 1.3:** Mapear o modelo de dados (Contratos Políticos, Performance, Cláusulas Customizadas, Snapshots, Log de Auditoria).
+- [x] **Quest 1.4:** Gerar o Grafo de Conhecimento e Arquitetura Interativo (`docs/KAPEL_ARCHITECTURE_GRAPH.html` e `GRAPH_REPORT.md`).
 
 ### 🔵 Nível 2: O Arquiteto (Design & Brainstorming de Novas Features)
 - [x] **Quest 2.1:** Escolher a funcionalidade (Módulo de Assinatura Eletrônica Nativa).

@@ -1,1 +1,1 @@
-feat: tornar interface totalmente responsiva para dispositivos moveis e celulares
+feat: adicionar grafo de arquitetura e conhecimento visual da KAPEL (Graphify)
