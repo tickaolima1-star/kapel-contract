@@ -1,4 +1,5 @@
 import mammoth from 'mammoth';
+import { BillingType } from '@/lib/types';
 
 export interface ExtractedContractResult {
   html: string;
@@ -26,10 +27,12 @@ export interface ExtractedContractResult {
     items: Array<{
       name: string;
       description?: string;
-      billing_type: string;
+      billing_type: BillingType;
       unit_price: number;
       quantity: number;
+      discount: number;
       total_price: number;
+      is_addition: boolean;
     }>;
   };
 }
@@ -131,14 +134,25 @@ export function parseContractText(text: string, rawHtml?: string): ExtractedCont
   }
 
   // 6. Itens de Serviço Extraídos
-  const items = [
+  const items: Array<{
+    name: string;
+    description?: string;
+    billing_type: BillingType;
+    unit_price: number;
+    quantity: number;
+    discount: number;
+    total_price: number;
+    is_addition: boolean;
+  }> = [
     {
       name: isPolitical ? 'Gestão de Mídia Eleitoral e Tráfego Pago' : 'Gestão de Mídia Digital e Performance',
       description: 'Planejamento, operação, monitoramento e otimização de campanhas.',
       billing_type: isPolitical ? 'PROJECT_50_50' : 'MONTHLY_ARREARS',
       unit_price: 3500,
       quantity: 1,
+      discount: 0,
       total_price: 3500,
+      is_addition: false,
     },
   ];
 
@@ -149,7 +163,9 @@ export function parseContractText(text: string, rawHtml?: string): ExtractedCont
       billing_type: 'PROJECT_50_50',
       unit_price: 2500,
       quantity: 1,
+      discount: 0,
       total_price: 2500,
+      is_addition: true,
     });
   }
 
