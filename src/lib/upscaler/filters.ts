@@ -34,25 +34,33 @@ export function applyUnsharpMasking(imageData: ImageData, factor: number): Image
   const output = new Uint8ClampedArray(src.length);
   output.set(src);
 
-  // Kernel de nitidez adaptativo (Laplaciano)
   const amount = Math.min(1.5, Math.max(0, factor));
+  const rowStride = width * 4;
 
   for (let y = 1; y < height - 1; y++) {
+    const yOffset = y * rowStride;
     for (let x = 1; x < width - 1; x++) {
-      const idx = (y * width + x) * 4;
+      const idx = yOffset + x * 4;
 
-      for (let c = 0; c < 3; c++) {
-        const center = src[idx + c];
-        const up = src[((y - 1) * width + x) * 4 + c];
-        const down = src[((y + 1) * width + x) * 4 + c];
-        const left = src[(y * width + (x - 1)) * 4 + c];
-        const right = src[(y * width + (x + 1)) * 4 + c];
+      const upIdx = idx - rowStride;
+      const downIdx = idx + rowStride;
+      const leftIdx = idx - 4;
+      const rightIdx = idx + 4;
 
-        const laplacian = 4 * center - (up + down + left + right);
-        const sharpened = center + amount * laplacian;
-        output[idx + c] = Math.min(255, Math.max(0, sharpened));
-      }
-      output[idx + 3] = src[idx + 3]; // Alpha channel
+      // Red channel
+      const rCenter = src[idx];
+      const rLaplacian = 4 * rCenter - (src[upIdx] + src[downIdx] + src[leftIdx] + src[rightIdx]);
+      output[idx] = Math.min(255, Math.max(0, rCenter + amount * rLaplacian));
+
+      // Green channel
+      const gCenter = src[idx + 1];
+      const gLaplacian = 4 * gCenter - (src[upIdx + 1] + src[downIdx + 1] + src[leftIdx + 1] + src[rightIdx + 1]);
+      output[idx + 1] = Math.min(255, Math.max(0, gCenter + amount * gLaplacian));
+
+      // Blue channel
+      const bCenter = src[idx + 2];
+      const bLaplacian = 4 * bCenter - (src[upIdx + 2] + src[downIdx + 2] + src[leftIdx + 2] + src[rightIdx + 2]);
+      output[idx + 2] = Math.min(255, Math.max(0, bCenter + amount * bLaplacian));
     }
   }
 

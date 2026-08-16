@@ -1,1 +1,1 @@
-fix: corrigir tipagem de BillingType no importador para garantir build limpo na Vercel
+fix: otimizar carregamento assincrono de imagens e filtro de nitidez sem travamento

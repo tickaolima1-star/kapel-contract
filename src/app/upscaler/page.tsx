@@ -7,19 +7,21 @@ import { ImageUploader } from '@/components/upscaler/ImageUploader';
 import { BeforeAfterSlider } from '@/components/upscaler/BeforeAfterSlider';
 import { UpscaleControls } from '@/components/upscaler/UpscaleControls';
 import { calculateUpscaleDimensions, applyUnsharpMasking } from '@/lib/upscaler/filters';
-import { Sparkles, RefreshCw } from 'lucide-react';
+import { Sparkles, RefreshCw, AlertCircle } from 'lucide-react';
 
 export default function UpscalerPage() {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [originalSrc, setOriginalSrc] = useState<string | null>(null);
   const [upscaledSrc, setUpscaledSrc] = useState<string | null>(null);
   const [scale, setScale] = useState<2 | 4>(2);
-  const [sharpen, setSharpen] = useState<number>(0.3);
+  const [sharpen, setSharpen] = useState<number>(0.2);
   const [format, setFormat] = useState<'png' | 'jpeg' | 'webp'>('png');
   const [processing, setProcessing] = useState<boolean>(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [dimensions, setDimensions] = useState<{ orig: string; upscaled: string } | null>(null);
 
   const handleImageSelected = (file: File) => {
+    setErrorMsg(null);
     setImageFile(file);
     const url = URL.createObjectURL(file);
     setOriginalSrc(url);
@@ -30,43 +32,80 @@ export default function UpscalerPage() {
 
     let isMounted = true;
     setProcessing(true);
+    setErrorMsg(null);
 
-    const img = new Image();
-    img.crossOrigin = 'anonymous';
-    img.src = originalSrc;
-    img.onload = () => {
-      if (!isMounted) return;
-
-      const { newWidth, newHeight } = calculateUpscaleDimensions(img.width, img.height, scale);
-
-      const canvas = document.createElement('canvas');
-      canvas.width = newWidth;
-      canvas.height = newHeight;
-      const ctx = canvas.getContext('2d');
-
-      if (ctx) {
-        ctx.imageSmoothingEnabled = true;
-        ctx.imageSmoothingQuality = 'high';
-        ctx.drawImage(img, 0, 0, newWidth, newHeight);
-
-        if (sharpen > 0) {
-          const imageData = ctx.getImageData(0, 0, newWidth, newHeight);
-          const sharpenedData = applyUnsharpMasking(imageData, sharpen);
-          ctx.putImageData(sharpenedData, 0, 0);
-        }
-
-        const dataUrl = canvas.toDataURL(`image/${format}`, 0.95);
-        setUpscaledSrc(dataUrl);
-        setDimensions({
-          orig: `${img.width}x${img.height}px`,
-          upscaled: `${newWidth}x${newHeight}px`,
-        });
+    const timer = setTimeout(() => {
+      const img = new Image();
+      
+      // Do NOT set crossOrigin for blob/data URLs
+      if (originalSrc.startsWith('http://') || originalSrc.startsWith('https://')) {
+        img.crossOrigin = 'anonymous';
       }
-      setProcessing(false);
-    };
+
+      img.onerror = () => {
+        if (!isMounted) return;
+        setProcessing(false);
+        setErrorMsg('Erro ao carregar a imagem selecionada. Tente outro arquivo PNG ou JPG.');
+      };
+
+      img.onload = () => {
+        if (!isMounted) return;
+
+        try {
+          const { newWidth, newHeight } = calculateUpscaleDimensions(img.width, img.height, scale);
+
+          // Limit max dimension to 4096px for browser GPU safety
+          const MAX_DIM = 4096;
+          let targetW = newWidth;
+          let targetH = newHeight;
+          if (targetW > MAX_DIM || targetH > MAX_DIM) {
+            const aspect = img.width / img.height;
+            if (targetW > targetH) {
+              targetW = MAX_DIM;
+              targetH = Math.round(MAX_DIM / aspect);
+            } else {
+              targetH = MAX_DIM;
+              targetW = Math.round(MAX_DIM * aspect);
+            }
+          }
+
+          const canvas = document.createElement('canvas');
+          canvas.width = targetW;
+          canvas.height = targetH;
+          const ctx = canvas.getContext('2d');
+
+          if (ctx) {
+            ctx.imageSmoothingEnabled = true;
+            ctx.imageSmoothingQuality = 'high';
+            ctx.drawImage(img, 0, 0, targetW, targetH);
+
+            if (sharpen > 0 && targetW * targetH <= 2048 * 2048) {
+              const imageData = ctx.getImageData(0, 0, targetW, targetH);
+              const sharpenedData = applyUnsharpMasking(imageData, sharpen);
+              ctx.putImageData(sharpenedData, 0, 0);
+            }
+
+            const dataUrl = canvas.toDataURL(`image/${format}`, format === 'jpeg' ? 0.92 : 0.95);
+            setUpscaledSrc(dataUrl);
+            setDimensions({
+              orig: `${img.width}x${img.height}px`,
+              upscaled: `${targetW}x${targetH}px`,
+            });
+          }
+        } catch (err: any) {
+          console.error(err);
+          setErrorMsg('Erro durante o processamento da imagem: ' + (err.message || 'memória insuficiente.'));
+        } finally {
+          if (isMounted) setProcessing(false);
+        }
+      };
+
+      img.src = originalSrc;
+    }, 50);
 
     return () => {
       isMounted = false;
+      clearTimeout(timer);
     };
   }, [originalSrc, scale, sharpen, format]);
 
@@ -90,6 +129,7 @@ export default function UpscalerPage() {
                 setImageFile(null);
                 setOriginalSrc(null);
                 setUpscaledSrc(null);
+                setErrorMsg(null);
               }}
               className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs transition-all shadow-md"
             >
@@ -100,6 +140,13 @@ export default function UpscalerPage() {
         }
       />
 
+      {errorMsg && (
+        <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-2xl flex items-center gap-3 text-sm text-red-400">
+          <AlertCircle className="w-5 h-5 shrink-0" />
+          <span>{errorMsg}</span>
+        </div>
+      )}
+
       {!originalSrc ? (
         <div className="max-w-3xl mx-auto py-8">
           <ImageUploader onImageSelected={handleImageSelected} />
@@ -107,21 +154,20 @@ export default function UpscalerPage() {
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-4">
-            {upscaledSrc ? (
+            {processing ? (
+              <div className="h-[500px] rounded-2xl bg-slate-900 border border-slate-800 flex flex-col items-center justify-center text-slate-400 space-y-3">
+                <div className="w-8 h-8 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin" />
+                <span className="text-sm font-medium text-slate-300">Processando super-resolução em tempo real...</span>
+                <span className="text-xs text-slate-500">Calculando interpolação e nitidez localmente na GPU</span>
+              </div>
+            ) : upscaledSrc ? (
               <BeforeAfterSlider
                 beforeSrc={originalSrc}
                 afterSrc={upscaledSrc}
                 beforeLabel={`Original (${dimensions?.orig || ''})`}
                 afterLabel={`Super-Resolução ${scale}x (${dimensions?.upscaled || ''})`}
               />
-            ) : (
-              <div className="h-[500px] rounded-2xl bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-400">
-                <div className="flex items-center gap-3">
-                  <div className="w-6 h-6 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin" />
-                  <span>Processando super-resolução...</span>
-                </div>
-              </div>
-            )}
+            ) : null}
           </div>
 
           <div>
