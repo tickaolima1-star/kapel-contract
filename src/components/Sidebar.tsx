@@ -17,6 +17,7 @@ import {
   ShieldCheck,
   Menu,
   X,
+  Sparkles,
 } from 'lucide-react';
 
 export function Sidebar() {
@@ -33,6 +34,7 @@ export function Sidebar() {
     { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
     { label: 'Clientes', href: '/clients', icon: Users },
     { label: 'Contratos', href: '/contracts', icon: FileText },
+    { label: 'Upscaler Studio', href: '/upscaler', icon: Sparkles },
     { label: 'Serviços', href: '/services', icon: Briefcase },
     { label: 'Templates', href: '/templates', icon: Layers },
     { label: 'Cláusulas', href: '/clauses', icon: FileCode2 },
