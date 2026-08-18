@@ -31,13 +31,18 @@ export async function POST(request: Request) {
       );
     }
 
-    // 1. Extrair Metadados do Documento via Parser Semântico (mantendo o corpo exato)
+    // 1. Extrair Metadados do Documento via Parser Semântico
     const parsed = parseContractText(rawText, rawHtml);
     const { client: clientData, contract: contractData, html: exactHtmlBody } = parsed;
 
-    // 2. Criar ou Buscar Cliente no Banco de Dados
+    // 2. Criar ou Atualizar Cliente Automaticamente no Banco de Dados
     let client = await prisma.client.findFirst({
-      where: { document: clientData.document },
+      where: {
+        OR: [
+          { document: clientData.document },
+          { legal_name: { contains: clientData.legal_name, mode: 'insensitive' } },
+        ],
+      },
     });
 
     if (!client) {
@@ -53,9 +58,26 @@ export async function POST(request: Request) {
           city: clientData.city || 'São Paulo',
           state: clientData.state || 'SP',
           representative_name: clientData.representative_name || null,
+          representative_cpf: clientData.representative_cpf || null,
           representative_role: clientData.representative_role || 'Representante Legal',
-          email: 'contato@' + clientData.legal_name.toLowerCase().replace(/[^a-z0-9]/g, '') + '.com.br',
+          email: clientData.email,
+          phone: clientData.phone || null,
           active: true,
+        },
+      });
+    } else {
+      // Atualiza campos que estejam vazios no cliente existente
+      client = await prisma.client.update({
+        where: { id: client.id },
+        data: {
+          address: client.address || clientData.address || undefined,
+          neighborhood: client.neighborhood || clientData.neighborhood || undefined,
+          zip_code: client.zip_code || clientData.zip_code || undefined,
+          city: client.city || clientData.city || undefined,
+          state: client.state || clientData.state || undefined,
+          representative_name: client.representative_name || clientData.representative_name || undefined,
+          representative_cpf: client.representative_cpf || clientData.representative_cpf || undefined,
+          representative_role: client.representative_role || clientData.representative_role || undefined,
         },
       });
     }
@@ -135,7 +157,7 @@ export async function POST(request: Request) {
         contract_id: contract.id,
         user_name: 'Patrick (Admin)',
         action: 'CONTRACT_IMPORTED_FROM_DOCX',
-        details: `Contrato #${contractNumber} importado mantendo o texto exato do documento original (.docx). Cliente ${client.legal_name} cadastrado com sucesso.`,
+        details: `Contrato #${contractNumber} importado com sucesso. Cliente ${client.legal_name} cadastrado/reconhecido automaticamente.`,
       },
     });
 
@@ -144,10 +166,11 @@ export async function POST(request: Request) {
         success: true,
         contractId: contract.id,
         contractNumber: contract.contract_number,
+        clientId: client.id,
         clientName: client.legal_name,
         signatureToken: contract.signature_token,
         previewUrl: `/contracts/${contract.id}/preview`,
-        message: `Contrato #${contract.contract_number} importado com o texto exato do arquivo DOCX!`,
+        message: `Contrato #${contract.contract_number} e Cliente "${client.legal_name}" cadastrados com sucesso!`,
       },
       { status: 201 }
     );

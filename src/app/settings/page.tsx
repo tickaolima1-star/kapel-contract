@@ -10,6 +10,7 @@ export default function SettingsPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [settingsError, setSettingsError] = useState<string | null>(null);
 
   // Estados da alteração de senha
   const [passwordData, setPasswordData] = useState({
@@ -42,7 +43,22 @@ export default function SettingsPage() {
       const res = await fetch('/api/settings');
       if (res.ok) {
         const data = await res.json();
-        setFormData(data);
+        setFormData({
+          legal_name: data.legal_name || '',
+          trade_name: data.trade_name || '',
+          cnpj: data.cnpj || '',
+          address: data.address || '',
+          neighborhood: data.neighborhood || '',
+          zip_code: data.zip_code || '',
+          city: data.city || '',
+          state: data.state || '',
+          legal_representative: data.legal_representative || '',
+          rep_cpf: data.rep_cpf || '',
+          email: data.email || '',
+          phone: data.phone || '',
+          jurisdiction_city: data.jurisdiction_city || 'São Paulo',
+          jurisdiction_state: data.jurisdiction_state || 'SP',
+        });
       }
     } catch (err) {
       console.error(err);
@@ -59,6 +75,7 @@ export default function SettingsPage() {
     e.preventDefault();
     setSaving(true);
     setSuccess(false);
+    setSettingsError(null);
 
     try {
       const res = await fetch('/api/settings', {
@@ -67,12 +84,33 @@ export default function SettingsPage() {
         body: JSON.stringify(formData),
       });
 
+      const data = await res.json();
+
       if (res.ok) {
+        setFormData({
+          legal_name: data.legal_name || '',
+          trade_name: data.trade_name || '',
+          cnpj: data.cnpj || '',
+          address: data.address || '',
+          neighborhood: data.neighborhood || '',
+          zip_code: data.zip_code || '',
+          city: data.city || '',
+          state: data.state || '',
+          legal_representative: data.legal_representative || '',
+          rep_cpf: data.rep_cpf || '',
+          email: data.email || '',
+          phone: data.phone || '',
+          jurisdiction_city: data.jurisdiction_city || 'São Paulo',
+          jurisdiction_state: data.jurisdiction_state || 'SP',
+        });
         setSuccess(true);
-        setTimeout(() => setSuccess(false), 4000);
+        setTimeout(() => setSuccess(false), 5000);
+      } else {
+        setSettingsError(data.error || 'Erro ao salvar configurações.');
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
+      setSettingsError('Erro de conexão ao salvar configurações.');
     } finally {
       setSaving(false);
     }
@@ -154,9 +192,16 @@ export default function SettingsPage() {
         </div>
 
         {success && (
-          <div className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center gap-3 text-xs text-emerald-400">
+          <div className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center gap-3 text-xs text-emerald-400 shadow-lg">
             <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
-            <span>Dados da KAPEL atualizados com sucesso. Novos contratos utilizarão esta qualificação.</span>
+            <span>Dados da KAPEL atualizados e salvos com sucesso no banco de dados!</span>
+          </div>
+        )}
+
+        {settingsError && (
+          <div className="p-4 rounded-2xl bg-red-500/10 border border-red-500/20 flex items-center gap-3 text-xs text-red-400 shadow-lg">
+            <AlertCircle className="w-5 h-5 text-red-400 shrink-0" />
+            <span>{settingsError}</span>
           </div>
         )}
 

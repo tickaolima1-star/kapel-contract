@@ -15,6 +15,9 @@ export interface ExtractedContractResult {
     state?: string;
     representative_name?: string;
     representative_role?: string;
+    representative_cpf?: string;
+    email?: string;
+    phone?: string;
   };
   contract: {
     template_type: 'POLITICAL' | 'PERFORMANCE';
@@ -24,6 +27,7 @@ export interface ExtractedContractResult {
     candidate_state?: string;
     candidate_number?: string;
     party?: string;
+    total_value?: number;
     items: Array<{
       name: string;
       description?: string;
@@ -52,36 +56,46 @@ export async function extractContentFromDocxBuffer(buffer: Buffer): Promise<{ ht
 }
 
 /**
- * Realiza a análise semântica sobre o texto do contrato para extrair os metadados do cliente.
+ * Realiza a análise semântica avançada sobre o texto do contrato para extrair todos os metadados do cliente.
  */
 export function parseContractText(text: string, rawHtml?: string): ExtractedContractResult {
   const cleanText = text.replace(/\s+/g, ' ').trim();
 
   // 1. Extração do CNPJ ou CPF do Cliente (Contratante)
   let document = '';
-  const cnpjMatch = cleanText.match(/CNPJ\s+(?:sob\s+o\s+nº\s*)?([0-9]{2}\.[0-9]{3}\.[0-9]{3}\/[0-9]{4}-[0-9]{2})/i);
+  const cnpjMatch = cleanText.match(/CNPJ\s*(?:sob\s+o\s+n[ºo]\s*)?[:.]?\s*([0-9]{2}\.[0-9]{3}\.[0-9]{3}\/[0-9]{4}-[0-9]{2})/i) ||
+                    cleanText.match(/([0-9]{2}\.[0-9]{3}\.[0-9]{3}\/[0-9]{4}-[0-9]{2})/);
   if (cnpjMatch) {
-    document = cnpjMatch[1];
+    document = cnpjMatch[1].trim();
   } else {
-    const cpfMatch = cleanText.match(/CPF\s+(?:sob\s+o\s+nº\s*)?([0-9]{3}\.[0-9]{3}\.[0-9]{3}-[0-9]{2})/i);
+    const cpfMatch = cleanText.match(/CPF\s*(?:sob\s+o\s+n[ºo]\s*)?[:.]?\s*([0-9]{3}\.[0-9]{3}\.[0-9]{3}-[0-9]{2})/i) ||
+                     cleanText.match(/([0-9]{3}\.[0-9]{3}\.[0-9]{3}-[0-9]{2})/);
     if (cpfMatch) {
-      document = cpfMatch[1];
+      document = cpfMatch[1].trim();
     }
   }
 
   // 2. Extração da Razão Social do Cliente (Contratante)
-  let legalName = 'Cliente Importado';
-  const contratanteMatch = cleanText.match(/de\s+um\s+lado,\s*([^,]+),\s*pessoa\s+jurídica/i) ||
-                           cleanText.match(/de\s+um\s+lado,\s*([^,]+),\s*inscrit[ao]/i);
+  let legalName = '';
+  const contratanteMatch = cleanText.match(/CONTRATANTE:\s*([^\n,]+)/i) ||
+                           cleanText.match(/de\s+um\s+lado,\s*([^,]+),\s*pessoa\s+jurídica/i) ||
+                           cleanText.match(/de\s+um\s+lado,\s*([^,]+),\s*inscrit[ao]/i) ||
+                           cleanText.match(/CONTRATANTE\s*[:]\s*([A-Za-z0-9À-ú\s.-]+?)(?:,\s*inscrit|,\s*CNPJ|,\s*com\s+sede)/i);
+  
   if (contratanteMatch) {
-    legalName = contratanteMatch[1].trim();
+    legalName = contratanteMatch[1].replace(/^(?:a|o|da|do)\s+/i, '').trim();
+  } else {
+    legalName = 'Cliente Importado ' + new Date().toLocaleDateString('pt-BR');
   }
 
-  // 3. Extração do Representante Legal
+  // 3. Extração do Representante Legal e CPF
   let representativeName = '';
   let representativeRole = 'Representante Legal';
-  const repMatch = cleanText.match(/representad[ao]\s+por\s+seu\s+([^,]+),\s*([^,]+),\s*doravante/i) ||
-                   cleanText.match(/representad[ao]\s+por\s+([^,]+),\s*doravante/i);
+  let representativeCpf = '';
+
+  const repMatch = cleanText.match(/representad[ao]\s+por\s+(?:seu\s+)?([^,]+),\s*([^,]+),\s*doravante/i) ||
+                   cleanText.match(/representad[ao]\s+por\s+([^,]+),\s*doravante/i) ||
+                   cleanText.match(/representante\s+legal:\s*([^\n,]+)/i);
   if (repMatch) {
     if (repMatch.length >= 3) {
       representativeRole = repMatch[1].trim();
@@ -91,9 +105,21 @@ export function parseContractText(text: string, rawHtml?: string): ExtractedCont
     }
   }
 
-  // 4. Extração do Endereço (Cidade, Estado, CEP)
-  let city = 'Belo Horizonte';
-  let state = 'MG';
+  const repCpfMatch = cleanText.match(/portador\s+do\s+CPF\s+(?:sob\s+o\s+n[ºo]\s*)?[:.]?\s*([0-9]{3}\.[0-9]{3}\.[0-9]{3}-[0-9]{2})/i);
+  if (repCpfMatch) representativeCpf = repCpfMatch[1].trim();
+
+  // 4. Extração de Contato (Email e Telefone)
+  let email = '';
+  let phone = '';
+  const emailMatch = cleanText.match(/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/);
+  if (emailMatch) email = emailMatch[1].toLowerCase();
+
+  const phoneMatch = cleanText.match(/(?:\(?\b\d{2}\)?\s*)?(?:9\s*)?\d{4}[-.\s]?\d{4}/);
+  if (phoneMatch) phone = phoneMatch[0];
+
+  // 5. Extração de Endereço (Cidade, Estado, CEP, Logradouro)
+  let city = 'São Paulo';
+  let state = 'SP';
   let zipCode = '';
   let address = '';
   let neighborhood = '';
@@ -106,17 +132,18 @@ export function parseContractText(text: string, rawHtml?: string): ExtractedCont
     state = cityStateMatch[2].trim();
   }
 
-  const cepMatch = cleanText.match(/CEP\s*([0-9]{5}-?[0-9]{3})/i);
+  const cepMatch = cleanText.match(/CEP\s*[:.]?\s*([0-9]{5}-?[0-9]{3})/i);
   if (cepMatch) zipCode = cepMatch[1];
 
-  const addressMatch = cleanText.match(/sede\s+na\s+([^,]+(?:,\s*nº\s*[^,]+)?)/i);
+  const addressMatch = cleanText.match(/sede\s+(?:na|no|em)\s+([^,]+(?:,\s*n[ºo]\s*[^,]+)?)/i) ||
+                       cleanText.match(/endereço\s*[:.]?\s*([^,]+(?:,\s*n[ºo]\s*[^,]+)?)/i);
   if (addressMatch) address = addressMatch[1].trim();
 
   const neighborhoodMatch = cleanText.match(/Bairro\s+([^,]+)/i);
   if (neighborhoodMatch) neighborhood = neighborhoodMatch[1].trim();
 
-  // 5. Identificação de Contrato Político / Eleitoral
-  const isPolitical = /eleitoral|campanha|candidato|deputado|prefeito|vereador/i.test(cleanText);
+  // 6. Identificação de Contrato Político / Eleitoral
+  const isPolitical = /eleitoral|campanha|candidato|deputado|prefeito|vereador|partido/i.test(cleanText);
   const templateType = isPolitical ? 'POLITICAL' : 'PERFORMANCE';
 
   let candidateName = '';
@@ -124,16 +151,29 @@ export function parseContractText(text: string, rawHtml?: string): ExtractedCont
   let candidateState = state;
 
   if (isPolitical) {
-    const candidateMatch = cleanText.match(/campanha\s+eleitoral\s+de\s+([A-Za-zÀ-ú\s]+?),\s*candidat[ao]\s+ao\s+cargo\s+de\s+([A-Za-zÀ-ú\s]+?)\s+pelo\s+Estado\s+de\s+([A-Za-zÀ-ú\s]+?)\s+(?:nas|em)/i);
+    const candidateMatch = cleanText.match(/campanha\s+eleitoral\s+de\s+([A-Za-zÀ-ú\s]+?),\s*candidat[ao]\s+ao\s+cargo\s+de\s+([A-Za-zÀ-ú\s]+?)\s+pelo\s+Estado\s+de\s+([A-Za-zÀ-ú\s]+?)\s+(?:nas|em)/i) ||
+                           cleanText.match(/candidat[ao]\s+([A-Za-zÀ-ú\s]+?),\s*cargo\s+de\s+([A-Za-zÀ-ú\s]+?)/i);
     if (candidateMatch) {
       candidateName = candidateMatch[1].trim();
       candidateRole = candidateMatch[2].trim();
-      candidateState = candidateMatch[3].trim();
-      if (candidateState.toLowerCase().includes('minas gerais')) candidateState = 'MG';
+      if (candidateMatch[3]) {
+        candidateState = candidateMatch[3].trim();
+        if (candidateState.toLowerCase().includes('minas gerais')) candidateState = 'MG';
+        if (candidateState.toLowerCase().includes('são paulo')) candidateState = 'SP';
+      }
     }
   }
 
-  // 6. Itens de Serviço Extraídos
+  // 7. Extração de Valores e Itens de Serviço
+  let unitPrice = 3500;
+  const priceMatch = cleanText.match(/R\$\s*([0-9]{1,3}(?:\.[0-9]{3})*(?:,[0-9]{2})?)/);
+  if (priceMatch) {
+    const parsedVal = parseFloat(priceMatch[1].replace(/\./g, '').replace(',', '.'));
+    if (!isNaN(parsedVal) && parsedVal > 0) {
+      unitPrice = parsedVal;
+    }
+  }
+
   const items: Array<{
     name: string;
     description?: string;
@@ -148,10 +188,10 @@ export function parseContractText(text: string, rawHtml?: string): ExtractedCont
       name: isPolitical ? 'Gestão de Mídia Eleitoral e Tráfego Pago' : 'Gestão de Mídia Digital e Performance',
       description: 'Planejamento, operação, monitoramento e otimização de campanhas.',
       billing_type: isPolitical ? 'PROJECT_50_50' : 'MONTHLY_ARREARS',
-      unit_price: 3500,
+      unit_price: unitPrice,
       quantity: 1,
       discount: 0,
-      total_price: 3500,
+      total_price: unitPrice,
       is_addition: false,
     },
   ];
@@ -169,7 +209,6 @@ export function parseContractText(text: string, rawHtml?: string): ExtractedCont
     });
   }
 
-  // Se não houver HTML fornecido, monta parágrafos básicos a partir do texto
   const finalHtml = rawHtml || cleanText.split('\n\n').map(p => `<p style="margin-bottom: 1em;">${p.trim()}</p>`).join('');
 
   return {
@@ -186,13 +225,17 @@ export function parseContractText(text: string, rawHtml?: string): ExtractedCont
       state,
       representative_name: representativeName,
       representative_role: representativeRole,
+      representative_cpf: representativeCpf,
+      email: email || `contato@${legalName.toLowerCase().replace(/[^a-z0-9]/g, '') || 'cliente'}.com.br`,
+      phone: phone || '',
     },
     contract: {
       template_type: templateType,
-      title: isPolitical ? `Contrato Eleitoral - ${legalName}` : `Contrato de Performance - ${legalName}`,
+      title: isPolitical ? `Contrato Eleitoral - ${legalName}` : `Contrato de Prestação de Serviços - ${legalName}`,
       candidate_name: candidateName,
       candidate_role: candidateRole,
       candidate_state: candidateState,
+      total_value: unitPrice,
       items,
     },
   };
