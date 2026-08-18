@@ -146,11 +146,77 @@ export default function DashboardPage() {
       });
 
       if (res.ok) {
+        const updatedContract = await res.json();
         setContractSaveSuccess(true);
-        await loadData();
+        
+        setData((prev) => {
+          if (!prev) return prev;
+
+          // 1. Atualizar clientes
+          const updatedClients = prev.clients.map((cli) => {
+            let contracts = cli.contracts || [];
+            const hasContract = contracts.some((c: any) => c.id === updatedContract.id);
+            const isAssignedToThisClient = cli.id === updatedContract.client_id;
+
+            if (hasContract && !isAssignedToThisClient) {
+              contracts = contracts.filter((c: any) => c.id !== updatedContract.id);
+            } else if (!hasContract && isAssignedToThisClient) {
+              contracts = [updatedContract, ...contracts];
+            } else if (hasContract && isAssignedToThisClient) {
+              contracts = contracts.map((c: any) => c.id === updatedContract.id ? updatedContract : c);
+            }
+
+            const activeContractsList = contracts.filter((c: any) => c.status !== 'CANCELLED');
+            const clientMRR = activeContractsList.reduce((sum: number, c: any) => sum + (c.calculated_mrr || 0), 0);
+            const clientOneTime = activeContractsList.reduce((sum: number, c: any) => sum + (c.calculated_total_one_time || 0), 0);
+
+            return {
+              ...cli,
+              contracts,
+              active_projects_count: contracts.filter((c: any) => c.status === 'FINALIZED').length,
+              total_mrr: clientMRR,
+              total_one_time: clientOneTime,
+            };
+          });
+
+          // 2. Atualizar contratos recentes
+          const updatedRecent = prev.recent_contracts.map((c: any) =>
+            c.id === updatedContract.id ? updatedContract : c
+          );
+
+          // 3. Atualizar métricas globais
+          const allContracts = updatedClients.flatMap((cli) => cli.contracts || []);
+          const finalActive = allContracts.filter((c: any) => c.status === 'FINALIZED');
+          const finalReady = allContracts.filter((c: any) => c.status === 'READY');
+          const finalDraft = allContracts.filter((c: any) => c.status === 'DRAFT');
+
+          const totalMRR = allContracts
+            .filter((c: any) => c.status !== 'CANCELLED')
+            .reduce((sum: number, c: any) => sum + (c.calculated_mrr || 0), 0);
+          const activeMRR = finalActive.reduce((sum: number, c: any) => sum + (c.calculated_mrr || 0), 0);
+          const totalOneTime = allContracts
+            .filter((c: any) => c.status !== 'CANCELLED')
+            .reduce((sum: number, c: any) => sum + (c.calculated_total_one_time || 0), 0);
+
+          return {
+            ...prev,
+            clients: updatedClients,
+            recent_contracts: updatedRecent,
+            metrics: {
+              ...prev.metrics,
+              total_mrr: totalMRR,
+              active_mrr: activeMRR,
+              total_one_time: totalOneTime,
+              active_contracts_count: finalActive.length,
+              ready_contracts_count: finalReady.length,
+              draft_contracts_count: finalDraft.length,
+            },
+          };
+        });
+
         setTimeout(() => {
           setSelectedContract(null);
-        }, 1000);
+        }, 800);
       }
     } catch (err) {
       console.error(err);
@@ -187,9 +253,63 @@ export default function DashboardPage() {
       });
 
       if (res.ok) {
+        const createdContract = await res.json();
         setNewProjectClientId(null);
         setNewProjectNotes('');
-        await loadData();
+
+        setData((prev) => {
+          if (!prev) return prev;
+
+          // 1. Adicionar ao cliente
+          const updatedClients = prev.clients.map((cli) => {
+            if (cli.id !== createdContract.client_id) return cli;
+
+            const contracts = [createdContract, ...(cli.contracts || [])];
+            const activeContractsList = contracts.filter((c: any) => c.status !== 'CANCELLED');
+            const clientMRR = activeContractsList.reduce((sum: number, c: any) => sum + (c.calculated_mrr || 0), 0);
+            const clientOneTime = activeContractsList.reduce((sum: number, c: any) => sum + (c.calculated_total_one_time || 0), 0);
+
+            return {
+              ...cli,
+              contracts,
+              active_projects_count: contracts.filter((c: any) => c.status === 'FINALIZED').length,
+              total_mrr: clientMRR,
+              total_one_time: clientOneTime,
+            };
+          });
+
+          // 2. Adicionar aos recentes
+          const updatedRecent = [createdContract, ...prev.recent_contracts].slice(0, 10);
+
+          // 3. Atualizar métricas globais
+          const allContracts = updatedClients.flatMap((cli) => cli.contracts || []);
+          const finalActive = allContracts.filter((c: any) => c.status === 'FINALIZED');
+          const finalReady = allContracts.filter((c: any) => c.status === 'READY');
+          const finalDraft = allContracts.filter((c: any) => c.status === 'DRAFT');
+
+          const totalMRR = allContracts
+            .filter((c: any) => c.status !== 'CANCELLED')
+            .reduce((sum: number, c: any) => sum + (c.calculated_mrr || 0), 0);
+          const activeMRR = finalActive.reduce((sum: number, c: any) => sum + (c.calculated_mrr || 0), 0);
+          const totalOneTime = allContracts
+            .filter((c: any) => c.status !== 'CANCELLED')
+            .reduce((sum: number, c: any) => sum + (c.calculated_total_one_time || 0), 0);
+
+          return {
+            ...prev,
+            clients: updatedClients,
+            recent_contracts: updatedRecent,
+            metrics: {
+              ...prev.metrics,
+              total_mrr: totalMRR,
+              active_mrr: activeMRR,
+              total_one_time: totalOneTime,
+              active_contracts_count: finalActive.length,
+              ready_contracts_count: finalReady.length,
+              draft_contracts_count: finalDraft.length,
+            },
+          };
+        });
       }
     } catch (err) {
       console.error(err);

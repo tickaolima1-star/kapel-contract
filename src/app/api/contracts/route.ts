@@ -181,17 +181,15 @@ export async function POST(req: NextRequest) {
         personal_data_processed: Boolean(body.personal_data_processed),
         mass_messaging: Boolean(body.mass_messaging),
         synthetic_content_used: Boolean(body.synthetic_content_used),
-        subcontracting_permitted: body.subcontracting_permitted !== undefined ? body.subcontracting_permitted : true,
+        subcontracting_permitted: body.subcontracting_permitted !== undefined ? Boolean(body.subcontracting_permitted) : true,
         subcontracting_clause_text: body.subcontracting_clause_text || null,
 
-        // Valores Calculados
         calculated_mrr: financials.recurrent_mrr,
         calculated_initial_payment: financials.initial_payment,
         calculated_future_milestones: financials.future_milestones,
         calculated_total_one_time: financials.total_one_time,
         estimated_media_budget: financials.media_budget_informative,
 
-        custom_clauses: JSON.stringify(body.custom_clauses || {}),
         items: {
           create: items.map((item) => ({
             service_id: item.service_id || null,
@@ -208,14 +206,10 @@ export async function POST(req: NextRequest) {
           })),
         },
       },
-      include: {
-        client: true,
-        items: true,
-        template: true,
-      },
+      include: { client: true, items: true, template: true },
     });
 
-    // 6. Gerar Snapshot
+    // 6. Criar Snapshot do Contrato
     const companyData = companySettings || {
       legal_name: '67.726.428 PATRICK EDUARDO LIMA SILVA',
       trade_name: 'KAPEL',
@@ -284,6 +278,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(contract, { status: 201 });
   } catch (error: any) {
     console.error('Erro ao criar contrato:', error);
-    return NextResponse.json({ error: error.message || 'Erro ao criar contrato.' }, { status: 500 });
+    return NextResponse.json({ error: 'Erro ao criar contrato.' }, { status: 500 });
   }
 }
