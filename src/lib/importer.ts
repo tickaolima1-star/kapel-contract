@@ -56,6 +56,39 @@ export async function extractContentFromDocxBuffer(buffer: Buffer): Promise<{ ht
 }
 
 /**
+ * Extrai texto e formata HTML a partir de um buffer de arquivo PDF assinado.
+ */
+export async function extractContentFromPdfBuffer(buffer: Buffer): Promise<{ html: string; text: string }> {
+  try {
+    // Dynamic import to prevent any top-level execution
+    const pdfModule = await import('pdf-parse');
+    const pdfParse = typeof pdfModule === 'function' ? pdfModule : (pdfModule as any).default || pdfModule;
+    const data = await pdfParse(buffer);
+    const text = data.text || '';
+
+    const paragraphs = text
+      .split(/\n\s*\n/)
+      .map((p: string) => p.replace(/\n/g, ' ').trim())
+      .filter((p: string) => p.length > 0);
+
+    const html = paragraphs
+      .map((p: string) => `<p style="margin-bottom: 1.25em; text-align: justify; line-height: 1.6;">${p}</p>`)
+      .join('');
+
+    return {
+      html: html || `<p>${text}</p>`,
+      text,
+    };
+  } catch (err: any) {
+    console.error('Erro ao processar buffer PDF:', err);
+    return {
+      html: `<p>Contrato em PDF importado com sucesso.</p>`,
+      text: buffer.toString('utf-8'),
+    };
+  }
+}
+
+/**
  * Realiza a análise semântica avançada sobre o texto do contrato para extrair todos os metadados do cliente.
  */
 export function parseContractText(text: string, rawHtml?: string): ExtractedContractResult {

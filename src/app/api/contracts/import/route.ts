@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { extractContentFromDocxBuffer, parseContractText } from '@/lib/importer';
+import { extractContentFromDocxBuffer, extractContentFromPdfBuffer, parseContractText } from '@/lib/importer';
 import { generateSignatureToken } from '@/lib/signature';
 import { calculateContractFinancials } from '@/lib/engine/financial';
 
@@ -9,14 +9,21 @@ export async function POST(request: Request) {
     const formData = await request.formData();
     const file = formData.get('file') as File | null;
     const textOverride = formData.get('text') as string | null;
+    const isAlreadySigned = formData.get('alreadySigned') === 'true';
 
     let rawText = textOverride || '';
     let rawHtml = '';
 
     if (file) {
       const buffer = Buffer.from(await file.arrayBuffer());
-      if (file.name.endsWith('.docx')) {
+      const lowerName = file.name.toLowerCase();
+      
+      if (lowerName.endsWith('.docx')) {
         const extracted = await extractContentFromDocxBuffer(buffer);
+        rawHtml = extracted.html;
+        rawText = extracted.text;
+      } else if (lowerName.endsWith('.pdf')) {
+        const extracted = await extractContentFromPdfBuffer(buffer);
         rawHtml = extracted.html;
         rawText = extracted.text;
       } else {
@@ -24,9 +31,9 @@ export async function POST(request: Request) {
       }
     }
 
-    if (!rawText || rawText.trim().length < 50) {
+    if (!rawText || rawText.trim().length < 30) {
       return NextResponse.json(
-        { error: 'Por favor, envie um arquivo .docx válido ou insira o texto do contrato.' },
+        { error: 'Por favor, envie um arquivo .pdf ou .docx válido com texto do contrato.' },
         { status: 400 }
       );
     }
@@ -118,6 +125,7 @@ export async function POST(request: Request) {
     // 5. Motor Financeiro
     const financials = calculateContractFinancials(contractData.items, 0);
     const signatureToken = generateSignatureToken();
+    const now = new Date();
 
     // 6. Criar Contrato Salva o Conteúdo Exato Importado (`imported_body`)
     const contract = await prisma.contract.create({
@@ -125,9 +133,13 @@ export async function POST(request: Request) {
         contract_number: contractNumber,
         client_id: client.id,
         template_id: template.id,
-        status: 'READY',
+        status: isAlreadySigned ? 'FINALIZED' : 'READY',
         signature_token: signatureToken,
-        signature_status: 'DRAFT',
+        signature_status: isAlreadySigned ? 'SIGNED' : 'DRAFT',
+        signed_kapel_at: isAlreadySigned ? now : null,
+        signed_client_at: isAlreadySigned ? now : null,
+        signed_client_name: isAlreadySigned ? clientData.representative_name || clientData.legal_name : null,
+        signed_client_doc: isAlreadySigned ? clientData.representative_cpf || clientData.document : null,
         title: contractData.title,
         candidate_name: contractData.candidate_name || null,
         candidate_role: contractData.candidate_role || null,
@@ -156,8 +168,8 @@ export async function POST(request: Request) {
       data: {
         contract_id: contract.id,
         user_name: 'Patrick (Admin)',
-        action: 'CONTRACT_IMPORTED_FROM_DOCX',
-        details: `Contrato #${contractNumber} importado com sucesso. Cliente ${client.legal_name} cadastrado/reconhecido automaticamente.`,
+        action: isAlreadySigned ? 'CONTRACT_IMPORTED_SIGNED_PDF' : 'CONTRACT_IMPORTED_FROM_FILE',
+        details: `Contrato #${contractNumber} importado (${file ? file.name : 'texto'}). Cliente ${client.legal_name} cadastrado/reconhecido automaticamente.${isAlreadySigned ? ' Marcado como Assinado/Ativo.' : ''}`,
       },
     });
 
