@@ -1,4 +1,6 @@
 import { cookies } from 'next/headers';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
 
 export interface AuthSession {
   user: {
@@ -10,6 +12,29 @@ export interface AuthSession {
 }
 
 export const AUTH_COOKIE_NAME = 'kapel_session';
+const JWT_SECRET = process.env.JWT_SECRET || 'kapel-super-secret-jwt-key-2026-production';
+
+export async function hashPassword(password: string): Promise<string> {
+  return bcrypt.hash(password, 10);
+}
+
+export async function verifyPassword(password: string, hash: string): Promise<boolean> {
+  if (!hash || !password) return false;
+  return bcrypt.compare(password, hash);
+}
+
+export function signSessionToken(user: { id: string; email: string; name: string; role: string }): string {
+  return jwt.sign({ user }, JWT_SECRET, { expiresIn: '7d' });
+}
+
+export function verifySessionToken(token: string): AuthSession | null {
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET) as AuthSession;
+    return decoded;
+  } catch {
+    return null;
+  }
+}
 
 export function getSession(): AuthSession | null {
   try {
@@ -18,8 +43,7 @@ export function getSession(): AuthSession | null {
     if (!sessionCookie || !sessionCookie.value) {
       return null;
     }
-    const session = JSON.parse(decodeURIComponent(sessionCookie.value));
-    return session as AuthSession;
+    return verifySessionToken(sessionCookie.value);
   } catch {
     return null;
   }
@@ -27,8 +51,8 @@ export function getSession(): AuthSession | null {
 
 export function setSessionCookie(user: { id: string; email: string; name: string; role: string }) {
   const cookieStore = cookies();
-  const sessionData = JSON.stringify({ user });
-  cookieStore.set(AUTH_COOKIE_NAME, encodeURIComponent(sessionData), {
+  const token = signSessionToken(user);
+  cookieStore.set(AUTH_COOKIE_NAME, token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
