@@ -1,4 +1,3 @@
-'use me';
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -51,19 +50,20 @@ export function Sidebar() {
   };
 
   const SidebarContent = () => (
-    <div className="flex flex-col h-full bg-[#0c121e] border-r border-[#1a2333] select-none">
+    <div className="flex flex-col h-full bg-[#0A0A0A] border-r border-[rgba(242,242,237,0.1)] select-none">
       {/* Brand Header */}
-      <div className="p-5 border-b border-[#1a2333] flex items-center justify-between">
+      <div className="p-5 border-b border-[rgba(242,242,237,0.1)] flex items-center justify-between">
         <Link href="/dashboard" className="flex items-center gap-3 group">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-400 flex items-center justify-center shadow-lg shadow-emerald-500/20 group-hover:scale-105 transition-transform">
-            <span className="font-bold text-black font-display text-lg tracking-wider">K</span>
+          <div className="kapel-logo logo-sm text-lg font-black tracking-wider flex items-center">
+            <span>K</span>
+            <span className="a-mark" aria-label="A"></span>
+            <span>PEL</span>
           </div>
-          <div>
-            <div className="flex items-center gap-1.5">
-              <span className="font-display font-bold text-lg tracking-wider text-white">KAPEL</span>
-              <span className="text-[10px] font-semibold tracking-widest text-emerald-400 bg-emerald-950/60 border border-emerald-800/50 px-1.5 py-0.5 rounded">CONTRACT</span>
-            </div>
-            <p className="text-[11px] text-slate-400">Inteligência Comercial</p>
+          <div className="ml-1">
+            <span className="text-[9px] font-bold tracking-widest text-[#F2F2ED] bg-[#1C2E24] border border-[#335943] px-1.5 py-0.5 rounded font-mono uppercase">
+              CONTRACT
+            </span>
+            <p className="text-[10px] text-[#8E948E] font-mono mt-0.5">SISTEMA OPERACIONAL</p>
           </div>
         </Link>
 
@@ -71,7 +71,7 @@ export function Sidebar() {
         <button
           type="button"
           onClick={() => setMobileOpen(false)}
-          className="lg:hidden p-1 text-slate-400 hover:text-white rounded-lg"
+          className="lg:hidden p-1 text-[#AEB4AE] hover:text-[#F2F2ED] rounded-lg"
         >
           <X className="w-6 h-6" />
         </button>
@@ -81,9 +81,9 @@ export function Sidebar() {
       <div className="px-4 pt-5 pb-2">
         <Link
           href="/contracts/new"
-          className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-semibold text-sm shadow-lg shadow-emerald-500/20 transition-all hover:shadow-emerald-500/30"
+          className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded bg-[#1C2E24] hover:bg-[#263F31] text-[#F2F2ED] border border-[#335943] font-semibold text-xs font-mono tracking-wider uppercase transition-all shadow-lg shadow-[#1C2E24]/20"
         >
-          <PlusCircle className="w-4 h-4 text-black" />
+          <PlusCircle className="w-4 h-4" />
           <span>Novo Contrato</span>
         </Link>
       </div>
@@ -98,13 +98,13 @@ export function Sidebar() {
             <Link
               key={item.href}
               href={item.href}
-              className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all ${
+              className={`flex items-center gap-3 px-3.5 py-2.5 rounded text-xs font-semibold uppercase tracking-wider transition-all font-mono ${
                 isActive
-                  ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shadow-sm'
-                  : 'text-slate-400 hover:text-slate-200 hover:bg-[#131d2e]'
+                  ? 'bg-[#1C2E24]/40 text-[#44755A] border border-[#335943]/30 shadow-sm'
+                  : 'text-[#AEB4AE] hover:text-[#F2F2ED] hover:bg-[#121312]'
               }`}
             >
-              <Icon className={`w-4 h-4 ${isActive ? 'text-emerald-400' : 'text-slate-400'}`} />
+              <Icon className={`w-4 h-4 ${isActive ? 'text-[#44755A]' : 'text-[#8E948E]'}`} />
               <span>{item.label}</span>
             </Link>
           );
@@ -112,24 +112,24 @@ export function Sidebar() {
       </nav>
 
       {/* User / Admin Footer */}
-      <div className="p-4 border-t border-[#1a2333] bg-[#090d16]/60">
+      <div className="p-4 border-t border-[rgba(242,242,237,0.1)] bg-[#050505]">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-xs font-semibold text-emerald-400">
+            <div className="w-8 h-8 rounded-full bg-[#121312] border border-[rgba(242,242,237,0.1)] flex items-center justify-center text-xs font-bold text-[#44755A] font-mono">
               P
             </div>
             <div>
-              <p className="text-xs font-medium text-slate-200 leading-tight">Patrick Silva</p>
-              <div className="flex items-center gap-1 text-[10px] text-emerald-400">
+              <p className="text-xs font-bold text-[#F2F2ED] leading-tight">Patrick Silva</p>
+              <div className="flex items-center gap-1 text-[10px] text-[#44755A] font-mono">
                 <ShieldCheck className="w-3 h-3" />
-                <span>Administrador</span>
+                <span>OPERADOR</span>
               </div>
             </div>
           </div>
           <button
             onClick={handleLogout}
             title="Encerrar Sessão"
-            className="p-1.5 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors"
+            className="p-1.5 rounded bg-transparent text-[#8E948E] hover:text-red-400 hover:bg-red-500/10 transition-colors"
           >
             <LogOut className="w-4 h-4" />
           </button>
@@ -141,17 +141,18 @@ export function Sidebar() {
   return (
     <>
       {/* Mobile Top Navbar */}
-      <header className="lg:hidden no-print sticky top-0 z-30 bg-[#0c121e] border-b border-[#1a2333] px-4 py-3 flex items-center justify-between">
+      <header className="lg:hidden no-print sticky top-0 z-30 bg-[#0A0A0A] border-b border-[rgba(242,242,237,0.1)] px-4 py-3 flex items-center justify-between">
         <Link href="/dashboard" className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-lg bg-emerald-500 flex items-center justify-center text-black font-bold text-sm">
-            K
+          <div className="kapel-logo logo-sm text-base font-black flex items-center">
+            <span>K</span>
+            <span className="a-mark"></span>
+            <span>PEL</span>
           </div>
-          <span className="font-display font-bold text-base text-white tracking-wider">KAPEL</span>
         </Link>
         <button
           type="button"
           onClick={() => setMobileOpen(true)}
-          className="p-2 text-slate-300 hover:text-white bg-[#131d2e] rounded-xl border border-[#1a2333]"
+          className="p-2 text-[#AEB4AE] hover:text-[#F2F2ED] bg-[#121312] rounded border border-[rgba(242,242,237,0.1)]"
         >
           <Menu className="w-5 h-5" />
         </button>

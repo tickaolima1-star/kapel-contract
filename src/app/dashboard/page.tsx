@@ -10,14 +10,6 @@ import {
   FileText,
   FileEdit,
   Users,
-  DollarSign,
-  PlusCircle,
-  Eye,
-  Copy,
-  ExternalLink,
-  Clock,
-  ShieldCheck,
-  Building2,
   Briefcase,
   Search,
   CheckCircle2,
@@ -31,6 +23,11 @@ import {
   FolderGit2,
   FileSpreadsheet,
   Plus,
+  PlusCircle,
+  Building2,
+  ExternalLink,
+  Eye,
+  ShieldCheck,
 } from 'lucide-react';
 import { formatCurrency, formatDateBR, formatDocument, CONTRACT_STATUS_LABELS } from '@/lib/utils';
 
@@ -450,31 +447,31 @@ export default function DashboardPage() {
   return (
     <AdminLayout>
       <Header
-        title="Painel Operacional KAPEL"
-        subtitle="Gestão centralizada de clientes ativos, projetos vinculados e receita recorrente (MRR)."
+        title="Painel Operacional"
+        subtitle="Gestão centralizada de clientes ativos, projetos vinculados e controle de faturamento (MRR)."
         actions={
           <div className="flex flex-wrap items-center gap-2">
             <button
               type="button"
               onClick={() => setIsSheetModalOpen(true)}
-              className="flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs shadow-lg shadow-emerald-600/20 transition-all"
+              className="flex items-center gap-2 px-4 py-2.5 rounded bg-[#121312] hover:bg-[#1B1D1B] border border-[rgba(242,242,237,0.1)] text-[#D7D8D0] hover:text-[#F2F2ED] font-bold text-[11px] font-mono tracking-wider uppercase transition-all"
             >
               <FileSpreadsheet className="w-4 h-4" />
-              <span>Puxar Planilha (Excel / CSV)</span>
+              <span>Importar Planilha</span>
             </button>
             <button
               type="button"
               onClick={() => setIsDocModalOpen(true)}
-              className="flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs shadow-lg shadow-blue-600/20 transition-all"
+              className="flex items-center gap-2 px-4 py-2.5 rounded bg-[#121312] hover:bg-[#1B1D1B] border border-[rgba(242,242,237,0.1)] text-[#D7D8D0] hover:text-[#F2F2ED] font-bold text-[11px] font-mono tracking-wider uppercase transition-all"
             >
               <UploadCloud className="w-4 h-4" />
-              <span>Importar Contrato (PDF / DOCX)</span>
+              <span>Importar Contrato PDF</span>
             </button>
             <Link
               href="/contracts/new"
-              className="flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-emerald-400 hover:bg-emerald-300 text-black font-semibold text-xs shadow-lg shadow-emerald-400/20 transition-all"
+              className="flex items-center gap-2 px-4 py-2.5 rounded bg-[#1C2E24] hover:bg-[#263F31] text-[#F2F2ED] border border-[#335943] font-bold text-[11px] font-mono tracking-wider uppercase transition-all shadow-lg shadow-[#1C2E24]/20"
             >
-              <PlusCircle className="w-4 h-4 text-black" />
+              <PlusCircle className="w-4 h-4" />
               <span>Novo Contrato</span>
             </Link>
           </div>
@@ -482,85 +479,85 @@ export default function DashboardPage() {
       />
 
       {loading ? (
-        <div className="flex items-center justify-center h-64 text-slate-400">
-          <div className="w-8 h-8 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin" />
+        <div className="flex items-center justify-center h-64 text-[#AEB4AE]">
+          <div className="w-8 h-8 border-2 border-[#335943] border-t-transparent rounded-full animate-spin" />
         </div>
       ) : data ? (
         <div className="space-y-8">
-          {/* KPI Cards Grid */}
+          {/* KPI Cards Grid using the signature design system specs */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {/* MRR Contratado */}
-            <div className="bg-[#0f172a] border border-[#1e293b] rounded-2xl p-5 relative overflow-hidden shadow-lg group hover:border-emerald-500/40 transition-all">
-              <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                <TrendingUp className="w-12 h-12 text-emerald-400" />
+            <div className="card-custom scanline bg-[#121312] border border-[rgba(242,242,237,0.1)] rounded p-5 relative overflow-hidden transition-all group hover:border-[#335943]/45">
+              <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
+                <TrendingUp className="w-12 h-12 text-[#44755A]" />
               </div>
-              <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">MRR Ativo (Recorrência)</p>
-              <h3 className="text-2xl font-bold text-emerald-400 font-display mt-2">
+              <p className="text-[10px] font-bold text-[#8E948E] uppercase tracking-widest font-mono">MRR Ativo Consolidado</p>
+              <h3 className="text-2xl font-black text-[#F2F2ED] font-mono mt-2 tracking-tight">
                 {formatCurrency(data.metrics.total_mrr)}
               </h3>
-              <p className="text-[11px] text-slate-500 mt-1">Faturamento mensal contratado</p>
+              <p className="text-[11px] text-[#8E948E] font-mono mt-1">Soma de contratos em andamento</p>
             </div>
 
-            {/* Clientes Ativos */}
-            <div className="bg-[#0f172a] border border-[#1e293b] rounded-2xl p-5 relative overflow-hidden shadow-lg group hover:border-blue-500/40 transition-all">
-              <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                <Users className="w-12 h-12 text-blue-400" />
+            {/* Clientes Cadastrados */}
+            <div className="card-custom bg-[#121312] border border-[rgba(242,242,237,0.1)] rounded p-5 relative overflow-hidden transition-all group hover:border-[#335943]/45">
+              <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
+                <Users className="w-12 h-12 text-[#44755A]" />
               </div>
-              <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Clientes Cadastrados</p>
-              <h3 className="text-2xl font-bold text-blue-300 font-display mt-2">
+              <p className="text-[10px] font-bold text-[#8E948E] uppercase tracking-widest font-mono">Clientes Cadastrados</p>
+              <h3 className="text-2xl font-black text-[#F2F2ED] font-mono mt-2 tracking-tight">
                 {data.metrics.active_clients_count}
               </h3>
-              <p className="text-[11px] text-slate-500 mt-1">Empresas e marcas na carteira</p>
+              <p className="text-[11px] text-[#8E948E] font-mono mt-1">Marcas e parceiros ativos</p>
             </div>
 
-            {/* Projetos / Contratos Ativos */}
-            <div className="bg-[#0f172a] border border-[#1e293b] rounded-2xl p-5 relative overflow-hidden shadow-lg group hover:border-purple-500/40 transition-all">
-              <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                <Briefcase className="w-12 h-12 text-purple-400" />
+            {/* Projetos em Execução */}
+            <div className="card-custom bg-[#121312] border border-[rgba(242,242,237,0.1)] rounded p-5 relative overflow-hidden transition-all group hover:border-[#335943]/45">
+              <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
+                <Briefcase className="w-12 h-12 text-[#44755A]" />
               </div>
-              <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Projetos em Execução</p>
-              <h3 className="text-2xl font-bold text-purple-300 font-display mt-2">
+              <p className="text-[10px] font-bold text-[#8E948E] uppercase tracking-widest font-mono">Projetos em Andamento</p>
+              <h3 className="text-2xl font-black text-[#F2F2ED] font-mono mt-2 tracking-tight">
                 {data.metrics.active_contracts_count}
               </h3>
-              <p className="text-[11px] text-slate-500 mt-1">Contratos ativos e assinados</p>
+              <p className="text-[11px] text-[#8E948E] font-mono mt-1">Contratos vigentes ativos</p>
             </div>
 
             {/* Aguardando Assinatura */}
-            <div className="bg-[#0f172a] border border-[#1e293b] rounded-2xl p-5 relative overflow-hidden shadow-lg group hover:border-amber-500/40 transition-all">
-              <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                <FileEdit className="w-12 h-12 text-amber-400" />
+            <div className="card-custom bg-[#121312] border border-[rgba(242,242,237,0.1)] rounded p-5 relative overflow-hidden transition-all group hover:border-[#335943]/45">
+              <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
+                <FileEdit className="w-12 h-12 text-amber-500" />
               </div>
-              <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Pendentes / Prontos</p>
-              <h3 className="text-2xl font-bold text-amber-400 font-display mt-2">
+              <p className="text-[10px] font-bold text-[#8E948E] uppercase tracking-widest font-mono">Aguardando Assinatura</p>
+              <h3 className="text-2xl font-black text-amber-500 font-mono mt-2 tracking-tight">
                 {data.metrics.ready_contracts_count}
               </h3>
-              <p className="text-[11px] text-slate-500 mt-1">Prontos para assinatura ou envio</p>
+              <p className="text-[11px] text-[#8E948E] font-mono mt-1">Minutas prontas ou pendentes</p>
             </div>
           </div>
 
           {/* Navigation Tabs & Search */}
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4 bg-[#0f172a] border border-[#1e293b] rounded-2xl p-3 shadow-lg">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4 bg-[#0A0A0A] border border-[rgba(242,242,237,0.1)] rounded p-3 shadow-lg">
             <div className="flex items-center gap-2 w-full md:w-auto">
               <button
                 type="button"
                 onClick={() => setActiveTab('CLIENTS')}
-                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
+                className={`flex items-center gap-2 px-4 py-2.5 rounded text-[11px] font-bold font-mono tracking-wider uppercase transition-all ${
                   activeTab === 'CLIENTS'
-                    ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
-                    : 'text-slate-400 hover:text-slate-200 bg-[#131c2e] border border-[#1e293b]'
+                    ? 'bg-[#1C2E24] text-[#44755A] border border-[#335943]/40'
+                    : 'text-[#AEB4AE] hover:text-[#F2F2ED] bg-transparent border border-transparent'
                 }`}
               >
                 <Building2 className="w-4 h-4" />
-                <span>Clientes & Projetos Vinculados ({filteredClients.length})</span>
+                <span>Clientes & Projetos ({filteredClients.length})</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => setActiveTab('RECENT_CONTRACTS')}
-                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
+                className={`flex items-center gap-2 px-4 py-2.5 rounded text-[11px] font-bold font-mono tracking-wider uppercase transition-all ${
                   activeTab === 'RECENT_CONTRACTS'
-                    ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
-                    : 'text-slate-400 hover:text-slate-200 bg-[#131c2e] border border-[#1e293b]'
+                    ? 'bg-[#1C2E24] text-[#44755A] border border-[#335943]/40'
+                    : 'text-[#AEB4AE] hover:text-[#F2F2ED] bg-transparent border border-transparent'
                 }`}
               >
                 <FileText className="w-4 h-4" />
@@ -569,13 +566,13 @@ export default function DashboardPage() {
             </div>
 
             <div className="relative w-full md:w-80">
-              <Search className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
+              <Search className="w-4 h-4 text-[#8E948E] absolute left-3 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Filtrar por cliente, CNPJ ou projeto..."
-                className="w-full pl-9 pr-4 py-1.5 bg-[#131c2e] border border-[#1e293b] rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500/50"
+                className="w-full pl-9 pr-4 py-2 bg-[#121312] border border-[rgba(242,242,237,0.1)] rounded text-xs text-white placeholder-[#8E948E] focus:outline-none focus:border-[#335943] focus:bg-[#1C2E24]/20 transition-all font-mono"
               />
             </div>
           </div>
@@ -584,26 +581,24 @@ export default function DashboardPage() {
           {activeTab === 'CLIENTS' && (
             <div className="space-y-4">
               {filteredClients.length === 0 ? (
-                <div className="bg-[#0f172a] border border-[#1e293b] rounded-2xl p-12 text-center text-slate-500 shadow-xl">
-                  <Building2 className="w-12 h-12 text-slate-600 mx-auto mb-3" />
-                  <p className="text-sm font-semibold text-slate-300">Nenhum cliente encontrado</p>
-                  <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
-                    Você pode subir sua planilha do Excel/CSV ou importar contratos para alimentar o painel!
+                <div className="bg-[#121312] border border-[rgba(242,242,237,0.1)] rounded p-12 text-center text-[#AEB4AE] shadow-xl">
+                  <Building2 className="w-12 h-12 text-[#8E948E] mx-auto mb-3" />
+                  <p className="text-sm font-semibold text-white">Nenhum registro encontrado</p>
+                  <p className="text-xs text-[#8E948E] mt-1 max-w-sm mx-auto font-mono">
+                    Suba sua planilha ou importe contratos para visualizar as informações consolidadas.
                   </p>
-                  <div className="mt-4 flex items-center justify-center gap-3">
+                  <div className="mt-6 flex items-center justify-center gap-3">
                     <button
                       onClick={() => setIsSheetModalOpen(true)}
-                      className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold"
+                      className="px-4 py-2 bg-[#121312] hover:bg-[#1B1D1B] border border-[rgba(242,242,237,0.1)] text-[#D7D8D0] rounded font-mono text-xs uppercase font-bold"
                     >
-                      <FileSpreadsheet className="w-4 h-4" />
-                      <span>Puxar da Minha Planilha</span>
+                      Planilha Excel
                     </button>
                     <button
                       onClick={() => setIsDocModalOpen(true)}
-                      className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold"
+                      className="px-4 py-2 bg-[#121312] hover:bg-[#1B1D1B] border border-[rgba(242,242,237,0.1)] text-[#D7D8D0] rounded font-mono text-xs uppercase font-bold"
                     >
-                      <UploadCloud className="w-4 h-4" />
-                      <span>Importar Contrato PDF</span>
+                      Importar PDF
                     </button>
                   </div>
                 </div>
@@ -611,29 +606,29 @@ export default function DashboardPage() {
                 filteredClients.map((cli) => (
                   <div
                     key={cli.id}
-                    className="bg-[#0f172a] border border-[#1e293b] rounded-2xl p-5 shadow-xl hover:border-slate-700 transition-all space-y-4"
+                    className="card-custom bg-[#121312] border border-[rgba(242,242,237,0.1)] rounded p-5 shadow-xl transition-all space-y-4 hover:border-[#335943]/20"
                   >
                     {/* Header do Cliente */}
-                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-4 border-b border-[#1e293b]">
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-4 border-b border-[rgba(242,242,237,0.1)]">
                       <div className="flex items-start gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shrink-0">
+                        <div className="w-10 h-10 rounded bg-[#1C2E24]/20 border border-[#335943]/30 flex items-center justify-center text-[#44755A] shrink-0">
                           <Building2 className="w-5 h-5" />
                         </div>
                         <div>
                           <div className="flex items-center gap-2">
-                            <h3 className="text-base font-bold text-white">{cli.legal_name}</h3>
+                            <h3 className="text-base font-black text-[#F2F2ED] uppercase tracking-wide">{cli.legal_name}</h3>
                             {cli.trade_name && cli.trade_name !== cli.legal_name && (
-                              <span className="text-xs text-slate-400 font-medium">({cli.trade_name})</span>
+                              <span className="text-xs text-[#AEB4AE] font-semibold">({cli.trade_name})</span>
                             )}
                           </div>
-                          <div className="flex flex-wrap items-center gap-3 text-xs text-slate-400 mt-1">
-                            <span className="font-mono">{formatDocument(cli.document)}</span>
+                          <div className="flex flex-wrap items-center gap-3 text-xs text-[#8E948E] font-mono mt-1">
+                            <span>{formatDocument(cli.document)}</span>
                             <span>•</span>
                             <span>{cli.city}/{cli.state}</span>
                             {cli.representative_name && (
                               <>
                                 <span>•</span>
-                                <span>Rep: <strong className="text-slate-300">{cli.representative_name}</strong></span>
+                                <span>REP: <strong className="text-[#AEB4AE]">{cli.representative_name}</strong></span>
                               </>
                             )}
                           </div>
@@ -642,17 +637,17 @@ export default function DashboardPage() {
 
                       {/* Métricas e Ação Rápida */}
                       <div className="flex items-center gap-3">
-                        <div className="flex items-center gap-4 bg-[#131c2e] px-4 py-2 rounded-xl border border-[#1e293b]">
+                        <div className="flex items-center gap-4 bg-[#0A0A0A] px-4 py-2 rounded border border-[rgba(242,242,237,0.1)]">
                           <div>
-                            <span className="text-[10px] text-slate-500 uppercase tracking-wider block">MRR Contratado</span>
-                            <span className="text-sm font-bold text-emerald-400 font-mono">
+                            <span className="text-[9px] text-[#8E948E] font-mono uppercase tracking-widest block">MRR Contratado</span>
+                            <span className="text-sm font-bold text-[#44755A] font-mono">
                               {formatCurrency(cli.total_mrr)}/mês
                             </span>
                           </div>
-                          <div className="h-6 w-px bg-[#1e293b]" />
+                          <div className="h-6 w-px bg-[rgba(242,242,237,0.1)]" />
                           <div>
-                            <span className="text-[10px] text-slate-500 uppercase tracking-wider block">Projetos</span>
-                            <span className="text-sm font-bold text-slate-200 font-mono">
+                            <span className="text-[9px] text-[#8E948E] font-mono uppercase tracking-widest block">Projetos</span>
+                            <span className="text-sm font-bold text-[#F2F2ED] font-mono">
                               {cli.contracts?.length || 0}
                             </span>
                           </div>
@@ -661,52 +656,56 @@ export default function DashboardPage() {
                         <button
                           type="button"
                           onClick={() => setNewProjectClientId(cli.id)}
-                          className="flex items-center gap-1.5 px-3 py-2 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 rounded-xl text-xs font-semibold transition-all"
+                          className="flex items-center gap-1.5 px-3 py-2 bg-[#1C2E24]/20 hover:bg-[#1C2E24]/40 text-[#44755A] border border-[#335943]/30 rounded text-xs font-mono font-bold tracking-wider uppercase transition-all"
                         >
                           <Plus className="w-3.5 h-3.5" />
-                          <span>Adicionar Projeto</span>
+                          <span>Novo Projeto</span>
                         </button>
                       </div>
                     </div>
 
                     {/* Projetos / Contratos Vinculados */}
                     <div className="space-y-2">
-                      <div className="flex items-center gap-2 text-xs font-semibold text-slate-400 uppercase tracking-wider">
-                        <FolderGit2 className="w-4 h-4 text-emerald-400" />
+                      <div className="flex items-center gap-2 text-xs font-bold text-[#AEB4AE] uppercase tracking-widest font-mono">
+                        <FolderGit2 className="w-4 h-4 text-[#44755A]" />
                         <span>Projetos & Contratos Vinculados:</span>
                       </div>
 
                       {cli.contracts?.length === 0 ? (
-                        <p className="text-xs text-slate-500 italic pl-6">Nenhum projeto vinculado a este cliente.</p>
+                        <p className="text-xs text-[#8E948E] italic pl-6 font-mono">Nenhum projeto vinculado a este cliente.</p>
                       ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1">
                           {cli.contracts.map((contract: any) => {
-                            const statusInfo = CONTRACT_STATUS_LABELS[contract.status] || {
-                              label: contract.status,
-                              color: 'bg-slate-800 text-slate-400 border-slate-700',
-                            };
+                            let statusColor = 'bg-slate-900/60 text-slate-400 border-slate-700/40';
+                            if (contract.status === 'FINALIZED') {
+                              statusColor = 'bg-[#1C2E24]/40 text-[#44755A] border-[#335943]/40';
+                            } else if (contract.status === 'READY') {
+                              statusColor = 'bg-amber-950/40 text-amber-400 border-amber-800/40';
+                            } else if (contract.status === 'CANCELLED') {
+                              statusColor = 'bg-red-950/40 text-red-400 border-red-800/40';
+                            }
 
                             return (
                               <div
                                 key={contract.id}
-                                className="p-4 rounded-xl bg-[#131c2e]/70 border border-[#1e293b] hover:border-emerald-500/30 transition-all space-y-3"
+                                className="p-4 rounded bg-[#121312] border border-[rgba(242,242,237,0.1)] hover:border-[#335943]/30 transition-all space-y-3"
                               >
                                 <div className="flex items-start justify-between gap-2">
                                   <div>
                                     <div className="flex items-center gap-2">
-                                      <span className="text-xs font-mono font-bold text-emerald-400">
+                                      <span className="text-xs font-mono font-bold text-[#44755A]">
                                         #{contract.contract_number}
                                       </span>
-                                      <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${statusInfo.color}`}>
-                                        {statusInfo.label}
+                                      <span className={`px-2 py-0.5 rounded text-[9px] font-bold font-mono border ${statusColor}`}>
+                                        {contract.status === 'FINALIZED' ? 'ATIVO' : CONTRACT_STATUS_LABELS[contract.status]?.label || contract.status}
                                       </span>
                                     </div>
-                                    <h4 className="text-xs font-semibold text-slate-100 mt-1 line-clamp-1">
+                                    <h4 className="text-xs font-bold text-white mt-1 line-clamp-1 uppercase font-mono tracking-wide">
                                       {contract.title || 'Prestação de Serviços'}
                                     </h4>
                                   </div>
 
-                                  <span className="text-xs font-bold text-slate-200 font-mono shrink-0">
+                                  <span className="text-xs font-bold text-[#F2F2ED] font-mono shrink-0">
                                     {contract.calculated_mrr > 0
                                       ? `${formatCurrency(contract.calculated_mrr)}/mês`
                                       : formatCurrency(contract.calculated_total_one_time || 0)}
@@ -715,10 +714,10 @@ export default function DashboardPage() {
 
                                 {/* Itens de Serviço do Projeto */}
                                 {contract.items && contract.items.length > 0 && (
-                                  <div className="text-[11px] text-slate-400 space-y-0.5">
+                                  <div className="text-[11px] text-[#AEB4AE] space-y-0.5 font-mono">
                                     {contract.items.map((it: any) => (
-                                      <div key={it.id} className="flex items-center gap-1.5 text-slate-300">
-                                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                                      <div key={it.id} className="flex items-center gap-1.5 text-[#D7D8D0]">
+                                        <span className="w-1.5 h-1.5 rounded-full bg-[#44755A]" />
                                         <span className="truncate">{it.name}</span>
                                       </div>
                                     ))}
@@ -727,21 +726,21 @@ export default function DashboardPage() {
 
                                 {/* Observações / Status Operacional */}
                                 {contract.particularities && (
-                                  <div className="p-2 rounded-lg bg-[#0f172a] border border-[#1e293b] text-[11px] text-slate-400">
-                                    <strong className="text-slate-300">Notas: </strong>
+                                  <div className="p-2 rounded bg-[#0A0A0A] border border-[rgba(242,242,237,0.1)] text-[11px] text-[#AEB4AE] font-mono">
+                                    <strong className="text-white">NOTAS: </strong>
                                     {contract.particularities}
                                   </div>
                                 )}
 
                                 {/* Ações do Projeto */}
-                                <div className="pt-2 border-t border-[#1e293b] flex items-center justify-between gap-2 text-xs">
+                                <div className="pt-2 border-t border-[rgba(242,242,237,0.1)] flex items-center justify-between gap-2 text-xs">
                                   <button
                                     type="button"
                                     onClick={() => handleOpenEditModal(contract)}
-                                    className="text-[11px] font-semibold text-emerald-400 hover:text-emerald-300 flex items-center gap-1"
+                                    className="text-[11px] font-bold text-[#44755A] hover:text-[#528769] font-mono tracking-wider uppercase flex items-center gap-1"
                                   >
                                     <FileEdit className="w-3.5 h-3.5" />
-                                    <span>Editar Valores / Status / Atribuição</span>
+                                    <span>Editar</span>
                                   </button>
 
                                   <div className="flex items-center gap-2">
@@ -749,11 +748,11 @@ export default function DashboardPage() {
                                       <button
                                         type="button"
                                         onClick={() => handleCopyLink(contract.signature_token, contract.id)}
-                                        title="Copiar Link de Assinatura Pública"
-                                        className={`p-1.5 rounded-lg border transition-all ${
+                                        title="Copiar Link de Assinatura"
+                                        className={`p-1.5 rounded border transition-all ${
                                           copiedId === contract.id
-                                            ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30'
-                                            : 'bg-[#0f172a] text-slate-400 hover:text-white border-[#1e293b]'
+                                            ? 'bg-[#1C2E24]/40 text-[#44755A] border-[#335943]/30'
+                                            : 'bg-[#0A0A0A] text-[#AEB4AE] hover:text-[#F2F2ED] border-[rgba(242,242,237,0.1)]'
                                         }`}
                                       >
                                         <Send className="w-3.5 h-3.5" />
@@ -763,7 +762,7 @@ export default function DashboardPage() {
                                     <Link
                                       href={`/contracts/${contract.id}/preview`}
                                       title="Visualizar Contrato A4"
-                                      className="p-1.5 rounded-lg bg-[#0f172a] text-slate-400 hover:text-white border border-[#1e293b] transition-colors"
+                                      className="p-1.5 rounded bg-[#0A0A0A] text-[#AEB4AE] hover:text-[#F2F2ED] border border-[rgba(242,242,237,0.1)] transition-colors"
                                     >
                                       <Eye className="w-3.5 h-3.5" />
                                     </Link>
@@ -785,15 +784,15 @@ export default function DashboardPage() {
           {activeTab === 'RECENT_CONTRACTS' && (
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               {/* Contratos Recentes (2 colunas) */}
-              <div className="lg:col-span-2 bg-[#0f172a] border border-[#1e293b] rounded-2xl p-6 shadow-xl">
+              <div className="lg:col-span-2 bg-[#121312] border border-[rgba(242,242,237,0.1)] rounded p-6 shadow-xl">
                 <div className="flex items-center justify-between mb-6">
                   <div>
-                    <h2 className="text-lg font-bold text-white font-display">Contratos Recentes</h2>
-                    <p className="text-xs text-slate-400">Últimos documentos configurados na plataforma</p>
+                    <h2 className="text-lg font-bold text-white uppercase tracking-wider">Contratos Recentes</h2>
+                    <p className="text-xs text-[#8E948E] font-mono mt-0.5">Últimos documentos configurados na plataforma</p>
                   </div>
                   <Link
                     href="/contracts"
-                    className="text-xs font-semibold text-emerald-400 hover:text-emerald-300 flex items-center gap-1"
+                    className="text-xs font-bold text-[#44755A] hover:text-[#528769] font-mono uppercase tracking-wider flex items-center gap-1"
                   >
                     <span>Ver todos</span>
                     <ExternalLink className="w-3.5 h-3.5" />
@@ -801,9 +800,9 @@ export default function DashboardPage() {
                 </div>
 
                 <div className="overflow-x-auto">
-                  <table className="w-full text-left text-xs">
+                  <table className="w-full text-left text-xs font-mono">
                     <thead>
-                      <tr className="border-b border-[#1e293b] text-slate-400 font-semibold uppercase tracking-wider">
+                      <tr className="border-b border-[rgba(242,242,237,0.1)] text-[#AEB4AE] font-bold uppercase tracking-widest text-[10px]">
                         <th className="pb-3">Nº</th>
                         <th className="pb-3">Cliente</th>
                         <th className="pb-3">Honorários</th>
@@ -811,27 +810,30 @@ export default function DashboardPage() {
                         <th className="pb-3 text-right">Ações</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-[#1e293b]/60">
+                    <tbody className="divide-y divide-[rgba(242,242,237,0.06)]">
                       {data.recent_contracts.map((c) => {
-                        const statusConfig = CONTRACT_STATUS_LABELS[c.status] || {
-                          label: c.status,
-                          color: 'bg-slate-800 text-slate-400 border-slate-700',
-                        };
+                        let statusColor = 'bg-slate-900/60 text-slate-400 border-slate-700/40';
+                        if (c.status === 'FINALIZED') {
+                          statusColor = 'bg-[#1C2E24]/40 text-[#44755A] border-[#335943]/40';
+                        } else if (c.status === 'READY') {
+                          statusColor = 'bg-amber-950/40 text-amber-400 border-amber-800/40';
+                        }
+
                         return (
-                          <tr key={c.id} className="hover:bg-[#131c2e]/50 transition-colors">
-                            <td className="py-3 font-mono font-bold text-emerald-400">
+                          <tr key={c.id} className="hover:bg-[#121312]/70 transition-colors">
+                            <td className="py-3 font-bold text-[#44755A]">
                               #{c.contract_number}
                             </td>
                             <td className="py-3">
-                              <p className="font-semibold text-slate-100">{c.client?.legal_name}</p>
-                              <p className="text-[11px] text-slate-500">{c.client?.document}</p>
+                              <p className="font-bold text-[#F2F2ED] uppercase text-[11px] tracking-wide">{c.client?.legal_name}</p>
+                              <p className="text-[10px] text-[#8E948E] mt-0.5">{c.client?.document}</p>
                             </td>
-                            <td className="py-3 font-medium text-emerald-400">
+                            <td className="py-3 font-bold text-[#44755A]">
                               {c.calculated_mrr > 0 ? `${formatCurrency(c.calculated_mrr)}/mês` : formatCurrency(c.calculated_total_one_time || 0)}
                             </td>
                             <td className="py-3">
-                              <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold border ${statusConfig.color}`}>
-                                {statusConfig.label}
+                              <span className={`inline-flex items-center px-2 py-0.5 rounded text-[9px] font-bold border ${statusColor}`}>
+                                {c.status === 'FINALIZED' ? 'ATIVO' : CONTRACT_STATUS_LABELS[c.status]?.label || c.status}
                               </span>
                             </td>
                             <td className="py-3 text-right">
@@ -839,15 +841,15 @@ export default function DashboardPage() {
                                 <button
                                   type="button"
                                   onClick={() => handleOpenEditModal(c)}
-                                  className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800"
-                                  title="Editar Status e Valores"
+                                  className="p-1.5 rounded text-[#AEB4AE] hover:text-[#F2F2ED]"
+                                  title="Editar"
                                 >
                                   <FileEdit className="w-3.5 h-3.5" />
                                 </button>
                                 <Link
                                   href={`/contracts/${c.id}/preview`}
-                                  className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800"
-                                  title="Visualizar Contrato"
+                                  className="p-1.5 rounded text-[#AEB4AE] hover:text-[#F2F2ED]"
+                                  title="Visualizar"
                                 >
                                   <Eye className="w-3.5 h-3.5" />
                                 </Link>
@@ -862,20 +864,20 @@ export default function DashboardPage() {
               </div>
 
               {/* Feed de Auditoria (1 coluna) */}
-              <div className="bg-[#0f172a] border border-[#1e293b] rounded-2xl p-6 shadow-xl flex flex-col">
+              <div className="bg-[#121312] border border-[rgba(242,242,237,0.1)] rounded p-6 shadow-xl flex flex-col">
                 <div className="flex items-center gap-2 mb-6">
-                  <ShieldCheck className="w-5 h-5 text-emerald-400" />
-                  <h2 className="text-lg font-bold text-white font-display">Histórico & Auditoria</h2>
+                  <ShieldCheck className="w-5 h-5 text-[#44755A]" />
+                  <h2 className="text-lg font-bold text-white uppercase tracking-wider">Histórico & Auditoria</h2>
                 </div>
 
                 <div className="space-y-3 flex-1 overflow-y-auto max-h-96">
                   {data.recent_audit_logs.map((log) => (
-                    <div key={log.id} className="p-3 rounded-xl bg-[#131c2e] border border-[#1e293b] space-y-1 text-xs">
-                      <div className="flex items-center justify-between text-[11px]">
-                        <span className="font-semibold text-emerald-400">{log.action}</span>
-                        <span className="text-slate-500">{formatDateBR(log.created_at)}</span>
+                    <div key={log.id} className="p-3 rounded bg-[#0A0A0A] border border-[rgba(242,242,237,0.1)] space-y-1 text-xs font-mono">
+                      <div className="flex items-center justify-between text-[10px]">
+                        <span className="font-bold text-[#44755A]">{log.action}</span>
+                        <span className="text-[#8E948E]">{formatDateBR(log.created_at)}</span>
                       </div>
-                      <p className="text-slate-300 text-[11px]">{log.details}</p>
+                      <p className="text-[#D7D8D0] text-[10px] leading-relaxed">{log.details}</p>
                     </div>
                   ))}
                 </div>
@@ -887,40 +889,40 @@ export default function DashboardPage() {
 
       {/* Modal 1: Gestão Completa de Projeto (Valores, Status, Atribuição) */}
       {selectedContract && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-          <div className="relative w-full max-w-lg bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl overflow-hidden">
-            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-800 bg-slate-950/50">
-              <div className="flex items-center gap-2 text-slate-100 font-semibold text-sm">
-                <FileEdit className="w-5 h-5 text-emerald-400" />
-                <span>Gerenciar Projeto #{selectedContract.contract_number}</span>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+          <div className="relative w-full max-w-lg bg-[#0A0A0A] border border-[rgba(242,242,237,0.1)] rounded shadow-2xl overflow-hidden">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-[rgba(242,242,237,0.1)] bg-[#050505]">
+              <div className="flex items-center gap-2 text-white font-bold text-sm uppercase font-mono tracking-wider">
+                <FileEdit className="w-5 h-5 text-[#44755A]" />
+                <span>Projeto #{selectedContract.contract_number}</span>
               </div>
               <button
                 onClick={() => setSelectedContract(null)}
-                className="text-slate-400 hover:text-slate-200 p-1 rounded-lg hover:bg-slate-800"
+                className="text-[#AEB4AE] hover:text-[#F2F2ED] p-1 rounded hover:bg-[#121312]"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <form onSubmit={handleSaveContractDetails} className="p-6 space-y-4 text-xs">
+            <form onSubmit={handleSaveContractDetails} className="p-6 space-y-4 text-xs font-mono">
               <div>
-                <label className="block text-slate-400 mb-1">Título do Projeto / Serviço *</label>
+                <label className="block text-[#AEB4AE] mb-1 uppercase tracking-widest text-[9px] font-bold">Título do Projeto *</label>
                 <input
                   type="text"
                   required
                   value={editTitle}
                   onChange={(e) => setEditTitle(e.target.value)}
-                  className="w-full px-3 py-2 bg-[#131c2e] border border-[#1e293b] rounded-xl text-white font-medium focus:border-emerald-500/50"
+                  className="w-full px-3 py-2 bg-[#121312] border border-[rgba(242,242,237,0.1)] rounded text-white font-medium focus:border-[#335943] focus:bg-[#1C2E24]/20 outline-none transition-all"
                 />
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-slate-400 mb-1">Cliente Vinculado (Atribuição)</label>
+                  <label className="block text-[#AEB4AE] mb-1 uppercase tracking-widest text-[9px] font-bold">Atribuição de Cliente</label>
                   <select
                     value={editClientId}
                     onChange={(e) => setEditClientId(e.target.value)}
-                    className="w-full px-3 py-2 bg-[#131c2e] border border-[#1e293b] rounded-xl text-white font-medium focus:border-emerald-500/50"
+                    className="w-full px-3 py-2 bg-[#121312] border border-[rgba(242,242,237,0.1)] rounded text-white font-medium focus:border-[#335943] focus:bg-[#1C2E24]/20 outline-none transition-all"
                   >
                     {data?.clients.map((c) => (
                       <option key={c.id} value={c.id}>
@@ -931,15 +933,15 @@ export default function DashboardPage() {
                 </div>
 
                 <div>
-                  <label className="block text-slate-400 mb-1">Status do Projeto</label>
+                  <label className="block text-[#AEB4AE] mb-1 uppercase tracking-widest text-[9px] font-bold">Status Operacional</label>
                   <select
                     value={editStatus}
                     onChange={(e) => setEditStatus(e.target.value)}
-                    className="w-full px-3 py-2 bg-[#131c2e] border border-[#1e293b] rounded-xl text-white font-medium focus:border-emerald-500/50"
+                    className="w-full px-3 py-2 bg-[#121312] border border-[rgba(242,242,237,0.1)] rounded text-white font-medium focus:border-[#335943] focus:bg-[#1C2E24]/20 outline-none transition-all"
                   >
-                    <option value="FINALIZED">Finalizado / Em Execução (Ativo)</option>
-                    <option value="READY">Pronto para Assinatura (Aguardando)</option>
-                    <option value="DRAFT">Rascunho (Em Elaboração)</option>
+                    <option value="FINALIZED">Finalizado / Execução (Ativo)</option>
+                    <option value="READY">Pronto para Assinatura</option>
+                    <option value="DRAFT">Rascunho (Elaboração)</option>
                     <option value="CANCELLED">Cancelado / Pausado</option>
                   </select>
                 </div>
@@ -947,43 +949,43 @@ export default function DashboardPage() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-slate-400 mb-1">Honorários Mensais (MRR R$)</label>
+                  <label className="block text-[#AEB4AE] mb-1 uppercase tracking-widest text-[9px] font-bold">MRR Recorrente (R$)</label>
                   <input
                     type="number"
                     step="0.01"
                     value={editMRR}
                     onChange={(e) => setEditMRR(parseFloat(e.target.value) || 0)}
-                    className="w-full px-3 py-2 bg-[#131c2e] border border-[#1e293b] rounded-xl text-white font-mono focus:border-emerald-500/50"
+                    className="w-full px-3 py-2 bg-[#121312] border border-[rgba(242,242,237,0.1)] rounded text-white focus:border-[#335943] focus:bg-[#1C2E24]/20 outline-none transition-all"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-slate-400 mb-1">Valor Único / Setup (R$)</label>
+                  <label className="block text-[#AEB4AE] mb-1 uppercase tracking-widest text-[9px] font-bold">Setup / Valor Único (R$)</label>
                   <input
                     type="number"
                     step="0.01"
                     value={editOneTime}
                     onChange={(e) => setEditOneTime(parseFloat(e.target.value) || 0)}
-                    className="w-full px-3 py-2 bg-[#131c2e] border border-[#1e293b] rounded-xl text-white font-mono focus:border-emerald-500/50"
+                    className="w-full px-3 py-2 bg-[#121312] border border-[rgba(242,242,237,0.1)] rounded text-white focus:border-[#335943] focus:bg-[#1C2E24]/20 outline-none transition-all"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-slate-400 mb-1">Observações & Particularidades</label>
+                <label className="block text-[#AEB4AE] mb-1 uppercase tracking-widest text-[9px] font-bold">Notas & Observações</label>
                 <textarea
                   rows={3}
                   value={editParticularities}
                   onChange={(e) => setEditParticularities(e.target.value)}
-                  placeholder="Ex: Escopo em andamento, reunião quinzenal agendada, campanha ativa..."
-                  className="w-full px-3 py-2 bg-[#131c2e] border border-[#1e293b] rounded-xl text-white placeholder-slate-500 focus:border-emerald-500/50"
+                  placeholder="Particularidades do projeto..."
+                  className="w-full px-3 py-2 bg-[#121312] border border-[rgba(242,242,237,0.1)] rounded text-white focus:border-[#335943] focus:bg-[#1C2E24]/20 outline-none transition-all"
                 />
               </div>
 
               {contractSaveSuccess && (
-                <div className="p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-xs text-emerald-400 flex items-center gap-2">
+                <div className="p-3 bg-[#1C2E24]/30 border border-[#335943]/40 rounded text-xs text-[#44755A] flex items-center gap-2">
                   <CheckCircle2 className="w-4 h-4" />
-                  <span>Projeto e valores atualizados com sucesso!</span>
+                  <span>Configuração de projeto atualizada.</span>
                 </div>
               )}
 
@@ -992,7 +994,7 @@ export default function DashboardPage() {
                   type="button"
                   onClick={handleDeleteContract}
                   disabled={savingContract}
-                  className="px-4 py-2 bg-red-950 hover:bg-red-900 border border-red-900/30 text-red-400 rounded-xl text-xs font-semibold disabled:opacity-50 transition-colors"
+                  className="px-4 py-2 bg-red-950/40 hover:bg-red-900/60 border border-red-900/40 text-red-400 rounded text-xs font-bold uppercase tracking-wider"
                 >
                   Excluir Projeto
                 </button>
@@ -1001,17 +1003,17 @@ export default function DashboardPage() {
                   <button
                     type="button"
                     onClick={() => setSelectedContract(null)}
-                    className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-medium"
+                    className="px-4 py-2 bg-[#121312] hover:bg-[#1B1D1B] border border-[rgba(242,242,237,0.1)] text-[#D7D8D0] rounded text-xs font-bold uppercase tracking-wider"
                   >
                     Cancelar
                   </button>
                   <button
                     type="submit"
                     disabled={savingContract}
-                    className="flex items-center gap-2 px-5 py-2 bg-emerald-500 hover:bg-emerald-400 text-black font-semibold rounded-xl text-xs shadow-lg shadow-emerald-500/20 disabled:opacity-50"
+                    className="flex items-center gap-2 px-5 py-2 bg-[#1C2E24] hover:bg-[#263F31] border border-[#335943] text-white font-bold rounded text-xs uppercase tracking-wider"
                   >
                     {savingContract ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-                    <span>Salvar Alterações</span>
+                    <span>Salvar</span>
                   </button>
                 </div>
               </div>
@@ -1022,53 +1024,53 @@ export default function DashboardPage() {
 
       {/* Modal 2: Novo Projeto Rápido */}
       {newProjectClientId && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-          <div className="relative w-full max-w-md bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl overflow-hidden">
-            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-800 bg-slate-950/50">
-              <div className="flex items-center gap-2 text-slate-100 font-semibold text-sm">
-                <PlusCircle className="w-5 h-5 text-emerald-400" />
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+          <div className="relative w-full max-w-md bg-[#0A0A0A] border border-[rgba(242,242,237,0.1)] rounded shadow-2xl overflow-hidden">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-[rgba(242,242,237,0.1)] bg-[#050505]">
+              <div className="flex items-center gap-2 text-white font-bold text-sm uppercase font-mono tracking-wider">
+                <PlusCircle className="w-5 h-5 text-[#44755A]" />
                 <span>Adicionar Novo Projeto</span>
               </div>
               <button
                 onClick={() => setNewProjectClientId(null)}
-                className="text-slate-400 hover:text-slate-200 p-1 rounded-lg hover:bg-slate-800"
+                className="text-[#AEB4AE] hover:text-[#F2F2ED] p-1 rounded hover:bg-[#121312]"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <form onSubmit={handleCreateQuickProject} className="p-6 space-y-4 text-xs">
+            <form onSubmit={handleCreateQuickProject} className="p-6 space-y-4 text-xs font-mono">
               <div>
-                <label className="block text-slate-400 mb-1">Título do Projeto / Serviço *</label>
+                <label className="block text-[#AEB4AE] mb-1 uppercase tracking-widest text-[9px] font-bold">Título do Projeto *</label>
                 <input
                   type="text"
                   required
                   value={newProjectTitle}
                   onChange={(e) => setNewProjectTitle(e.target.value)}
-                  className="w-full px-3 py-2 bg-[#131c2e] border border-[#1e293b] rounded-xl text-white font-medium focus:border-emerald-500/50"
+                  className="w-full px-3 py-2 bg-[#121312] border border-[rgba(242,242,237,0.1)] rounded text-white font-medium focus:border-[#335943] focus:bg-[#1C2E24]/20 outline-none transition-all"
                 />
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-slate-400 mb-1">Honorários (MRR R$)</label>
+                  <label className="block text-[#AEB4AE] mb-1 uppercase tracking-widest text-[9px] font-bold">Honorários MRR (R$)</label>
                   <input
                     type="number"
                     step="0.01"
                     value={newProjectMRR}
                     onChange={(e) => setNewProjectMRR(parseFloat(e.target.value) || 0)}
-                    className="w-full px-3 py-2 bg-[#131c2e] border border-[#1e293b] rounded-xl text-white font-mono focus:border-emerald-500/50"
+                    className="w-full px-3 py-2 bg-[#121312] border border-[rgba(242,242,237,0.1)] rounded text-white focus:border-[#335943] focus:bg-[#1C2E24]/20 outline-none transition-all"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-slate-400 mb-1">Status</label>
+                  <label className="block text-[#AEB4AE] mb-1 uppercase tracking-widest text-[9px] font-bold">Status Inicial</label>
                   <select
                     value={newProjectStatus}
                     onChange={(e) => setNewProjectStatus(e.target.value)}
-                    className="w-full px-3 py-2 bg-[#131c2e] border border-[#1e293b] rounded-xl text-white font-medium focus:border-emerald-500/50"
+                    className="w-full px-3 py-2 bg-[#121312] border border-[rgba(242,242,237,0.1)] rounded text-white focus:border-[#335943] focus:bg-[#1C2E24]/20 outline-none transition-all"
                   >
-                    <option value="FINALIZED">Finalizado / Em Execução (Ativo)</option>
+                    <option value="FINALIZED">Finalizado / Execução (Ativo)</option>
                     <option value="READY">Pronto para Assinatura</option>
                     <option value="DRAFT">Rascunho</option>
                   </select>
@@ -1076,13 +1078,13 @@ export default function DashboardPage() {
               </div>
 
               <div>
-                <label className="block text-slate-400 mb-1">Observações do Projeto</label>
+                <label className="block text-[#AEB4AE] mb-1 uppercase tracking-widest text-[9px] font-bold">Observações</label>
                 <textarea
                   rows={3}
                   value={newProjectNotes}
                   onChange={(e) => setNewProjectNotes(e.target.value)}
-                  placeholder="Escopo do projeto, prazos..."
-                  className="w-full px-3 py-2 bg-[#131c2e] border border-[#1e293b] rounded-xl text-white placeholder-slate-500 focus:border-emerald-500/50"
+                  placeholder="Escopo inicial do projeto..."
+                  className="w-full px-3 py-2 bg-[#121312] border border-[rgba(242,242,237,0.1)] rounded text-white focus:border-[#335943] focus:bg-[#1C2E24]/20 outline-none transition-all"
                 />
               </div>
 
@@ -1090,14 +1092,14 @@ export default function DashboardPage() {
                 <button
                   type="button"
                   onClick={() => setNewProjectClientId(null)}
-                  className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-medium"
+                  className="px-4 py-2 bg-[#121312] hover:bg-[#1B1D1B] border border-[rgba(242,242,237,0.1)] text-[#D7D8D0] rounded text-xs font-bold uppercase tracking-wider"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
                   disabled={creatingProject}
-                  className="flex items-center gap-2 px-5 py-2 bg-emerald-500 hover:bg-emerald-400 text-black font-semibold rounded-xl text-xs shadow-lg shadow-emerald-500/20 disabled:opacity-50"
+                  className="flex items-center gap-2 px-5 py-2 bg-[#1C2E24] hover:bg-[#263F31] border border-[#335943] text-white font-bold rounded text-xs uppercase tracking-wider"
                 >
                   {creatingProject ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
                   <span>Criar Projeto</span>
@@ -1110,12 +1112,12 @@ export default function DashboardPage() {
 
       {/* Modal 3: Importação de Planilha Excel / CSV */}
       {isSheetModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-          <div className="relative w-full max-w-lg bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl overflow-hidden">
-            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-800 bg-slate-950/50">
-              <div className="flex items-center gap-2 text-slate-100 font-semibold text-sm">
-                <FileSpreadsheet className="w-5 h-5 text-emerald-400" />
-                Importar Planilha de Projetos (Excel / CSV)
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+          <div className="relative w-full max-w-lg bg-[#0A0A0A] border border-[rgba(242,242,237,0.1)] rounded shadow-2xl overflow-hidden">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-[rgba(242,242,237,0.1)] bg-[#050505]">
+              <div className="flex items-center gap-2 text-white font-bold text-sm uppercase font-mono tracking-wider">
+                <FileSpreadsheet className="w-5 h-5 text-[#44755A]" />
+                <span>Importar Planilha</span>
               </div>
               <button
                 onClick={() => {
@@ -1124,32 +1126,32 @@ export default function DashboardPage() {
                   setSheetSuccessMsg(null);
                   setSheetErrorMsg(null);
                 }}
-                className="text-slate-400 hover:text-slate-200 p-1 rounded-lg hover:bg-slate-800"
+                className="text-[#AEB4AE] hover:text-[#F2F2ED] p-1 rounded hover:bg-[#121312]"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <form onSubmit={handleImportSheet} className="p-6 space-y-4 text-xs">
-              <p className="text-slate-400">
-                Selecione o arquivo da sua planilha (<strong className="text-slate-200">.xlsx, .xls ou .csv</strong>). O sistema identificará automaticamente as colunas de <strong>Cliente, CNPJ, Projeto, Valor e Status</strong> e criará os registros no seu painel!
+            <form onSubmit={handleImportSheet} className="p-6 space-y-4 text-xs font-mono">
+              <p className="text-[#AEB4AE] leading-relaxed">
+                Selecione o arquivo da planilha (<strong className="text-white">.xlsx, .xls ou .csv</strong>). O sistema analisará os cabeçalhos para cadastrar clientes e projetos automaticamente.
               </p>
 
               {sheetSuccessMsg && (
-                <div className="p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-xs text-emerald-400 flex items-center gap-2">
+                <div className="p-3 bg-[#1C2E24]/30 border border-[#335943]/40 rounded text-xs text-[#44755A] flex items-center gap-2">
                   <CheckCircle2 className="w-4 h-4 shrink-0" />
                   <span>{sheetSuccessMsg}</span>
                 </div>
               )}
 
               {sheetErrorMsg && (
-                <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-xl text-xs text-red-400 flex items-center gap-2">
+                <div className="p-3 bg-red-950/40 border border-red-900/40 rounded text-xs text-red-400 flex items-center gap-2">
                   <AlertCircle className="w-4 h-4 shrink-0" />
                   <span>{sheetErrorMsg}</span>
                 </div>
               )}
 
-              <div className="border-2 border-dashed border-slate-800 hover:border-emerald-500/50 rounded-2xl p-6 text-center transition-colors bg-slate-950/50">
+              <div className="border border-dashed border-[rgba(242,242,237,0.2)] hover:border-[#335943] rounded p-6 text-center transition-colors bg-[#121312]">
                 <input
                   type="file"
                   id="sheetFile"
@@ -1158,14 +1160,14 @@ export default function DashboardPage() {
                   className="hidden"
                 />
                 <label htmlFor="sheetFile" className="cursor-pointer flex flex-col items-center space-y-2">
-                  <div className="w-12 h-12 bg-emerald-600/10 border border-emerald-500/30 rounded-2xl flex items-center justify-center text-emerald-400">
+                  <div className="w-12 h-12 bg-[#1C2E24]/20 border border-[#335943]/30 rounded flex items-center justify-center text-[#44755A]">
                     <FileSpreadsheet className="w-6 h-6" />
                   </div>
                   <div>
-                    <span className="text-sm font-semibold text-slate-200 block">
-                      {sheetFile ? sheetFile.name : 'Clique para selecionar a Planilha Excel ou CSV'}
+                    <span className="text-xs font-bold text-white block">
+                      {sheetFile ? sheetFile.name : 'SELECIONAR PLANILHA EXCEL / CSV'}
                     </span>
-                    <span className="text-xs text-slate-500">Formatos aceitos: .XLSX, .XLS, .CSV</span>
+                    <span className="text-[10px] text-[#8E948E] mt-1 block">Formatos: .xlsx, .xls, .csv</span>
                   </div>
                 </label>
               </div>
@@ -1177,17 +1179,17 @@ export default function DashboardPage() {
                     setIsSheetModalOpen(false);
                     setSheetFile(null);
                   }}
-                  className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-medium"
+                  className="px-4 py-2 bg-[#121312] hover:bg-[#1B1D1B] border border-[rgba(242,242,237,0.1)] text-[#D7D8D0] rounded text-xs font-bold uppercase tracking-wider"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
                   disabled={!sheetFile || importingSheet}
-                  className="flex items-center gap-2 px-5 py-2 bg-emerald-500 hover:bg-emerald-400 text-black font-semibold rounded-xl text-xs shadow-lg shadow-emerald-500/20 disabled:opacity-50"
+                  className="flex items-center gap-2 px-5 py-2 bg-[#1C2E24] hover:bg-[#263F31] border border-[#335943] text-white font-bold rounded text-xs uppercase tracking-wider"
                 >
                   {importingSheet ? <Loader2 className="w-4 h-4 animate-spin" /> : <UploadCloud className="w-4 h-4" />}
-                  <span>Processar & Importar Planilha</span>
+                  <span>Importar</span>
                 </button>
               </div>
             </form>
@@ -1197,12 +1199,12 @@ export default function DashboardPage() {
 
       {/* Modal 4: Importação de Contrato PDF ou DOCX */}
       {isDocModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-          <div className="relative w-full max-w-lg bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl overflow-hidden">
-            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-800 bg-slate-950/50">
-              <div className="flex items-center gap-2 text-slate-100 font-semibold text-sm">
-                <UploadCloud className="w-5 h-5 text-blue-400" />
-                Importar Contrato Existente (PDF ou DOCX)
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+          <div className="relative w-full max-w-lg bg-[#0A0A0A] border border-[rgba(242,242,237,0.1)] rounded shadow-2xl overflow-hidden">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-[rgba(242,242,237,0.1)] bg-[#050505]">
+              <div className="flex items-center gap-2 text-white font-bold text-sm uppercase font-mono tracking-wider">
+                <UploadCloud className="w-5 h-5 text-[#44755A]" />
+                <span>Importar Contrato Existente</span>
               </div>
               <button
                 onClick={() => {
@@ -1210,25 +1212,25 @@ export default function DashboardPage() {
                   setDocFile(null);
                   setDocError(null);
                 }}
-                className="text-slate-400 hover:text-slate-200 p-1 rounded-lg hover:bg-slate-800"
+                className="text-[#AEB4AE] hover:text-[#F2F2ED] p-1 rounded hover:bg-[#121312]"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <div className="p-6 space-y-4">
-              <p className="text-xs text-slate-400">
-                Selecione o arquivo do contrato (<strong className="text-slate-200">.PDF</strong> ou <strong className="text-slate-200">.DOCX</strong>). O sistema reconhecerá automaticamente a <strong>Razão Social, CNPJ/CPF, Representante, Endereço e Valores</strong>, cadastrando o Cliente e registrando o contrato no seu painel!
+            <div className="p-6 space-y-4 font-mono text-xs">
+              <p className="text-[#AEB4AE] leading-relaxed">
+                Carregue o arquivo do contrato (<strong className="text-white">.PDF</strong> ou <strong className="text-white">.DOCX</strong>). O leitor semântico registrará o cliente e o projeto.
               </p>
 
               {docError && (
-                <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-xl text-xs text-red-400 flex items-center gap-2">
+                <div className="p-3 bg-red-950/40 border border-red-900/40 rounded text-xs text-red-400 flex items-center gap-2">
                   <AlertCircle className="w-4 h-4 shrink-0" />
                   <span>{docError}</span>
                 </div>
               )}
 
-              <div className="border-2 border-dashed border-slate-800 hover:border-blue-500/50 rounded-2xl p-6 text-center transition-colors bg-slate-950/50">
+              <div className="border border-dashed border-[rgba(242,242,237,0.2)] hover:border-[#335943] rounded p-6 text-center transition-colors bg-[#121312]">
                 <input
                   type="file"
                   id="dashContractFile"
@@ -1237,30 +1239,30 @@ export default function DashboardPage() {
                   className="hidden"
                 />
                 <label htmlFor="dashContractFile" className="cursor-pointer flex flex-col items-center space-y-2">
-                  <div className="w-12 h-12 bg-blue-600/10 border border-blue-500/30 rounded-2xl flex items-center justify-center text-blue-400">
+                  <div className="w-12 h-12 bg-[#1C2E24]/20 border border-[#335943]/30 rounded flex items-center justify-center text-[#44755A]">
                     <FileCheck className="w-6 h-6" />
                   </div>
                   <div>
-                    <span className="text-sm font-semibold text-slate-200 block">
-                      {docFile ? docFile.name : 'Clique para selecionar o PDF ou DOCX'}
+                    <span className="text-xs font-bold text-white block">
+                      {docFile ? docFile.name : 'SELECIONAR ARQUIVO PDF / DOCX'}
                     </span>
-                    <span className="text-xs text-slate-500">Formatos suportados: .PDF, .DOCX</span>
+                    <span className="text-[10px] text-[#8E948E] mt-1 block">Formatos: .pdf, .docx</span>
                   </div>
                 </label>
               </div>
 
               {/* Opção de Contrato Já Assinado */}
-              <label className="flex items-start gap-3 p-3 bg-slate-800/40 rounded-xl border border-slate-800 cursor-pointer">
+              <label className="flex items-start gap-3 p-3 bg-[#121312] rounded border border-[rgba(242,242,237,0.1)] cursor-pointer">
                 <input
                   type="checkbox"
                   checked={alreadySigned}
                   onChange={(e) => setAlreadySigned(e.target.checked)}
-                  className="mt-0.5 w-4 h-4 accent-emerald-500 rounded bg-slate-900 border-slate-700"
+                  className="mt-0.5 w-4 h-4 accent-[#44755A] rounded bg-[#0A0A0A] border-[rgba(242,242,237,0.2)]"
                 />
                 <div className="text-xs">
-                  <span className="font-semibold text-slate-200 block">Este contrato já foi assinado pelo cliente</span>
-                  <span className="text-slate-400 text-[11px]">
-                    Cadastrará o cliente e marcará o contrato como <strong>Finalizado / Ativo</strong> no seu histórico.
+                  <span className="font-bold text-white block uppercase tracking-wide">Contrato já assinado</span>
+                  <span className="text-[#8E948E] text-[10px] mt-0.5 block leading-relaxed">
+                    Registra o cliente e marca o projeto como vigência ativa (Assinado).
                   </span>
                 </div>
               </label>
@@ -1272,7 +1274,7 @@ export default function DashboardPage() {
                     setIsDocModalOpen(false);
                     setDocFile(null);
                   }}
-                  className="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-medium transition-colors"
+                  className="px-4 py-2.5 bg-[#121312] hover:bg-[#1B1D1B] border border-[rgba(242,242,237,0.1)] text-[#D7D8D0] rounded text-xs font-bold uppercase tracking-wider"
                 >
                   Cancelar
                 </button>
@@ -1308,10 +1310,10 @@ export default function DashboardPage() {
                       setImportingDoc(false);
                     }
                   }}
-                  className="flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-semibold shadow-lg shadow-blue-600/20 transition-all disabled:opacity-50"
+                  className="flex items-center gap-2 px-5 py-2.5 bg-[#1C2E24] hover:bg-[#263F31] border border-[#335943] text-white rounded text-xs font-bold uppercase tracking-wider"
                 >
                   {importingDoc && <Loader2 className="w-4 h-4 animate-spin" />}
-                  <span>Processar & Cadastrar Cliente</span>
+                  <span>Processar</span>
                 </button>
               </div>
             </div>
