@@ -225,6 +225,80 @@ export default function DashboardPage() {
     }
   };
 
+  const handleDeleteContract = async () => {
+    if (!selectedContract) return;
+    if (!window.confirm(`Tem certeza que deseja excluir permanentemente o Projeto #${selectedContract.contract_number}?`)) {
+      return;
+    }
+
+    setSavingContract(true);
+    try {
+      const res = await fetch(`/api/contracts/${selectedContract.id}`, {
+        method: 'DELETE',
+      });
+
+      if (res.ok) {
+        setData((prev) => {
+          if (!prev) return prev;
+
+          // 1. Remover dos clientes
+          const updatedClients = prev.clients.map((cli) => {
+            const contracts = (cli.contracts || []).filter((c: any) => c.id !== selectedContract.id);
+            const activeContractsList = contracts.filter((c: any) => c.status !== 'CANCELLED');
+            const clientMRR = activeContractsList.reduce((sum: number, c: any) => sum + (c.calculated_mrr || 0), 0);
+            const clientOneTime = activeContractsList.reduce((sum: number, c: any) => sum + (c.calculated_total_one_time || 0), 0);
+
+            return {
+              ...cli,
+              contracts,
+              active_projects_count: contracts.filter((c: any) => c.status === 'FINALIZED').length,
+              total_mrr: clientMRR,
+              total_one_time: clientOneTime,
+            };
+          });
+
+          // 2. Remover dos contratos recentes
+          const updatedRecent = prev.recent_contracts.filter((c: any) => c.id !== selectedContract.id);
+
+          // 3. Atualizar métricas globais
+          const allContracts = updatedClients.flatMap((cli) => cli.contracts || []);
+          const finalActive = allContracts.filter((c: any) => c.status === 'FINALIZED');
+          const finalReady = allContracts.filter((c: any) => c.status === 'READY');
+          const finalDraft = allContracts.filter((c: any) => c.status === 'DRAFT');
+
+          const totalMRR = allContracts
+            .filter((c: any) => c.status !== 'CANCELLED')
+            .reduce((sum: number, c: any) => sum + (c.calculated_mrr || 0), 0);
+          const activeMRR = finalActive.reduce((sum: number, c: any) => sum + (c.calculated_mrr || 0), 0);
+          const totalOneTime = allContracts
+            .filter((c: any) => c.status !== 'CANCELLED')
+            .reduce((sum: number, c: any) => sum + (c.calculated_total_one_time || 0), 0);
+
+          return {
+            ...prev,
+            clients: updatedClients,
+            recent_contracts: updatedRecent,
+            metrics: {
+              ...prev.metrics,
+              total_mrr: totalMRR,
+              active_mrr: activeMRR,
+              total_one_time: totalOneTime,
+              active_contracts_count: finalActive.length,
+              ready_contracts_count: finalReady.length,
+              draft_contracts_count: finalDraft.length,
+            },
+          };
+        });
+
+        setSelectedContract(null);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setSavingContract(false);
+    }
+  };
+
   const handleCreateQuickProject = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newProjectClientId) return;
@@ -913,22 +987,33 @@ export default function DashboardPage() {
                 </div>
               )}
 
-              <div className="pt-2 flex items-center justify-end gap-3">
+              <div className="pt-2 flex items-center justify-between gap-3">
                 <button
                   type="button"
-                  onClick={() => setSelectedContract(null)}
-                  className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-medium"
-                >
-                  Cancelar
-                </button>
-                <button
-                  type="submit"
+                  onClick={handleDeleteContract}
                   disabled={savingContract}
-                  className="flex items-center gap-2 px-5 py-2 bg-emerald-500 hover:bg-emerald-400 text-black font-semibold rounded-xl text-xs shadow-lg shadow-emerald-500/20 disabled:opacity-50"
+                  className="px-4 py-2 bg-red-950 hover:bg-red-900 border border-red-900/30 text-red-400 rounded-xl text-xs font-semibold disabled:opacity-50 transition-colors"
                 >
-                  {savingContract ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-                  <span>Salvar Alterações</span>
+                  Excluir Projeto
                 </button>
+
+                <div className="flex items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setSelectedContract(null)}
+                    className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-medium"
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={savingContract}
+                    className="flex items-center gap-2 px-5 py-2 bg-emerald-500 hover:bg-emerald-400 text-black font-semibold rounded-xl text-xs shadow-lg shadow-emerald-500/20 disabled:opacity-50"
+                  >
+                    {savingContract ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                    <span>Salvar Alterações</span>
+                  </button>
+                </div>
               </div>
             </form>
           </div>
