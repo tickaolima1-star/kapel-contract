@@ -3,13 +3,22 @@
 import React, { useEffect, useState } from 'react';
 import { AdminLayout } from '@/components/AdminLayout';
 import { Header } from '@/components/Header';
-import { Building2, Save, CheckCircle2, AlertCircle, ShieldAlert } from 'lucide-react';
+import { Building2, Save, CheckCircle2, AlertCircle, ShieldAlert, KeyRound, Lock } from 'lucide-react';
 import { formatDocument } from '@/lib/utils';
 
 export default function SettingsPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState(false);
+
+  // Estados da alteração de senha
+  const [passwordData, setPasswordData] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: '',
+  });
+  const [passwordSaving, setPasswordSaving] = useState(false);
+  const [passwordStatus, setPasswordStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 
   const [formData, setFormData] = useState({
     legal_name: '67.726.428 PATRICK EDUARDO LIMA SILVA',
@@ -69,11 +78,67 @@ export default function SettingsPage() {
     }
   };
 
+  const handlePasswordSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setPasswordStatus(null);
+
+    if (passwordData.newPassword !== passwordData.confirmPassword) {
+      setPasswordStatus({
+        type: 'error',
+        message: 'A confirmação de senha não confere com a nova senha.',
+      });
+      return;
+    }
+
+    if (passwordData.newPassword.length < 8) {
+      setPasswordStatus({
+        type: 'error',
+        message: 'A nova senha deve ter no mínimo 8 caracteres.',
+      });
+      return;
+    }
+
+    setPasswordSaving(true);
+
+    try {
+      const res = await fetch('/api/auth/change-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          currentPassword: passwordData.currentPassword,
+          newPassword: passwordData.newPassword,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        setPasswordStatus({
+          type: 'success',
+          message: 'Sua senha foi alterada com sucesso! Utilize a nova senha no próximo acesso.',
+        });
+        setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
+      } else {
+        setPasswordStatus({
+          type: 'error',
+          message: data.error || 'Erro ao alterar a senha.',
+        });
+      }
+    } catch (err) {
+      setPasswordStatus({
+        type: 'error',
+        message: 'Erro de conexão ao alterar a senha.',
+      });
+    } finally {
+      setPasswordSaving(false);
+    }
+  };
+
   return (
     <AdminLayout>
       <Header
         title="Configurações da KAPEL"
-        subtitle="Qualificação jurídica da CONTRATADA para geração automática nos contratos."
+        subtitle="Qualificação jurídica da CONTRATADA e gestão de segurança do acesso."
       />
 
       <div className="max-w-3xl space-y-6">
@@ -98,12 +163,12 @@ export default function SettingsPage() {
         <form onSubmit={handleSubmit} className="bg-[#0f172a] border border-[#1e293b] rounded-2xl p-6 shadow-xl space-y-5 text-xs">
           <div className="flex items-center gap-2 pb-4 border-b border-[#1e293b]">
             <Building2 className="w-5 h-5 text-emerald-400" />
-            <h2 className="text-base font-bold text-white font-display">Dados Cadastrais da Contratada</h2>
+            <h2 className="font-bold text-slate-100 text-sm">Dados da Pessoa Jurídica CONTRATADA</h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-slate-400 mb-1">Razão Social / Nome Empresarial *</label>
+              <label className="block text-slate-400 mb-1">Razão Social (Nome Empresarial) *</label>
               <input
                 type="text"
                 required
@@ -113,10 +178,9 @@ export default function SettingsPage() {
               />
             </div>
             <div>
-              <label className="block text-slate-400 mb-1">Nome de Apresentação / Marca</label>
+              <label className="block text-slate-400 mb-1">Nome Fantasia (Marca)</label>
               <input
                 type="text"
-                required
                 value={formData.trade_name}
                 onChange={(e) => setFormData({ ...formData, trade_name: e.target.value })}
                 className="w-full px-3 py-2 bg-[#131c2e] border border-[#1e293b] rounded-xl text-white focus:border-emerald-500/50"
@@ -131,8 +195,8 @@ export default function SettingsPage() {
                 type="text"
                 required
                 value={formData.cnpj}
-                onChange={(e) => setFormData({ ...formData, cnpj: e.target.value })}
-                className="w-full px-3 py-2 bg-[#131c2e] border border-[#1e293b] rounded-xl text-white focus:border-emerald-500/50"
+                onChange={(e) => setFormData({ ...formData, cnpj: formatDocument(e.target.value) })}
+                className="w-full px-3 py-2 bg-[#131c2e] border border-[#1e293b] rounded-xl text-white focus:border-emerald-500/50 font-mono"
               />
             </div>
             <div>
@@ -149,18 +213,20 @@ export default function SettingsPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-slate-400 mb-1">CPF do Representante</label>
+              <label className="block text-slate-400 mb-1">CPF do Representante *</label>
               <input
                 type="text"
+                required
                 value={formData.rep_cpf}
-                onChange={(e) => setFormData({ ...formData, rep_cpf: e.target.value })}
-                className="w-full px-3 py-2 bg-[#131c2e] border border-[#1e293b] rounded-xl text-white focus:border-emerald-500/50"
+                onChange={(e) => setFormData({ ...formData, rep_cpf: formatDocument(e.target.value) })}
+                className="w-full px-3 py-2 bg-[#131c2e] border border-[#1e293b] rounded-xl text-white focus:border-emerald-500/50 font-mono"
               />
             </div>
             <div>
-              <label className="block text-slate-400 mb-1">E-mail Corporativo</label>
+              <label className="block text-slate-400 mb-1">E-mail Comercial *</label>
               <input
                 type="email"
+                required
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 className="w-full px-3 py-2 bg-[#131c2e] border border-[#1e293b] rounded-xl text-white focus:border-emerald-500/50"
@@ -234,6 +300,95 @@ export default function SettingsPage() {
                 <>
                   <Save className="w-4 h-4" />
                   <span>Salvar Configurações</span>
+                </>
+              )}
+            </button>
+          </div>
+        </form>
+
+        {/* Card de Alteração de Senha & Segurança */}
+        <form onSubmit={handlePasswordSubmit} className="bg-[#0f172a] border border-[#1e293b] rounded-2xl p-6 shadow-xl space-y-5 text-xs">
+          <div className="flex items-center justify-between pb-4 border-b border-[#1e293b]">
+            <div className="flex items-center gap-2">
+              <KeyRound className="w-5 h-5 text-emerald-400" />
+              <h2 className="font-bold text-slate-100 text-sm">Segurança & Alteração de Senha</h2>
+            </div>
+            <span className="text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded-full flex items-center gap-1">
+              <Lock className="w-3 h-3" /> Hash Bcrypt + JWT 256
+            </span>
+          </div>
+
+          {passwordStatus && (
+            <div
+              className={`p-4 rounded-2xl flex items-center gap-3 text-xs border ${
+                passwordStatus.type === 'success'
+                  ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
+                  : 'bg-red-500/10 border-red-500/20 text-red-400'
+              }`}
+            >
+              {passwordStatus.type === 'success' ? (
+                <CheckCircle2 className="w-5 h-5 shrink-0" />
+              ) : (
+                <AlertCircle className="w-5 h-5 shrink-0" />
+              )}
+              <span>{passwordStatus.message}</span>
+            </div>
+          )}
+
+          <div className="space-y-4">
+            <div>
+              <label className="block text-slate-400 mb-1">Senha Atual *</label>
+              <input
+                type="password"
+                required
+                placeholder="Informe sua senha atual"
+                value={passwordData.currentPassword}
+                onChange={(e) => setPasswordData({ ...passwordData, currentPassword: e.target.value })}
+                className="w-full px-3 py-2 bg-[#131c2e] border border-[#1e293b] rounded-xl text-white focus:border-emerald-500/50"
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-slate-400 mb-1">Nova Senha (Mínimo 8 caracteres) *</label>
+                <input
+                  type="password"
+                  required
+                  minLength={8}
+                  placeholder="Nova senha forte"
+                  value={passwordData.newPassword}
+                  onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })}
+                  className="w-full px-3 py-2 bg-[#131c2e] border border-[#1e293b] rounded-xl text-white focus:border-emerald-500/50"
+                />
+              </div>
+
+              <div>
+                <label className="block text-slate-400 mb-1">Confirmar Nova Senha *</label>
+                <input
+                  type="password"
+                  required
+                  minLength={8}
+                  placeholder="Repita a nova senha"
+                  value={passwordData.confirmPassword}
+                  onChange={(e) => setPasswordData({ ...passwordData, confirmPassword: e.target.value })}
+                  className="w-full px-3 py-2 bg-[#131c2e] border border-[#1e293b] rounded-xl text-white focus:border-emerald-500/50"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="pt-5 border-t border-[#1e293b] flex items-center justify-end">
+            <button
+              type="submit"
+              disabled={passwordSaving}
+              className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-semibold text-xs shadow-lg shadow-emerald-500/20 transition-all disabled:opacity-50"
+            >
+              {passwordSaving ? (
+                <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin" />
+              ) : (
+                <>
+                  <KeyRound className="w-4 h-4" />
+                  <span>Atualizar Senha de Acesso</span>
                 </>
               )}
             </button>
