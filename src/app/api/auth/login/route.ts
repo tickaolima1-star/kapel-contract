@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { setSessionCookie } from '@/lib/auth';
+import { setSessionCookie, verifyPassword } from '@/lib/auth';
 
 export async function POST(req: NextRequest) {
   try {
@@ -19,13 +19,13 @@ export async function POST(req: NextRequest) {
 
     if (!user) {
       return NextResponse.json(
-        { error: 'Credenciais inválidas. Verifique seu e-mail e senha.' },
+        { error: 'Credenciais inválidas.' },
         { status: 401 }
       );
     }
 
-    // Validação de senha
-    const isValid = user.password === password || password === 'admin';
+    // Validação estrita de senha via Bcrypt (Sem backdoor 'admin')
+    const isValid = await verifyPassword(password, user.password);
     if (!isValid) {
       return NextResponse.json(
         { error: 'Credenciais inválidas.' },
