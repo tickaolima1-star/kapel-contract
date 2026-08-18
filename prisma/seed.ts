@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
 
@@ -43,17 +44,20 @@ async function main() {
     },
   });
 
-  // 2. Administrador Patrick
+  // 2. Administrador Patrick (Com hash de senha Bcrypt seguro)
+  const initialPasswordHash = await bcrypt.hash('admin123', 10);
+
   await prisma.user.upsert({
     where: { email: 'patrick@kapel.digital' },
     update: {
       name: 'Patrick Eduardo Lima Silva',
       role: 'ADMIN',
+      password: initialPasswordHash,
     },
     create: {
       email: 'patrick@kapel.digital',
       name: 'Patrick Eduardo Lima Silva',
-      password: 'admin',
+      password: initialPasswordHash,
       role: 'ADMIN',
     },
   });

@@ -1,10 +1,13 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { AUTH_COOKIE_NAME } from './lib/auth';
+import { AUTH_COOKIE_NAME, verifySessionToken } from './lib/auth';
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const sessionCookie = request.cookies.get(AUTH_COOKIE_NAME);
+  
+  // Valida integridade do JWT de sessão
+  const isValidSession = sessionCookie?.value ? !!verifySessionToken(sessionCookie.value) : false;
 
   const protectedRoutes = [
     '/dashboard',
@@ -14,28 +17,29 @@ export function middleware(request: NextRequest) {
     '/templates',
     '/clauses',
     '/settings',
+    '/upscaler',
   ];
 
   const isProtected = protectedRoutes.some((route) => pathname.startsWith(route));
 
   // Redireciona raiz / para /dashboard ou /login
   if (pathname === '/') {
-    if (sessionCookie) {
+    if (isValidSession) {
       return NextResponse.redirect(new URL('/dashboard', request.url));
     } else {
       return NextResponse.redirect(new URL('/login', request.url));
     }
   }
 
-  // Redireciona para login se rota protegida sem sessão
-  if (isProtected && !sessionCookie) {
+  // Redireciona para login se rota protegida sem sessão válida
+  if (isProtected && !isValidSession) {
     const loginUrl = new URL('/login', request.url);
     loginUrl.searchParams.set('from', pathname);
     return NextResponse.redirect(loginUrl);
   }
 
   // Se já autenticado e tentando acessar login, manda para dashboard
-  if (pathname === '/login' && sessionCookie) {
+  if (pathname === '/login' && isValidSession) {
     return NextResponse.redirect(new URL('/dashboard', request.url));
   }
 
