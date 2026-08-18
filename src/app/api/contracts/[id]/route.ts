@@ -89,6 +89,28 @@ export async function PUT(
           })),
         });
       }
+    } else if (body.calculated_mrr !== undefined) {
+      // Atualiza o item de serviço existente ou cria caso não exista
+      if (existing.items.length > 0) {
+        await prisma.contractItem.update({
+          where: { id: existing.items[0].id },
+          data: {
+            unit_price: calculatedMRR,
+            total_price: calculatedMRR,
+          },
+        });
+      } else if (calculatedMRR > 0) {
+        await prisma.contractItem.create({
+          data: {
+            contract_id: params.id,
+            name: body.title || existing.title || 'Gestão de Mídia & Performance Digital',
+            billing_type: 'MONTHLY_ARREARS',
+            unit_price: calculatedMRR,
+            quantity: 1,
+            total_price: calculatedMRR,
+          },
+        });
+      }
     }
 
     const newStatus = body.status || existing.status;
