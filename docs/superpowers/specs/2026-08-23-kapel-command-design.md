@@ -36,6 +36,7 @@ A primeira versão deve reduzir carga mental e aumentar eficiência e lucrativid
 - A entrada de dados precisa caber em poucos minutos.
 - Informações financeiras só entram após reforço de autenticação e autorização.
 - A arquitetura será interna primeiro, com fundação preparada para organizações futuras.
+- Toda interface nova seguirá o design system existente da KAPEL, sem introduzir uma identidade visual paralela.
 
 ## 4. Escopo da primeira versão
 
@@ -331,7 +332,22 @@ Novos grupos de API:
 
 A UI será dividida em componentes focados. O arquivo atual de dashboard, que concentra consulta, métricas, importação e múltiplos modais, não receberá o novo módulo. Command e Operations terão rotas e componentes próprios.
 
-## 12. Tratamento de erros
+## 12. Design system
+
+A interface usará os padrões já presentes no repositório:
+
+- Inter Tight para interface e IBM Plex Mono para identificadores, rótulos operacionais e dados compactos;
+- fundo preto e superfícies escuras existentes;
+- verde institucional da KAPEL para ações primárias, estados ativos e foco;
+- Sidebar, AdminLayout e Header como base de navegação e composição;
+- mesmos raios, bordas, espaçamentos, estados de hover e responsividade;
+- Lucide React para ícones;
+- componentes pequenos e focados, evitando copiar o arquivo monolítico atual do dashboard;
+- acessibilidade por teclado, contraste e rótulos claros em todos os controles.
+
+Um eventual arquivo formal de design system fornecido posteriormente complementará essas regras sem alterar a arquitetura aprovada.
+
+## 13. Tratamento de erros
 
 - Falha de importação não grava lote parcial sem indicação clara.
 - Linhas inválidas aparecem em relatório de correção.
@@ -341,7 +357,7 @@ A UI será dividida em componentes focados. O arquivo atual de dashboard, que co
 - Toda mutação retorna erro legível e mantém o formulário preenchido.
 - Operações destrutivas exigem confirmação e deixam auditoria.
 
-## 13. Estratégia de testes
+## 14. Estratégia de testes
 
 - Testes unitários para pontuação de prioridade e regras de bloqueio.
 - Testes de migração com cópia dos dados existentes.
@@ -353,7 +369,7 @@ A UI será dividida em componentes focados. O arquivo atual de dashboard, que co
 - Teste de não regressão do fluxo de contratos, assinatura e dashboard comercial.
 - Build de produção antes de qualquer publicação.
 
-## 14. Sequência de entrega
+## 15. Sequência de entrega
 
 ### Entrega 0 — segurança e fundação
 Autenticação verificável, organização KAPEL, migração dos dados existentes e testes de acesso.
@@ -373,7 +389,7 @@ Resumo diário explicável, sem autoridade para alterar dados por conta própria
 ### Entrega 5 — integrações
 ClickUp e planilhas com sincronização incremental. A comercialização da plataforma permanece fora deste ciclo.
 
-## 15. Dados iniciais da KAPEL
+## 16. Dados iniciais da KAPEL
 
 A primeira carga operacional usará:
 
@@ -388,7 +404,7 @@ A primeira carga operacional usará:
 
 Esses dados começam como estimativas e carregam data de verificação.
 
-## 16. Critérios de sucesso
+## 17. Critérios de sucesso
 
 Após duas semanas de uso:
 
@@ -401,7 +417,7 @@ Após duas semanas de uso:
 - a aplicação de contratos continua funcionando sem regressão;
 - o usuário relata redução da necessidade de manter o portfólio inteiro na memória.
 
-## 17. Decisões registradas
+## 18. Decisões registradas
 
 - Evoluir o repositório existente, sem reescrever do zero.
 - Manter Contract como módulo.
