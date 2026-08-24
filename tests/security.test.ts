@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, it, expect } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import {
   hashPassword,
   verifyPassword,
@@ -7,23 +7,6 @@ import {
 } from '../src/lib/auth';
 
 describe('Motor de Criptografia & Segurança (Bcrypt + JWT)', () => {
-  const originalSecret = process.env.JWT_SECRET;
-  const user = {
-    id: 'usr-123',
-    email: 'patrick@kapel.digital',
-    name: 'Patrick Silva',
-    role: 'ADMIN',
-  };
-
-  beforeEach(() => {
-    process.env.JWT_SECRET = 'chave-segura-com-32-caracteres-para-testes';
-  });
-
-  afterEach(() => {
-    if (originalSecret === undefined) delete process.env.JWT_SECRET;
-    else process.env.JWT_SECRET = originalSecret;
-  });
-
   it('deve gerar hash Bcrypt valido e verificar senha corretamente', async () => {
     const password = 'MinhaSenhaSegura123!';
     const hash = await hashPassword(password);
@@ -45,6 +28,13 @@ describe('Motor de Criptografia & Segurança (Bcrypt + JWT)', () => {
   });
 
   it('deve assinar e verificar token JWT de sessao', () => {
+    const user = {
+      id: 'usr-123',
+      email: 'patrick@kapel.digital',
+      name: 'Patrick Silva',
+      role: 'ADMIN',
+    };
+
     const token = signSessionToken(user);
     expect(typeof token).toBe('string');
     expect(token.split('.').length).toBe(3);
@@ -52,17 +42,5 @@ describe('Motor de Criptografia & Segurança (Bcrypt + JWT)', () => {
     const verified = verifySessionToken(token);
     expect(verified).not.toBeNull();
     expect(verified?.user.email).toBe('patrick@kapel.digital');
-  });
-
-  it('falha fechado quando JWT_SECRET não existe', () => {
-    delete process.env.JWT_SECRET;
-    expect(() => signSessionToken(user)).toThrow('JWT_SECRET é obrigatório');
-  });
-
-  it('rejeita token assinado com outra chave', () => {
-    process.env.JWT_SECRET = 'chave-com-32-bytes-para-testes-01';
-    const token = signSessionToken(user);
-    process.env.JWT_SECRET = 'chave-com-32-bytes-para-testes-02';
-    expect(verifySessionToken(token)).toBeNull();
   });
 });

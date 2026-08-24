@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { withOrgContext } from '@/lib/api-auth';
 
-async function getSettings() {
+export async function GET() {
   try {
     let settings = await prisma.companySettings.findUnique({
       where: { id: 'default' },
@@ -26,7 +25,7 @@ async function getSettings() {
   }
 }
 
-async function updateSettings(req: NextRequest) {
+export async function PUT(req: NextRequest) {
   try {
     const data = await req.json();
 
@@ -73,6 +72,3 @@ async function updateSettings(req: NextRequest) {
     return NextResponse.json({ error: 'Erro ao atualizar configurações.' }, { status: 500 });
   }
 }
-
-export const GET = withOrgContext(getSettings);
-export const PUT = withOrgContext(updateSettings, ['OWNER', 'ADMIN']);
