@@ -1,10 +1,14 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { validateDocPrefix, generateSignatureToken } from '@/lib/signature';
+import { withOrgContext, type OrgRequestContext } from '@/lib/api-auth';
 
-export async function POST(
+type RouteContext = { params: { id: string } };
+
+async function signKapel(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: RouteContext,
+  auth: OrgRequestContext,
 ) {
   try {
     const body = await request.json();
@@ -17,8 +21,8 @@ export async function POST(
       );
     }
 
-    const contract = await prisma.contract.findUnique({
-      where: { id: params.id },
+    const contract = await prisma.contract.findFirst({
+      where: { id: params.id, organization_id: auth.organizationId },
     });
 
     if (!contract) {
@@ -44,8 +48,8 @@ export async function POST(
     const userAgent = request.headers.get('user-agent') || 'Desconhecido';
     const signatureToken = contract.signature_token || generateSignatureToken();
 
-    const updatedContract = await prisma.contract.update({
-      where: { id: params.id },
+    await prisma.contract.updateMany({
+      where: { id: params.id, organization_id: auth.organizationId },
       data: {
         signature_token: signatureToken,
         signature_status: 'PENDING_CLIENT',
@@ -57,6 +61,12 @@ export async function POST(
         signed_kapel_signature_data: signature_data,
       },
     });
+    const updatedContract = await prisma.contract.findFirst({
+      where: { id: params.id, organization_id: auth.organizationId },
+    });
+    if (!updatedContract) {
+      return NextResponse.json({ error: 'Contrato não encontrado.' }, { status: 404 });
+    }
 
     // Log de Auditoria
     await prisma.auditLog.create({
@@ -79,3 +89,5 @@ export async function POST(
     return NextResponse.json({ error: error.message || 'Erro ao processar assinatura.' }, { status: 500 });
   }
 }
+
+export const POST = withOrgContext<RouteContext>(signKapel, ['OWNER', 'ADMIN']);

@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { withOrgContext } from '@/lib/api-auth';
 
-export async function GET() {
+async function listCategories() {
   try {
     const categories = await prisma.serviceCategory.findMany({
       orderBy: { order: 'asc' },
@@ -13,3 +14,5 @@ export async function GET() {
     return NextResponse.json({ error: 'Erro ao listar categorias.' }, { status: 500 });
   }
 }
+
+export const GET = withOrgContext(listCategories);

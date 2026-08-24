@@ -1,6 +1,7 @@
 import { cookies } from 'next/headers';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import { getJwtSecret } from './jwt-secret';
 
 export interface AuthSession {
   user: {
@@ -12,7 +13,6 @@ export interface AuthSession {
 }
 
 export const AUTH_COOKIE_NAME = 'kapel_session';
-const JWT_SECRET = process.env.JWT_SECRET || 'kapel-super-secret-jwt-key-2026-production';
 
 export async function hashPassword(password: string): Promise<string> {
   return bcrypt.hash(password, 10);
@@ -24,13 +24,19 @@ export async function verifyPassword(password: string, hash: string): Promise<bo
 }
 
 export function signSessionToken(user: { id: string; email: string; name: string; role: string }): string {
-  return jwt.sign({ user }, JWT_SECRET, { expiresIn: '7d' });
+  const secret = new TextDecoder().decode(getJwtSecret());
+  return jwt.sign({ user }, secret, { algorithm: 'HS256', expiresIn: '7d' });
 }
 
 export function verifySessionToken(token: string): AuthSession | null {
   try {
-    const decoded = jwt.verify(token, JWT_SECRET) as AuthSession;
-    return decoded;
+    const secret = new TextDecoder().decode(getJwtSecret());
+    const decoded = jwt.verify(token, secret, { algorithms: ['HS256'] }) as AuthSession;
+    const user = decoded?.user;
+    if (!user || !['id', 'email', 'name', 'role'].every((field) => typeof user[field as keyof typeof user] === 'string')) {
+      return null;
+    }
+    return { user };
   } catch {
     return null;
   }

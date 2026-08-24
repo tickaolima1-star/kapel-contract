@@ -3,15 +3,16 @@ import { prisma } from '@/lib/prisma';
 import { calculateContractFinancials } from '@/lib/engine/financial';
 import { generateContractSnapshot } from '@/lib/engine/snapshot';
 import { ContractConfigInput } from '@/lib/types';
+import { withOrgContext, type OrgRequestContext } from '@/lib/api-auth';
 
-export async function GET(req: NextRequest) {
+async function listContracts(req: NextRequest, _context: unknown, auth: OrgRequestContext) {
   try {
     const { searchParams } = new URL(req.url);
     const query = searchParams.get('q') || '';
     const status = searchParams.get('status') || '';
     const type = searchParams.get('type') || '';
 
-    const where: any = {};
+    const where: any = { organization_id: auth.organizationId };
     if (status) {
       where.status = status;
     }
@@ -46,7 +47,7 @@ export async function GET(req: NextRequest) {
   }
 }
 
-export async function POST(req: NextRequest) {
+async function createContract(req: NextRequest, _context: unknown, auth: OrgRequestContext) {
   try {
     const body: ContractConfigInput & { status?: string } = await req.json();
 
@@ -73,6 +74,7 @@ export async function POST(req: NextRequest) {
 
     // 2. Gerar próximo número sequencial de contrato sem colisão (ex: 000001)
     const lastContract = await prisma.contract.findFirst({
+      where: { organization_id: auth.organizationId },
       orderBy: { created_at: 'desc' },
       select: { contract_number: true },
     });
@@ -86,7 +88,7 @@ export async function POST(req: NextRequest) {
     }
 
     let contractNumber = String(nextNum).padStart(6, '0');
-    while (await prisma.contract.findUnique({ where: { contract_number: contractNumber } })) {
+    while (await prisma.contract.findFirst({ where: { contract_number: contractNumber, organization_id: auth.organizationId } })) {
       nextNum++;
       contractNumber = String(nextNum).padStart(6, '0');
     }
@@ -94,7 +96,7 @@ export async function POST(req: NextRequest) {
     // 3. Buscar dados da empresa e do cliente
     const [companySettings, client] = await Promise.all([
       prisma.companySettings.findUnique({ where: { id: 'default' } }),
-      prisma.client.findUnique({ where: { id: body.client_id } }),
+      prisma.client.findFirst({ where: { id: body.client_id, organization_id: auth.organizationId } }),
     ]);
 
     if (!client) {
@@ -118,6 +120,7 @@ export async function POST(req: NextRequest) {
     // 5. Criar Contrato no Banco
     const contract = await prisma.contract.create({
       data: {
+        organization_id: auth.organizationId,
         contract_number: contractNumber,
         client_id: body.client_id,
         template_id: template.id,
@@ -281,3 +284,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Erro ao criar contrato.' }, { status: 500 });
   }
 }
+
+export const GET = withOrgContext(listContracts);
+export const POST = withOrgContext(createContract, ['OWNER', 'ADMIN', 'OPERATOR']);

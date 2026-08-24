@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { withOrgContext } from '@/lib/api-auth';
 
-export async function GET(req: NextRequest) {
+async function listServices(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
     const category = searchParams.get('category');
@@ -26,7 +27,7 @@ export async function GET(req: NextRequest) {
   }
 }
 
-export async function POST(req: NextRequest) {
+async function createService(req: NextRequest) {
   try {
     const data = await req.json();
 
@@ -60,3 +61,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Erro ao criar serviço.' }, { status: 500 });
   }
 }
+
+export const GET = withOrgContext(listServices);
+export const POST = withOrgContext(createService, ['OWNER', 'ADMIN']);
