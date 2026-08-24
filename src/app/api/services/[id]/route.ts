@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { withOrgContext } from '@/lib/api-auth';
 
-export async function PUT(
+export const PUT = withOrgContext(async (
   req: NextRequest,
   { params }: { params: { id: string } }
-) {
+) => {
   try {
     const data = await req.json();
 
@@ -27,12 +28,12 @@ export async function PUT(
     console.error('Erro ao atualizar serviço:', error);
     return NextResponse.json({ error: 'Erro ao atualizar serviço.' }, { status: 500 });
   }
-}
+});
 
-export async function DELETE(
+export const DELETE = withOrgContext(async (
   req: NextRequest,
   { params }: { params: { id: string } }
-) {
+) => {
   try {
     await prisma.service.delete({
       where: { id: params.id },
@@ -42,4 +43,5 @@ export async function DELETE(
     console.error('Erro ao excluir serviço:', error);
     return NextResponse.json({ error: 'Não foi possível excluir o serviço.' }, { status: 500 });
   }
-}
+});
+

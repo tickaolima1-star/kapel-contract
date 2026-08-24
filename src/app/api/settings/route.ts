@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { withOrgContext } from '@/lib/api-auth';
 
-export async function GET() {
+export const GET = withOrgContext(async (req: NextRequest) => {
   try {
     let settings = await prisma.companySettings.findUnique({
       where: { id: 'default' },
@@ -23,9 +24,9 @@ export async function GET() {
     console.error('Erro ao buscar configurações da empresa:', error);
     return NextResponse.json({ error: 'Erro ao buscar configurações.' }, { status: 500 });
   }
-}
+});
 
-export async function PUT(req: NextRequest) {
+export const PUT = withOrgContext(async (req: NextRequest) => {
   try {
     const data = await req.json();
 
@@ -71,4 +72,5 @@ export async function PUT(req: NextRequest) {
     console.error('Erro ao atualizar configurações:', error);
     return NextResponse.json({ error: 'Erro ao atualizar configurações.' }, { status: 500 });
   }
-}
+});
+

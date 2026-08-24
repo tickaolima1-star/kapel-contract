@@ -3,15 +3,17 @@ import { prisma } from '@/lib/prisma';
 import { calculateContractFinancials } from '@/lib/engine/financial';
 import { generateContractSnapshot } from '@/lib/engine/snapshot';
 import { ContractConfigInput } from '@/lib/types';
+import { withOrgContext } from '@/lib/api-auth';
 
-export async function GET(
+export const GET = withOrgContext(async (
   req: NextRequest,
-  { params }: { params: { id: string } }
-) {
+  { params }: { params: { id: string } },
+  auth
+) => {
   try {
     const [contract, companySettings] = await Promise.all([
-      prisma.contract.findUnique({
-        where: { id: params.id },
+      prisma.contract.findFirst({
+        where: { id: params.id, organization_id: auth.organizationId },
         include: {
           client: true,
           template: true,
@@ -25,6 +27,7 @@ export async function GET(
       prisma.companySettings.findUnique({ where: { id: 'default' } }),
     ]);
 
+
     if (!contract) {
       return NextResponse.json({ error: 'Contrato não encontrado.' }, { status: 404 });
     }
@@ -37,17 +40,19 @@ export async function GET(
     console.error('Erro ao buscar contrato:', error);
     return NextResponse.json({ error: 'Erro ao buscar contrato.' }, { status: 500 });
   }
-}
+});
 
-export async function PUT(
+
+export const PUT = withOrgContext(async (
   req: NextRequest,
-  { params }: { params: { id: string } }
-) {
+  { params }: { params: { id: string } },
+  auth
+) => {
   try {
     const body = await req.json();
 
-    const existing = await prisma.contract.findUnique({
-      where: { id: params.id },
+    const existing = await prisma.contract.findFirst({
+      where: { id: params.id, organization_id: auth.organizationId },
       include: { client: true, items: true, template: true },
     });
 
@@ -122,6 +127,7 @@ export async function PUT(
     const updated = await prisma.contract.update({
       where: { id: params.id },
       data: {
+        organization_id: auth.organizationId,
         client_id: body.client_id || existing.client_id,
         status: newStatus,
         title: body.title || existing.title,
@@ -188,13 +194,22 @@ export async function PUT(
     console.error('Erro ao atualizar contrato:', error);
     return NextResponse.json({ error: 'Erro ao atualizar contrato.' }, { status: 500 });
   }
-}
+});
 
-export async function DELETE(
+export const DELETE = withOrgContext(async (
   req: NextRequest,
-  { params }: { params: { id: string } }
-) {
+  { params }: { params: { id: string } },
+  auth
+) => {
   try {
+    const existing = await prisma.contract.findFirst({
+      where: { id: params.id, organization_id: auth.organizationId },
+    });
+
+    if (!existing) {
+      return NextResponse.json({ error: 'Contrato não encontrado.' }, { status: 404 });
+    }
+
     await prisma.contract.delete({
       where: { id: params.id },
     });
@@ -203,4 +218,5 @@ export async function DELETE(
     console.error('Erro ao excluir contrato:', error);
     return NextResponse.json({ error: 'Não foi possível excluir o contrato.' }, { status: 500 });
   }
-}
+});
+

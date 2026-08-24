@@ -1,5 +1,6 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { withOrgContext } from '@/lib/api-auth';
 
 function getContractMRR(c: any): number {
   if (c.calculated_mrr && c.calculated_mrr > 0) return c.calculated_mrr;
@@ -25,11 +26,11 @@ function getContractMRR(c: any): number {
   return 0;
 }
 
-export async function GET() {
+export const GET = withOrgContext(async (req: NextRequest, context: any, auth) => {
   try {
     const [clients, contracts, recentAuditLogs] = await Promise.all([
       prisma.client.findMany({
-        where: { active: true },
+        where: { active: true, organization_id: auth.organizationId },
         include: {
           contracts: {
             include: {
@@ -42,6 +43,7 @@ export async function GET() {
         orderBy: { updated_at: 'desc' },
       }),
       prisma.contract.findMany({
+        where: { organization_id: auth.organizationId },
         include: {
           client: true,
           items: true,
@@ -50,6 +52,12 @@ export async function GET() {
         orderBy: { updated_at: 'desc' },
       }),
       prisma.auditLog.findMany({
+        where: {
+          OR: [
+            { contract: { organization_id: auth.organizationId } },
+            { contract_id: null }, // Mantenha logs globais de sistema apenas se necessário, ou restrinja totalmente
+          ],
+        },
         take: 6,
         orderBy: { created_at: 'desc' },
         include: { contract: true },
@@ -113,4 +121,5 @@ export async function GET() {
       { status: 500 }
     );
   }
-}
+});
+

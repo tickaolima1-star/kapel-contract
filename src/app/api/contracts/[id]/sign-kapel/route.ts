@@ -1,11 +1,13 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { validateDocPrefix, generateSignatureToken } from '@/lib/signature';
+import { withOrgContext } from '@/lib/api-auth';
 
-export async function POST(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
+export const POST = withOrgContext(async (
+  request: NextRequest,
+  { params }: { params: { id: string } },
+  auth
+) => {
   try {
     const body = await request.json();
     const { doc_prefix_4, signature_data, signer_name } = body;
@@ -17,8 +19,8 @@ export async function POST(
       );
     }
 
-    const contract = await prisma.contract.findUnique({
-      where: { id: params.id },
+    const contract = await prisma.contract.findFirst({
+      where: { id: params.id, organization_id: auth.organizationId },
     });
 
     if (!contract) {
@@ -47,6 +49,7 @@ export async function POST(
     const updatedContract = await prisma.contract.update({
       where: { id: params.id },
       data: {
+        organization_id: auth.organizationId,
         signature_token: signatureToken,
         signature_status: 'PENDING_CLIENT',
         signed_kapel_at: new Date(),
@@ -78,4 +81,5 @@ export async function POST(
     console.error('Erro na assinatura KAPEL:', error);
     return NextResponse.json({ error: error.message || 'Erro ao processar assinatura.' }, { status: 500 });
   }
-}
+});
+

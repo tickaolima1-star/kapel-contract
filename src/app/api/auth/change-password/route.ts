@@ -1,17 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { getSession, verifyPassword, hashPassword } from '@/lib/auth';
+import { verifyPassword, hashPassword } from '@/lib/auth';
+import { withSession } from '@/lib/api-auth';
 
-export async function POST(req: NextRequest) {
+export const POST = withSession(async (req: NextRequest, context: any, session) => {
   try {
-    const session = getSession();
-    if (!session || !session.user) {
-      return NextResponse.json(
-        { error: 'Sessão expirada ou usuário não autenticado.' },
-        { status: 401 }
-      );
-    }
-
     const { currentPassword, newPassword } = await req.json();
 
     if (!currentPassword || !newPassword) {
@@ -74,4 +67,5 @@ export async function POST(req: NextRequest) {
       { status: 500 }
     );
   }
-}
+});
+

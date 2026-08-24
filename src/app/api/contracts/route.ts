@@ -3,15 +3,19 @@ import { prisma } from '@/lib/prisma';
 import { calculateContractFinancials } from '@/lib/engine/financial';
 import { generateContractSnapshot } from '@/lib/engine/snapshot';
 import { ContractConfigInput } from '@/lib/types';
+import { withOrgContext } from '@/lib/api-auth';
 
-export async function GET(req: NextRequest) {
+export const GET = withOrgContext(async (req: NextRequest, context: any, auth) => {
   try {
     const { searchParams } = new URL(req.url);
     const query = searchParams.get('q') || '';
     const status = searchParams.get('status') || '';
     const type = searchParams.get('type') || '';
 
-    const where: any = {};
+    const where: any = {
+      organization_id: auth.organizationId,
+    };
+
     if (status) {
       where.status = status;
     }
@@ -44,9 +48,10 @@ export async function GET(req: NextRequest) {
     console.error('Erro ao buscar contratos:', error);
     return NextResponse.json({ error: 'Erro ao buscar contratos.' }, { status: 500 });
   }
-}
+});
 
-export async function POST(req: NextRequest) {
+
+export const POST = withOrgContext(async (req: NextRequest, context: any, auth) => {
   try {
     const body: ContractConfigInput & { status?: string } = await req.json();
 
@@ -91,15 +96,16 @@ export async function POST(req: NextRequest) {
       contractNumber = String(nextNum).padStart(6, '0');
     }
 
-    // 3. Buscar dados da empresa e do cliente
-    const [companySettings, client] = await Promise.all([
-      prisma.companySettings.findUnique({ where: { id: 'default' } }),
-      prisma.client.findUnique({ where: { id: body.client_id } }),
-    ]);
+    // 3. Buscar dados da empresa e do cliente (scoped)
+    const client = await prisma.client.findFirst({
+      where: { id: body.client_id, organization_id: auth.organizationId },
+    });
 
     if (!client) {
       return NextResponse.json({ error: 'Cliente não encontrado.' }, { status: 404 });
     }
+
+    const companySettings = await prisma.companySettings.findUnique({ where: { id: 'default' } });
 
     // 4. Executar Motor Financeiro
     const items = body.items || [];
@@ -118,6 +124,7 @@ export async function POST(req: NextRequest) {
     // 5. Criar Contrato no Banco
     const contract = await prisma.contract.create({
       data: {
+        organization_id: auth.organizationId,
         contract_number: contractNumber,
         client_id: body.client_id,
         template_id: template.id,
@@ -280,4 +287,5 @@ export async function POST(req: NextRequest) {
     console.error('Erro ao criar contrato:', error);
     return NextResponse.json({ error: 'Erro ao criar contrato.' }, { status: 500 });
   }
-}
+});
+

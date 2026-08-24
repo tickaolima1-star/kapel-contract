@@ -1,13 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { withOrgContext } from '@/lib/api-auth';
 
-export async function GET(
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export const GET = withOrgContext(async (req: NextRequest, { params }: { params: { id: string } }, auth) => {
   try {
-    const client = await prisma.client.findUnique({
-      where: { id: params.id },
+    const client = await prisma.client.findFirst({
+      where: { id: params.id, organization_id: auth.organizationId },
       include: {
         contracts: {
           orderBy: { created_at: 'desc' },
@@ -24,18 +22,24 @@ export async function GET(
     console.error('Erro ao buscar cliente:', error);
     return NextResponse.json({ error: 'Erro ao buscar cliente.' }, { status: 500 });
   }
-}
+});
 
-export async function PUT(
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export const PUT = withOrgContext(async (req: NextRequest, { params }: { params: { id: string } }, auth) => {
   try {
+    const existing = await prisma.client.findFirst({
+      where: { id: params.id, organization_id: auth.organizationId },
+    });
+
+    if (!existing) {
+      return NextResponse.json({ error: 'Cliente não encontrado.' }, { status: 404 });
+    }
+
     const data = await req.json();
 
     const client = await prisma.client.update({
       where: { id: params.id },
       data: {
+        organization_id: auth.organizationId,
         type: data.type,
         legal_name: data.legal_name?.trim(),
         trade_name: data.trade_name?.trim() || null,
@@ -63,13 +67,18 @@ export async function PUT(
     console.error('Erro ao atualizar cliente:', error);
     return NextResponse.json({ error: 'Erro ao atualizar cliente.' }, { status: 500 });
   }
-}
+});
 
-export async function DELETE(
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export const DELETE = withOrgContext(async (req: NextRequest, { params }: { params: { id: string } }, auth) => {
   try {
+    const existing = await prisma.client.findFirst({
+      where: { id: params.id, organization_id: auth.organizationId },
+    });
+
+    if (!existing) {
+      return NextResponse.json({ error: 'Cliente não encontrado.' }, { status: 404 });
+    }
+
     await prisma.client.delete({
       where: { id: params.id },
     });
@@ -79,4 +88,5 @@ export async function DELETE(
     console.error('Erro ao excluir cliente:', error);
     return NextResponse.json({ error: 'Não foi possível excluir o cliente.' }, { status: 500 });
   }
-}
+});
+

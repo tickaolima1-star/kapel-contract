@@ -1,13 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { withOrgContext } from '@/lib/api-auth';
 
-export async function POST(
+export const POST = withOrgContext(async (
   req: NextRequest,
-  { params }: { params: { id: string } }
-) {
+  { params }: { params: { id: string } },
+  auth
+) => {
   try {
-    const original = await prisma.contract.findUnique({
-      where: { id: params.id },
+    const original = await prisma.contract.findFirst({
+      where: { id: params.id, organization_id: auth.organizationId },
       include: { items: true, client: true },
     });
 
@@ -37,6 +39,7 @@ export async function POST(
 
     const duplicated = await prisma.contract.create({
       data: {
+        organization_id: auth.organizationId,
         contract_number: newContractNumber,
         client_id: original.client_id,
         template_id: original.template_id,
@@ -101,4 +104,5 @@ export async function POST(
     console.error('Erro ao duplicar contrato:', error);
     return NextResponse.json({ error: 'Erro ao duplicar contrato.' }, { status: 500 });
   }
-}
+});
+
