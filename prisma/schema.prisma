@@ -64,6 +64,7 @@ model Client {
   organization_id     String
   organization        Organization @relation(fields: [organization_id], references: [id])
   contracts           Contract[]
+  projects            Project[]
 }
 
 model ServiceCategory {
@@ -251,6 +252,7 @@ model Contract {
   dependencies                   ContractDependency[]
   snapshot                       ContractSnapshot?
   audit_logs                     AuditLog[]
+  project                        Project?
 }
 
 model ContractItem {
@@ -309,27 +311,213 @@ enum MembershipRole {
 }
 
 model Organization {
-  id          String       @id @default(cuid())
-  name        String
-  slug        String       @unique
-  active      Boolean      @default(true)
-  created_at  DateTime     @default(now())
-  updated_at  DateTime     @updatedAt
-  memberships Membership[]
-  clients     Client[]
-  contracts   Contract[]
+  id              String       @id @default(cuid())
+  name            String
+  slug            String       @unique
+  active          Boolean      @default(true)
+  created_at      DateTime     @default(now())
+  updated_at      DateTime     @updatedAt
+  memberships     Membership[]
+  clients         Client[]
+  contracts       Contract[]
+  projects        Project[]
+  updates         ProjectUpdate[]
+  work_items      WorkItem[]
+  blockers        OperationalBlocker[]
+  command_actions CommandAction[]
 }
 
 model Membership {
-  id              String         @id @default(cuid())
-  organization_id String
-  organization    Organization   @relation(fields: [organization_id], references: [id], onDelete: Cascade)
-  user_id         String
-  user            User           @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  role            MembershipRole @default(OPERATOR)
-  created_at      DateTime       @default(now())
+  id                  String         @id @default(cuid())
+  organization_id     String
+  organization        Organization   @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+  user_id             String
+  user                User           @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  role                MembershipRole @default(OPERATOR)
+  created_at          DateTime       @default(now())
+  owned_projects      Project[]      @relation("ProjectOwner")
+  authored_updates    ProjectUpdate[] @relation("UpdateAuthor")
+  assigned_work_items WorkItem[]     @relation("WorkItemAssignee")
+  command_actions     CommandAction[] @relation("CommandActor")
 
   @@unique([organization_id, user_id])
   @@index([user_id])
 }
+
+enum ProjectStatus {
+  PLANNING
+  ACTIVE
+  BLOCKED
+  ON_HOLD
+  COMPLETED
+  CANCELLED
+}
+
+enum ProjectHealth {
+  HEALTHY
+  ATTENTION
+  CRITICAL
+}
+
+enum ProjectSource {
+  MANUAL
+  SPREADSHEET
+  CLICKUP
+  OTHER
+}
+
+enum UpdateConfidence {
+  CONFIRMED
+  ESTIMATED
+}
+
+enum WorkItemType {
+  ACTION
+  FOLLOW_UP
+  REVIEW
+  DECISION
+}
+
+enum WorkItemStatus {
+  OPEN
+  DOING
+  DONE
+  BLOCKED
+  CANCELLED
+}
+
+enum BlockerParty {
+  KAPEL
+  CLIENT
+  PARTNER
+  THIRD_PARTY
+}
+
+enum BlockerStatus {
+  OPEN
+  RESOLVED
+  WAIVED
+}
+
+enum CommandActionType {
+  START
+  COMPLETE
+  DEFER
+  DELEGATE
+}
+
+model Project {
+  id                    String        @id @default(cuid())
+  organization_id       String
+  organization          Organization  @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+  contracting_client_id String
+  contracting_client    Client        @relation(fields: [contracting_client_id], references: [id])
+  contract_id           String?       @unique
+  contract              Contract?     @relation(fields: [contract_id], references: [id], onDelete: SetNull)
+  name                  String
+  end_client_name       String?
+  objective             String
+  status                ProjectStatus @default(PLANNING)
+  health                ProjectHealth @default(HEALTHY)
+  owner_membership_id   String
+  owner                 Membership    @relation("ProjectOwner", fields: [owner_membership_id], references: [id])
+  deadline              DateTime?
+  weekly_hours_estimate Float         @default(0)
+  monthly_value_at_risk Decimal       @default(0) @db.Decimal(12, 2)
+  strategic_value       Int           @default(3)
+  mental_load           Int           @default(3)
+  source                ProjectSource @default(MANUAL)
+  external_id           String?
+  external_url          String?
+  last_update_at        DateTime?
+  created_at            DateTime      @default(now())
+  updated_at            DateTime      @updatedAt
+  updates               ProjectUpdate[]
+  work_items            WorkItem[]
+  blockers              OperationalBlocker[]
+
+  @@unique([organization_id, source, external_id])
+  @@index([organization_id, status, health])
+  @@index([organization_id, deadline])
+}
+
+model ProjectUpdate {
+  id                   String           @id @default(cuid())
+  organization_id      String
+  organization         Organization     @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+  project_id           String
+  project              Project          @relation(fields: [project_id], references: [id], onDelete: Cascade)
+  author_membership_id String
+  author               Membership       @relation("UpdateAuthor", fields: [author_membership_id], references: [id])
+  summary              String
+  next_action          String
+  blocker              String?
+  metric_label         String?
+  metric_value         String?
+  confidence           UpdateConfidence @default(CONFIRMED)
+  created_at           DateTime         @default(now())
+
+  @@index([organization_id, project_id, created_at])
+}
+
+model WorkItem {
+  id                     String         @id @default(cuid())
+  organization_id        String
+  organization           Organization   @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+  project_id             String
+  project                Project        @relation(fields: [project_id], references: [id], onDelete: Cascade)
+  assignee_membership_id String?
+  assignee               Membership?    @relation("WorkItemAssignee", fields: [assignee_membership_id], references: [id])
+  title                  String
+  type                   WorkItemType   @default(ACTION)
+  status                 WorkItemStatus @default(OPEN)
+  due_at                 DateTime?
+  estimated_minutes      Int?
+  external_source        String?
+  external_id            String?
+  completed_at           DateTime?
+  created_at             DateTime       @default(now())
+  updated_at             DateTime       @updatedAt
+  command_actions        CommandAction[]
+
+  @@unique([organization_id, external_source, external_id])
+  @@index([organization_id, status, due_at])
+}
+
+model OperationalBlocker {
+  id                String        @id @default(cuid())
+  organization_id   String
+  organization      Organization  @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+  project_id        String
+  project           Project       @relation(fields: [project_id], references: [id], onDelete: Cascade)
+  description       String
+  responsible_party BlockerParty
+  blocks_delivery   Boolean       @default(true)
+  status            BlockerStatus @default(OPEN)
+  follow_up_at      DateTime?
+  created_at        DateTime      @default(now())
+  resolved_at       DateTime?
+
+  @@index([organization_id, status, follow_up_at])
+  @@index([organization_id, project_id])
+}
+
+model CommandAction {
+  id                  String            @id @default(cuid())
+  organization_id     String
+  organization        Organization      @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+  work_item_id        String
+  work_item           WorkItem          @relation(fields: [work_item_id], references: [id], onDelete: Cascade)
+  actor_membership_id String
+  actor               Membership        @relation("CommandActor", fields: [actor_membership_id], references: [id])
+  action              CommandActionType
+  previous_status     WorkItemStatus
+  resulting_status    WorkItemStatus
+  reason              String?
+  created_at          DateTime          @default(now())
+
+  @@index([organization_id, created_at])
+}
+
+
 

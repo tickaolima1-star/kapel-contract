@@ -4,6 +4,8 @@ import { extractContentFromDocxBuffer, extractContentFromPdfBuffer, parseContrac
 import { generateSignatureToken } from '@/lib/signature';
 import { calculateContractFinancials } from '@/lib/engine/financial';
 import { withOrgContext } from '@/lib/api-auth';
+import { initializeOperationalProject } from '@/lib/engine/project-initializer';
+
 
 export const POST = withOrgContext(async (request: NextRequest, context: any, auth) => {
   try {
@@ -167,6 +169,11 @@ export const POST = withOrgContext(async (request: NextRequest, context: any, au
         },
       },
     });
+
+    if (isAlreadySigned) {
+      await initializeOperationalProject(contract.id);
+    }
+
 
     // 7. Registrar Auditoria
     await prisma.auditLog.create({

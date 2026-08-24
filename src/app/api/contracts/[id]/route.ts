@@ -4,6 +4,8 @@ import { calculateContractFinancials } from '@/lib/engine/financial';
 import { generateContractSnapshot } from '@/lib/engine/snapshot';
 import { ContractConfigInput } from '@/lib/types';
 import { withOrgContext } from '@/lib/api-auth';
+import { initializeOperationalProject } from '@/lib/engine/project-initializer';
+
 
 export const GET = withOrgContext(async (
   req: NextRequest,
@@ -178,7 +180,9 @@ export const PUT = withOrgContext(async (
     let action = 'CONTRACT_UPDATED';
     if (newStatus === 'FINALIZED' && existing.status !== 'FINALIZED') {
       action = 'CONTRACT_FINALIZED';
+      await initializeOperationalProject(updated.id);
     }
+
 
     await prisma.auditLog.create({
       data: {

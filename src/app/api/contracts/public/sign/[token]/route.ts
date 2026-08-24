@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { validateDocPrefix, generateAuditHash } from '@/lib/signature';
+import { initializeOperationalProject } from '@/lib/engine/project-initializer';
+
 
 // GET: Buscar contrato público para o cliente assinar
 export async function GET(
@@ -126,6 +128,9 @@ export async function POST(
         audit_hash: auditHash,
       },
     });
+
+    await initializeOperationalProject(contract.id);
+
 
     // Registrar no Log de Auditoria
     await prisma.auditLog.create({
