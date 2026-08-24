@@ -6,6 +6,16 @@ const repoRoot = resolve(__dirname, '..');
 const readRepoFile = (relativePath: string) =>
   readFileSync(resolve(repoRoot, relativePath), 'utf8');
 
+const workflowNames = [
+  'brainstorm-to-plan',
+  'project-sanitize',
+  'lint-burndown',
+  'multi-agent-review',
+  'parallel-wave-dispatch',
+  'memory-capture',
+  'quality-gates',
+] as const;
+
 describe('cross-agent toolkit contract', () => {
   it('exposes a root Codex entrypoint backed by the shared skill catalog', () => {
     const entrypoint = readRepoFile('AGENTS.md');
@@ -49,5 +59,25 @@ describe('cross-agent toolkit contract', () => {
     expect(core).toContain('Always On');
     expect(typescript).toContain('src/**/*.ts');
     expect(typescript).toContain('src/**/*.tsx');
+  });
+
+  it('ships unique, bounded, slash-invocable workflows', () => {
+    expect(new Set(workflowNames).size).toBe(workflowNames.length);
+    for (const name of workflowNames) {
+      const content = readRepoFile(`.agents/workflows/${name}.md`);
+      expect(content).toMatch(/^# /);
+      expect(content).toContain('## Description');
+      expect(content).toContain('## Steps');
+      expect(content.length).toBeLessThan(12_000);
+      expect(content).not.toMatch(/^\s*\/plugin\s/gm);
+    }
+  });
+
+  it('routes process workflows through installed Superpowers skills', () => {
+    expect(readRepoFile('.agents/workflows/brainstorm-to-plan.md')).toContain('brainstorming');
+    expect(readRepoFile('.agents/workflows/brainstorm-to-plan.md')).toContain('writing-plans');
+    expect(readRepoFile('.agents/workflows/multi-agent-review.md')).toContain('requesting-code-review');
+    expect(readRepoFile('.agents/workflows/parallel-wave-dispatch.md')).toContain('dispatching-parallel-agents');
+    expect(readRepoFile('.agents/workflows/quality-gates.md')).toContain('verification-before-completion');
   });
 });
