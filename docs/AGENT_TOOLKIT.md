@@ -12,7 +12,7 @@ This repository contains one Superpowers-based engineering workflow for both Cod
 | `.agents/adapters/` | Native capability mapping for Codex and Antigravity. |
 | `.agents/rules/` | Antigravity workspace rules. |
 | `.agents/workflows/` | Repeatable Antigravity slash workflows and portable runbooks. |
-| `tests/agent-toolkit.test.ts` | Structural compatibility and portability checks. |
+| `tests/agent-toolkit.test.ts` | Structural compatibility, skill metadata, reference, and portability checks. |
 
 ## Usage
 

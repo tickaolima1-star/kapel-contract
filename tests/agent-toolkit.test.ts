@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
@@ -110,6 +110,43 @@ describe('cross-agent toolkit contract', () => {
     ];
     for (const path of paths) {
       expect(readRepoFile(path)).not.toMatch(/^\s*\/plugin\s/gm);
+    }
+  });
+
+  it('keeps every workspace skill discoverable with valid frontmatter', () => {
+    const skillsRoot = resolve(repoRoot, '.agents/skills');
+    const skillDirectories = readdirSync(skillsRoot).filter((name) =>
+      statSync(resolve(skillsRoot, name)).isDirectory(),
+    );
+
+    expect(skillDirectories.length).toBeGreaterThan(0);
+    const names = skillDirectories.map((directory) => {
+      const skillPath = `.agents/skills/${directory}/SKILL.md`;
+      expect(existsSync(resolve(repoRoot, skillPath)), `${skillPath} is missing`).toBe(true);
+      const content = readRepoFile(skillPath);
+      const frontmatter = content.match(/^---\r?\n([\s\S]*?)\r?\n---/);
+      expect(frontmatter, `${skillPath} has invalid frontmatter`).not.toBeNull();
+      expect(frontmatter?.[1]).toMatch(/^name:\s*\S+/m);
+      expect(frontmatter?.[1]).toMatch(/^description:\s*.+/m);
+      return frontmatter?.[1].match(/^name:\s*(.+)$/m)?.[1].trim();
+    });
+
+    expect(new Set(names).size).toBe(names.length);
+  });
+
+  it('resolves critical cross-platform references', () => {
+    const references = [
+      '.agents/AGENTS.md',
+      '.agents/skills',
+      '.agents/adapters/codex.md',
+      '.agents/adapters/antigravity.md',
+      '.agents/rules/core.md',
+      '.agents/rules/typescript.md',
+      ...workflowNames.map((name) => `.agents/workflows/${name}.md`),
+    ];
+
+    for (const reference of references) {
+      expect(existsSync(resolve(repoRoot, reference)), `${reference} is missing`).toBe(true);
     }
   });
 });
