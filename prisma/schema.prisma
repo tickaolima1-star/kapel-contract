@@ -33,8 +33,9 @@ model User {
   name       String
   password   String
   role       String   @default("ADMIN")
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  created_at DateTime   @default(now())
+  updated_at DateTime   @updatedAt
+  memberships Membership[]
 }
 
 model Client {
@@ -60,6 +61,8 @@ model Client {
   active              Boolean    @default(true)
   created_at          DateTime   @default(now())
   updated_at          DateTime   @updatedAt
+  organization_id     String
+  organization        Organization @relation(fields: [organization_id], references: [id])
   contracts           Contract[]
 }
 
@@ -241,6 +244,9 @@ model Contract {
   created_at                     DateTime              @default(now())
   updated_at                     DateTime              @updatedAt
 
+  organization_id                String
+  organization                   Organization          @relation(fields: [organization_id], references: [id])
+
   items                          ContractItem[]
   dependencies                   ContractDependency[]
   snapshot                       ContractSnapshot?
@@ -294,3 +300,36 @@ model AuditLog {
   details     String
   created_at  DateTime  @default(now())
 }
+
+enum MembershipRole {
+  OWNER
+  ADMIN
+  OPERATOR
+  VIEWER
+}
+
+model Organization {
+  id          String       @id @default(cuid())
+  name        String
+  slug        String       @unique
+  active      Boolean      @default(true)
+  created_at  DateTime     @default(now())
+  updated_at  DateTime     @updatedAt
+  memberships Membership[]
+  clients     Client[]
+  contracts   Contract[]
+}
+
+model Membership {
+  id              String         @id @default(cuid())
+  organization_id String
+  organization    Organization   @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+  user_id         String
+  user            User           @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  role            MembershipRole @default(OPERATOR)
+  created_at      DateTime       @default(now())
+
+  @@unique([organization_id, user_id])
+  @@index([user_id])
+}
+
