@@ -1,15 +1,54 @@
-# Superpowers Methodology & Rules
+# KAPEL Shared Agent Contract
 
-This project is equipped with the **Superpowers** agentic skills framework (`obra/superpowers`).
+This file is the platform-neutral source of truth for repository work. Codex enters through `/AGENTS.md`; Google Antigravity enters through `.agents/rules/`. Reusable methods live in `.agents/skills/`.
 
-## Core Rules & Workflow
+## Project stack
 
-1. **Skill First**: Before acting or answering, check if a relevant skill exists in `.agents/skills/`.
-2. **Process Priority**:
-   - For new feature development / specs: invoke `brainstorming` -> `writing-plans` -> `executing-plans` (or `subagent-driven-development`).
-   - For debugging: invoke `systematic-debugging`.
-   - For changes requiring tests: enforce `test-driven-development`.
-   - Before completing tasks: invoke `verification-before-completion`.
-3. **Quality & Verification**:
-   - Always run verification commands before declaring success.
-   - Do not skip tests or produce unverified code changes.
+- Next.js 14 and React 18 application code in `src/app`.
+- TypeScript with strict checking across application and tests.
+- Prisma for the local data model and Supabase for hosted data and authentication integration.
+- Tailwind CSS for styling and Vitest for automated tests.
+
+## Repository boundaries
+
+- `src/app`: routes, layouts, server handlers, and page composition.
+- `src/components`: reusable interface components.
+- `src/lib`: business logic, integrations, and framework-independent helpers.
+- `prisma`: schema, migrations, and seed data.
+- `tests`: Vitest coverage for application behavior and repository contracts.
+- `docs`: architecture, specifications, plans, and operator documentation.
+
+Never commit `.env`, `.next`, `*.tsbuildinfo`, or local database state from `prisma/dev.db`. Treat generated output as disposable and preserve unrelated user changes.
+
+## Skill-first lifecycle
+
+Inspect `.agents/skills/` before responding or acting.
+
+- New features and behavioral changes: `brainstorming`, then `writing-plans`, then an approved execution skill.
+- Bugs, failing tests, or unexpected behavior: `systematic-debugging` before proposing a fix.
+- Implementation changes: `test-driven-development` unless the task is documentation-only.
+- Reviews: `requesting-code-review` or `receiving-code-review` as appropriate.
+- Completion: `verification-before-completion` with fresh evidence.
+
+## Canonical commands
+
+- Install: `npm install`
+- Develop: `npm run dev`
+- Focused test: `npx vitest run <test-file>`
+- Full tests: `npm test`
+- Typecheck: `npm run typecheck`
+- Build: `npm run build`
+- Lint: `npm run lint` only after confirming the existing command is configured and non-interactive.
+- Database schema sync: `npm run db:push`
+- Database seed: `npm run db:seed`
+
+## Completion evidence
+
+Run the smallest relevant check first, then expand to typecheck, full tests, and build in proportion to risk. Report the exact command and result. If a check fails, determine whether the failure is introduced or pre-existing; never hide or silently skip it.
+
+## Platform adapters
+
+- Codex behavior mapping: `.agents/adapters/codex.md`
+- Antigravity behavior mapping: `.agents/adapters/antigravity.md`
+
+Adapters describe native mechanics. They do not override this shared contract or duplicate skill bodies.
