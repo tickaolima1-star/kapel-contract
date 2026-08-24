@@ -80,4 +80,36 @@ describe('cross-agent toolkit contract', () => {
     expect(readRepoFile('.agents/workflows/parallel-wave-dispatch.md')).toContain('dispatching-parallel-agents');
     expect(readRepoFile('.agents/workflows/quality-gates.md')).toContain('verification-before-completion');
   });
+
+  it('exposes canonical validation commands', () => {
+    const pkg = JSON.parse(readRepoFile('package.json')) as {
+      scripts: Record<string, string>;
+    };
+    expect(pkg.scripts.typecheck).toBe('tsc --noEmit');
+    expect(pkg.scripts['test:agent-toolkit']).toBe('vitest run tests/agent-toolkit.test.ts');
+  });
+
+  it('documents functional parity and explicit compatibility boundaries', () => {
+    const docs = readRepoFile('docs/AGENT_TOOLKIT.md');
+    for (const token of ['Codex', 'Antigravity', 'AGENTS.md', '.agents/rules', '.agents/workflows']) {
+      expect(docs).toContain(token);
+    }
+    expect(docs).toContain('Functional parity');
+    expect(docs).toContain('Claude-only');
+  });
+
+  it('keeps executable toolkit guidance free of Claude marketplace commands', () => {
+    const paths = [
+      'AGENTS.md',
+      '.agents/AGENTS.md',
+      '.agents/adapters/codex.md',
+      '.agents/adapters/antigravity.md',
+      '.agents/rules/core.md',
+      '.agents/rules/typescript.md',
+      ...workflowNames.map((name) => `.agents/workflows/${name}.md`),
+    ];
+    for (const path of paths) {
+      expect(readRepoFile(path)).not.toMatch(/^\s*\/plugin\s/gm);
+    }
+  });
 });
