@@ -12,7 +12,14 @@ export interface AuthSession {
 }
 
 export const AUTH_COOKIE_NAME = 'kapel_session';
-const JWT_SECRET = process.env.JWT_SECRET || 'kapel-super-secret-jwt-key-2026-production';
+
+function getJwtSecretString(): string {
+  const val = process.env.JWT_SECRET;
+  if (!val || val.length < 32) {
+    throw new Error('JWT_SECRET é obrigatório e deve ter ao menos 32 caracteres.');
+  }
+  return val;
+}
 
 export async function hashPassword(password: string): Promise<string> {
   return bcrypt.hash(password, 10);
@@ -24,17 +31,18 @@ export async function verifyPassword(password: string, hash: string): Promise<bo
 }
 
 export function signSessionToken(user: { id: string; email: string; name: string; role: string }): string {
-  return jwt.sign({ user }, JWT_SECRET, { expiresIn: '7d' });
+  return jwt.sign({ user }, getJwtSecretString(), { algorithm: 'HS256', expiresIn: '7d' });
 }
 
 export function verifySessionToken(token: string): AuthSession | null {
   try {
-    const decoded = jwt.verify(token, JWT_SECRET) as AuthSession;
+    const decoded = jwt.verify(token, getJwtSecretString(), { algorithms: ['HS256'] }) as AuthSession;
     return decoded;
   } catch {
     return null;
   }
 }
+
 
 export function getSession(): AuthSession | null {
   try {

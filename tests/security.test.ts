@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import {
   hashPassword,
   verifyPassword,
@@ -7,6 +7,20 @@ import {
 } from '../src/lib/auth';
 
 describe('Motor de Criptografia & Segurança (Bcrypt + JWT)', () => {
+  const originalSecret = process.env.JWT_SECRET;
+
+  beforeEach(() => {
+    process.env.JWT_SECRET = 'chave-segura-com-32-caracteres-para-testes';
+  });
+
+  afterEach(() => {
+    if (originalSecret === undefined) {
+      delete process.env.JWT_SECRET;
+    } else {
+      process.env.JWT_SECRET = originalSecret;
+    }
+  });
+
   it('deve gerar hash Bcrypt valido e verificar senha corretamente', async () => {
     const password = 'MinhaSenhaSegura123!';
     const hash = await hashPassword(password);
@@ -43,4 +57,21 @@ describe('Motor de Criptografia & Segurança (Bcrypt + JWT)', () => {
     expect(verified).not.toBeNull();
     expect(verified?.user.email).toBe('patrick@kapel.digital');
   });
+
+  it('falha fechado quando JWT_SECRET nao existe', () => {
+    const originalSecret = process.env.JWT_SECRET;
+    delete process.env.JWT_SECRET;
+    expect(() => signSessionToken({ id: '1', email: 'p@k.digital', name: 'Patrick', role: 'ADMIN' })).toThrow('JWT_SECRET é obrigatório');
+    process.env.JWT_SECRET = originalSecret;
+  });
+
+  it('rejeita token assinado com outra chave', () => {
+    const originalSecret = process.env.JWT_SECRET;
+    process.env.JWT_SECRET = 'chave-com-32-bytes-para-testes-01';
+    const token = signSessionToken({ id: '1', email: 'p@k.digital', name: 'Patrick', role: 'ADMIN' });
+    process.env.JWT_SECRET = 'chave-com-32-bytes-para-testes-02';
+    expect(verifySessionToken(token)).toBeNull();
+    process.env.JWT_SECRET = originalSecret;
+  });
 });
+
