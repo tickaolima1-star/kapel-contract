@@ -13,6 +13,9 @@
 # production
 /build
 
+# local git worktrees
+/.worktrees/
+
 # debug
 npm-debug.log*
 yarn-debug.log*
