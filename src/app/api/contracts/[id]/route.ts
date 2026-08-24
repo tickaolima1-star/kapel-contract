@@ -3,19 +3,15 @@ import { prisma } from '@/lib/prisma';
 import { calculateContractFinancials } from '@/lib/engine/financial';
 import { generateContractSnapshot } from '@/lib/engine/snapshot';
 import { ContractConfigInput } from '@/lib/types';
-import { withOrgContext, type OrgRequestContext } from '@/lib/api-auth';
 
-type RouteContext = { params: { id: string } };
-
-async function getContract(
+export async function GET(
   req: NextRequest,
-  { params }: RouteContext,
-  auth: OrgRequestContext,
+  { params }: { params: { id: string } }
 ) {
   try {
     const [contract, companySettings] = await Promise.all([
-      prisma.contract.findFirst({
-        where: { id: params.id, organization_id: auth.organizationId },
+      prisma.contract.findUnique({
+        where: { id: params.id },
         include: {
           client: true,
           template: true,
@@ -43,16 +39,15 @@ async function getContract(
   }
 }
 
-async function updateContract(
+export async function PUT(
   req: NextRequest,
-  { params }: RouteContext,
-  auth: OrgRequestContext,
+  { params }: { params: { id: string } }
 ) {
   try {
     const body = await req.json();
 
-    const existing = await prisma.contract.findFirst({
-      where: { id: params.id, organization_id: auth.organizationId },
+    const existing = await prisma.contract.findUnique({
+      where: { id: params.id },
       include: { client: true, items: true, template: true },
     });
 
@@ -124,8 +119,8 @@ async function updateContract(
       ? JSON.stringify(body.platforms)
       : (typeof body.platforms === 'string' && body.platforms.startsWith('[') ? body.platforms : (typeof body.platforms === 'string' ? JSON.stringify([body.platforms]) : existing.platforms));
 
-    const updateResult = await prisma.contract.updateMany({
-      where: { id: params.id, organization_id: auth.organizationId },
+    const updated = await prisma.contract.update({
+      where: { id: params.id },
       data: {
         client_id: body.client_id || existing.client_id,
         status: newStatus,
@@ -170,18 +165,8 @@ async function updateContract(
         calculated_mrr: calculatedMRR,
         calculated_total_one_time: calculatedOneTime,
       },
-    });
-
-    if (updateResult.count === 0) {
-      return NextResponse.json({ error: 'Contrato não encontrado.' }, { status: 404 });
-    }
-    const updated = await prisma.contract.findFirst({
-      where: { id: params.id, organization_id: auth.organizationId },
       include: { client: true, items: true, template: true },
     });
-    if (!updated) {
-      return NextResponse.json({ error: 'Contrato não encontrado.' }, { status: 404 });
-    }
 
     // Log de auditoria
     let action = 'CONTRACT_UPDATED';
@@ -205,25 +190,17 @@ async function updateContract(
   }
 }
 
-async function deleteContract(
+export async function DELETE(
   req: NextRequest,
-  { params }: RouteContext,
-  auth: OrgRequestContext,
+  { params }: { params: { id: string } }
 ) {
   try {
-    const result = await prisma.contract.deleteMany({
-      where: { id: params.id, organization_id: auth.organizationId },
+    await prisma.contract.delete({
+      where: { id: params.id },
     });
-    if (result.count === 0) {
-      return NextResponse.json({ error: 'Contrato não encontrado.' }, { status: 404 });
-    }
     return NextResponse.json({ success: true });
   } catch (error: any) {
     console.error('Erro ao excluir contrato:', error);
     return NextResponse.json({ error: 'Não foi possível excluir o contrato.' }, { status: 500 });
   }
 }
-
-export const GET = withOrgContext<RouteContext>(getContract);
-export const PUT = withOrgContext<RouteContext>(updateContract, ['OWNER', 'ADMIN', 'OPERATOR']);
-export const DELETE = withOrgContext<RouteContext>(deleteContract, ['OWNER', 'ADMIN']);

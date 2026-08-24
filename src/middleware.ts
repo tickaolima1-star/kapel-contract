@@ -1,17 +1,14 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { verifyEdgeSessionToken } from '@/lib/auth-edge';
 
 export const AUTH_COOKIE_NAME = 'kapel_session';
 
-export async function middleware(request: NextRequest) {
+export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const sessionCookie = request.cookies.get(AUTH_COOKIE_NAME);
   
-  const session = sessionCookie?.value
-    ? await verifyEdgeSessionToken(sessionCookie.value)
-    : null;
-  const isValidSession = session !== null;
+  // Validação leve de formato JWT no Edge Runtime (3 partes base64)
+  const isValidSession = !!sessionCookie?.value && sessionCookie.value.split('.').length === 3;
 
   const protectedRoutes = [
     '/dashboard',
@@ -22,8 +19,6 @@ export async function middleware(request: NextRequest) {
     '/clauses',
     '/settings',
     '/upscaler',
-    '/command',
-    '/operations',
   ];
 
   const isProtected = protectedRoutes.some((route) => pathname.startsWith(route));

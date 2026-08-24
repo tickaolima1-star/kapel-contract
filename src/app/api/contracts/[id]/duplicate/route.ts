@@ -1,17 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { withOrgContext, type OrgRequestContext } from '@/lib/api-auth';
 
-type RouteContext = { params: { id: string } };
-
-async function duplicateContract(
+export async function POST(
   req: NextRequest,
-  { params }: RouteContext,
-  auth: OrgRequestContext,
+  { params }: { params: { id: string } }
 ) {
   try {
-    const original = await prisma.contract.findFirst({
-      where: { id: params.id, organization_id: auth.organizationId },
+    const original = await prisma.contract.findUnique({
+      where: { id: params.id },
       include: { items: true, client: true },
     });
 
@@ -21,7 +17,6 @@ async function duplicateContract(
 
     // Gerar próximo número sequencial sem colisão
     const lastContract = await prisma.contract.findFirst({
-      where: { organization_id: auth.organizationId },
       orderBy: { created_at: 'desc' },
       select: { contract_number: true },
     });
@@ -35,14 +30,13 @@ async function duplicateContract(
     }
 
     let newContractNumber = String(nextNum).padStart(6, '0');
-    while (await prisma.contract.findFirst({ where: { contract_number: newContractNumber, organization_id: auth.organizationId } })) {
+    while (await prisma.contract.findUnique({ where: { contract_number: newContractNumber } })) {
       nextNum++;
       newContractNumber = String(nextNum).padStart(6, '0');
     }
 
     const duplicated = await prisma.contract.create({
       data: {
-        organization_id: auth.organizationId,
         contract_number: newContractNumber,
         client_id: original.client_id,
         template_id: original.template_id,
@@ -108,5 +102,3 @@ async function duplicateContract(
     return NextResponse.json({ error: 'Erro ao duplicar contrato.' }, { status: 500 });
   }
 }
-
-export const POST = withOrgContext<RouteContext>(duplicateContract, ['OWNER', 'ADMIN', 'OPERATOR']);

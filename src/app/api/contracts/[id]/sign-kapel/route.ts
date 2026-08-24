@@ -1,14 +1,10 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { validateDocPrefix, generateSignatureToken } from '@/lib/signature';
-import { withOrgContext, type OrgRequestContext } from '@/lib/api-auth';
 
-type RouteContext = { params: { id: string } };
-
-async function signKapel(
+export async function POST(
   request: Request,
-  { params }: RouteContext,
-  auth: OrgRequestContext,
+  { params }: { params: { id: string } }
 ) {
   try {
     const body = await request.json();
@@ -21,8 +17,8 @@ async function signKapel(
       );
     }
 
-    const contract = await prisma.contract.findFirst({
-      where: { id: params.id, organization_id: auth.organizationId },
+    const contract = await prisma.contract.findUnique({
+      where: { id: params.id },
     });
 
     if (!contract) {
@@ -48,8 +44,8 @@ async function signKapel(
     const userAgent = request.headers.get('user-agent') || 'Desconhecido';
     const signatureToken = contract.signature_token || generateSignatureToken();
 
-    await prisma.contract.updateMany({
-      where: { id: params.id, organization_id: auth.organizationId },
+    const updatedContract = await prisma.contract.update({
+      where: { id: params.id },
       data: {
         signature_token: signatureToken,
         signature_status: 'PENDING_CLIENT',
@@ -61,12 +57,6 @@ async function signKapel(
         signed_kapel_signature_data: signature_data,
       },
     });
-    const updatedContract = await prisma.contract.findFirst({
-      where: { id: params.id, organization_id: auth.organizationId },
-    });
-    if (!updatedContract) {
-      return NextResponse.json({ error: 'Contrato não encontrado.' }, { status: 404 });
-    }
 
     // Log de Auditoria
     await prisma.auditLog.create({
@@ -89,5 +79,3 @@ async function signKapel(
     return NextResponse.json({ error: error.message || 'Erro ao processar assinatura.' }, { status: 500 });
   }
 }
-
-export const POST = withOrgContext<RouteContext>(signKapel, ['OWNER', 'ADMIN']);

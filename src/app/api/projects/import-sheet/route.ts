@@ -2,9 +2,8 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import * as XLSX from 'xlsx';
 import { generateSignatureToken } from '@/lib/signature';
-import { withOrgContext, type OrgRequestContext } from '@/lib/api-auth';
 
-async function importSheet(request: Request, _context: unknown, auth: OrgRequestContext) {
+export async function POST(request: Request) {
   try {
     const formData = await request.formData();
     const file = formData.get('file') as File | null;
@@ -97,7 +96,6 @@ async function importSheet(request: Request, _context: unknown, auth: OrgRequest
       // 1. Criar ou Atualizar Cliente
       let client = await prisma.client.findFirst({
         where: {
-          organization_id: auth.organizationId,
           OR: [
             ...(documentRaw ? [{ document: documentRaw }] : []),
             { legal_name: { contains: clientName, mode: 'insensitive' } },
@@ -108,7 +106,6 @@ async function importSheet(request: Request, _context: unknown, auth: OrgRequest
       if (!client) {
         client = await prisma.client.create({
           data: {
-            organization_id: auth.organizationId,
             type: documentRaw && documentRaw.length > 14 ? 'PJ' : 'PF',
             legal_name: clientName,
             trade_name: clientName.split(' ')[0],
@@ -129,7 +126,6 @@ async function importSheet(request: Request, _context: unknown, auth: OrgRequest
 
       // 2. Gerar Número de Contrato
       const lastContract = await prisma.contract.findFirst({
-        where: { organization_id: auth.organizationId },
         orderBy: { created_at: 'desc' },
         select: { contract_number: true },
       });
@@ -141,7 +137,7 @@ async function importSheet(request: Request, _context: unknown, auth: OrgRequest
       }
 
       let contractNumber = String(nextNum).padStart(6, '0');
-      while (await prisma.contract.findFirst({ where: { contract_number: contractNumber, organization_id: auth.organizationId } })) {
+      while (await prisma.contract.findUnique({ where: { contract_number: contractNumber } })) {
         nextNum++;
         contractNumber = String(nextNum).padStart(6, '0');
       }
@@ -152,7 +148,6 @@ async function importSheet(request: Request, _context: unknown, auth: OrgRequest
 
       await prisma.contract.create({
         data: {
-          organization_id: auth.organizationId,
           contract_number: contractNumber,
           client_id: client.id,
           template_id: template.id,
@@ -195,5 +190,3 @@ async function importSheet(request: Request, _context: unknown, auth: OrgRequest
     );
   }
 }
-
-export const POST = withOrgContext(importSheet, ['OWNER', 'ADMIN']);

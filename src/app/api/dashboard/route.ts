@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { withOrgContext, type OrgRequestContext } from '@/lib/api-auth';
 
 function getContractMRR(c: any): number {
   if (c.calculated_mrr && c.calculated_mrr > 0) return c.calculated_mrr;
@@ -26,11 +25,11 @@ function getContractMRR(c: any): number {
   return 0;
 }
 
-async function getDashboard(_request: Request, _context: unknown, auth: OrgRequestContext) {
+export async function GET() {
   try {
     const [clients, contracts, recentAuditLogs] = await Promise.all([
       prisma.client.findMany({
-        where: { active: true, organization_id: auth.organizationId },
+        where: { active: true },
         include: {
           contracts: {
             include: {
@@ -43,7 +42,6 @@ async function getDashboard(_request: Request, _context: unknown, auth: OrgReque
         orderBy: { updated_at: 'desc' },
       }),
       prisma.contract.findMany({
-        where: { organization_id: auth.organizationId },
         include: {
           client: true,
           items: true,
@@ -54,7 +52,6 @@ async function getDashboard(_request: Request, _context: unknown, auth: OrgReque
       prisma.auditLog.findMany({
         take: 6,
         orderBy: { created_at: 'desc' },
-        where: { contract: { organization_id: auth.organizationId } },
         include: { contract: true },
       }),
     ]);
@@ -117,5 +114,3 @@ async function getDashboard(_request: Request, _context: unknown, auth: OrgReque
     );
   }
 }
-
-export const GET = withOrgContext(getDashboard);

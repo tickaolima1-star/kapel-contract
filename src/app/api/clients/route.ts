@@ -1,14 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { withOrgContext, type OrgRequestContext } from '@/lib/api-auth';
 
-async function listClients(req: NextRequest, _context: unknown, auth: OrgRequestContext) {
+export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
     const query = searchParams.get('q') || '';
     const type = searchParams.get('type') || '';
 
-    const where: any = { organization_id: auth.organizationId };
+    const where: any = {};
     if (type) {
       where.type = type;
     }
@@ -39,7 +38,7 @@ async function listClients(req: NextRequest, _context: unknown, auth: OrgRequest
   }
 }
 
-async function createClient(req: NextRequest, _context: unknown, auth: OrgRequestContext) {
+export async function POST(req: NextRequest) {
   try {
     const data = await req.json();
 
@@ -52,7 +51,6 @@ async function createClient(req: NextRequest, _context: unknown, auth: OrgReques
 
     const client = await prisma.client.create({
       data: {
-        organization_id: auth.organizationId,
         type: data.type || 'PJ',
         legal_name: data.legal_name.trim(),
         trade_name: data.trade_name ? data.trade_name.trim() : null,
@@ -81,6 +79,3 @@ async function createClient(req: NextRequest, _context: unknown, auth: OrgReques
     return NextResponse.json({ error: 'Erro ao criar cliente.' }, { status: 500 });
   }
 }
-
-export const GET = withOrgContext(listClients);
-export const POST = withOrgContext(createClient, ['OWNER', 'ADMIN', 'OPERATOR']);

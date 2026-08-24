@@ -17,8 +17,6 @@ import {
   Menu,
   X,
   Sparkles,
-  Gauge,
-  ListChecks,
 } from 'lucide-react';
 
 export function Sidebar() {
@@ -32,8 +30,6 @@ export function Sidebar() {
   }, [pathname]);
 
   const navItems = [
-    { label: 'Command', href: '/command', icon: Gauge },
-    { label: 'Operations', href: '/operations', icon: ListChecks },
     { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
     { label: 'Clientes', href: '/clients', icon: Users },
     { label: 'Contratos', href: '/contracts', icon: FileText },
