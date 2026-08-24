@@ -1,9 +1,13 @@
-import { NextResponse } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import * as XLSX from 'xlsx';
 import { generateSignatureToken } from '@/lib/signature';
+import { withOrgContext } from '@/lib/api-auth';
 
-export async function POST(request: Request) {
+export const POST = withOrgContext(async (request: NextRequest, context: any, auth: any) => {
+  if (auth.role === 'VIEWER') {
+    return NextResponse.json({ error: 'Acesso negado.' }, { status: 403 });
+  }
   try {
     const formData = await request.formData();
     const file = formData.get('file') as File | null;
@@ -96,6 +100,7 @@ export async function POST(request: Request) {
       // 1. Criar ou Atualizar Cliente
       let client = await prisma.client.findFirst({
         where: {
+          organization_id: auth.organizationId,
           OR: [
             ...(documentRaw ? [{ document: documentRaw }] : []),
             { legal_name: { contains: clientName, mode: 'insensitive' } },
@@ -106,6 +111,7 @@ export async function POST(request: Request) {
       if (!client) {
         client = await prisma.client.create({
           data: {
+            organization_id: auth.organizationId,
             type: documentRaw && documentRaw.length > 14 ? 'PJ' : 'PF',
             legal_name: clientName,
             trade_name: clientName.split(' ')[0],
@@ -126,6 +132,7 @@ export async function POST(request: Request) {
 
       // 2. Gerar Número de Contrato
       const lastContract = await prisma.contract.findFirst({
+        where: { organization_id: auth.organizationId },
         orderBy: { created_at: 'desc' },
         select: { contract_number: true },
       });
@@ -137,7 +144,7 @@ export async function POST(request: Request) {
       }
 
       let contractNumber = String(nextNum).padStart(6, '0');
-      while (await prisma.contract.findUnique({ where: { contract_number: contractNumber } })) {
+      while (await prisma.contract.findFirst({ where: { contract_number: contractNumber, organization_id: auth.organizationId } })) {
         nextNum++;
         contractNumber = String(nextNum).padStart(6, '0');
       }
@@ -148,6 +155,7 @@ export async function POST(request: Request) {
 
       await prisma.contract.create({
         data: {
+          organization_id: auth.organizationId,
           contract_number: contractNumber,
           client_id: client.id,
           template_id: template.id,
@@ -189,4 +197,4 @@ export async function POST(request: Request) {
       { status: 500 }
     );
   }
-}
+});
