@@ -1,13 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { withOrgContext, type OrgRequestContext } from '@/lib/api-auth';
 
-export async function GET(
+type RouteContext = { params: { id: string } };
+
+async function getClient(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: RouteContext,
+  auth: OrgRequestContext,
 ) {
   try {
-    const client = await prisma.client.findUnique({
-      where: { id: params.id },
+    const client = await prisma.client.findFirst({
+      where: { id: params.id, organization_id: auth.organizationId },
       include: {
         contracts: {
           orderBy: { created_at: 'desc' },
@@ -26,15 +30,16 @@ export async function GET(
   }
 }
 
-export async function PUT(
+async function updateClient(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: RouteContext,
+  auth: OrgRequestContext,
 ) {
   try {
     const data = await req.json();
 
-    const client = await prisma.client.update({
-      where: { id: params.id },
+    const result = await prisma.client.updateMany({
+      where: { id: params.id, organization_id: auth.organizationId },
       data: {
         type: data.type,
         legal_name: data.legal_name?.trim(),
@@ -58,6 +63,12 @@ export async function PUT(
       },
     });
 
+    if (result.count === 0) {
+      return NextResponse.json({ error: 'Cliente não encontrado.' }, { status: 404 });
+    }
+    const client = await prisma.client.findFirst({
+      where: { id: params.id, organization_id: auth.organizationId },
+    });
     return NextResponse.json(client);
   } catch (error: any) {
     console.error('Erro ao atualizar cliente:', error);
@@ -65,14 +76,19 @@ export async function PUT(
   }
 }
 
-export async function DELETE(
+async function deleteClient(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: RouteContext,
+  auth: OrgRequestContext,
 ) {
   try {
-    await prisma.client.delete({
-      where: { id: params.id },
+    const result = await prisma.client.deleteMany({
+      where: { id: params.id, organization_id: auth.organizationId },
     });
+
+    if (result.count === 0) {
+      return NextResponse.json({ error: 'Cliente não encontrado.' }, { status: 404 });
+    }
 
     return NextResponse.json({ success: true });
   } catch (error: any) {
@@ -80,3 +96,7 @@ export async function DELETE(
     return NextResponse.json({ error: 'Não foi possível excluir o cliente.' }, { status: 500 });
   }
 }
+
+export const GET = withOrgContext<RouteContext>(getClient);
+export const PUT = withOrgContext<RouteContext>(updateClient, ['OWNER', 'ADMIN', 'OPERATOR']);
+export const DELETE = withOrgContext<RouteContext>(deleteClient, ['OWNER', 'ADMIN']);

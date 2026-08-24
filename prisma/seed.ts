@@ -6,6 +6,12 @@ const prisma = new PrismaClient();
 async function main() {
   console.log('🌱 Iniciando Seed do KAPEL CONTRACT (Performance + Political)...');
 
+  const organization = await prisma.organization.upsert({
+    where: { slug: 'kapel' },
+    update: { name: 'KAPEL', active: true },
+    create: { id: 'org_kapel', name: 'KAPEL', slug: 'kapel', active: true },
+  });
+
   // 1. Configurações da Empresa (KAPEL)
   await prisma.companySettings.upsert({
     where: { id: 'default' },
@@ -47,7 +53,7 @@ async function main() {
   // 2. Administrador Patrick (Com hash de senha Bcrypt seguro)
   const initialPasswordHash = await bcrypt.hash('admin123', 10);
 
-  await prisma.user.upsert({
+  const patrick = await prisma.user.upsert({
     where: { email: 'patrick@kapel.digital' },
     update: {
       name: 'Patrick Eduardo Lima Silva',
@@ -59,6 +65,22 @@ async function main() {
       name: 'Patrick Eduardo Lima Silva',
       password: initialPasswordHash,
       role: 'ADMIN',
+    },
+  });
+
+  await prisma.membership.upsert({
+    where: {
+      organization_id_user_id: {
+        organization_id: organization.id,
+        user_id: patrick.id,
+      },
+    },
+    update: { role: 'OWNER' },
+    create: {
+      id: 'membership_patrick',
+      organization_id: organization.id,
+      user_id: patrick.id,
+      role: 'OWNER',
     },
   });
 
@@ -279,6 +301,7 @@ async function main() {
   const clientSimone = await prisma.client.upsert({
     where: { id: 'client-demo-wpl' },
     update: {
+      organization_id: organization.id,
       legal_name: 'WPL Empreendimentos Digitais Ltda',
       trade_name: 'WPL / Simone',
       type: 'PJ',
@@ -292,6 +315,7 @@ async function main() {
       email: 'simone@wplempreendimentos.com.br',
     },
     create: {
+      organization_id: organization.id,
       id: 'client-demo-wpl',
       legal_name: 'WPL Empreendimentos Digitais Ltda',
       trade_name: 'WPL / Simone',
@@ -311,6 +335,7 @@ async function main() {
   const clientAgencia89 = await prisma.client.upsert({
     where: { id: 'client-demo-agencia89' },
     update: {
+      organization_id: organization.id,
       legal_name: 'Agência 89 Comunicação Estratégica Ltda',
       trade_name: 'Agência 89 / Campanha Ademir',
       type: 'PJ',
@@ -330,6 +355,7 @@ async function main() {
       notes: 'Agência de publicidade contratante para a campanha majoritária de Ademir José da Silva.',
     },
     create: {
+      organization_id: organization.id,
       id: 'client-demo-agencia89',
       legal_name: 'Agência 89 Comunicação Estratégica Ltda',
       trade_name: 'Agência 89 / Campanha Ademir',
@@ -359,6 +385,7 @@ async function main() {
   if (!existingPolitical) {
     const contractPol = await prisma.contract.create({
       data: {
+        organization_id: organization.id,
         contract_number: '000002',
         client_id: clientAgencia89.id,
         template_id: templatePol.id,

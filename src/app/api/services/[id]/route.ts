@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { withOrgContext } from '@/lib/api-auth';
 
-export async function PUT(
+async function updateService(
   req: NextRequest,
   { params }: { params: { id: string } }
 ) {
@@ -29,7 +30,7 @@ export async function PUT(
   }
 }
 
-export async function DELETE(
+async function deleteService(
   req: NextRequest,
   { params }: { params: { id: string } }
 ) {
@@ -43,3 +44,6 @@ export async function DELETE(
     return NextResponse.json({ error: 'Não foi possível excluir o serviço.' }, { status: 500 });
   }
 }
+
+export const PUT = withOrgContext(updateService, ['OWNER', 'ADMIN']);
+export const DELETE = withOrgContext(deleteService, ['OWNER', 'ADMIN']);

@@ -3,8 +3,9 @@ import { prisma } from '@/lib/prisma';
 import { extractContentFromDocxBuffer, extractContentFromPdfBuffer, parseContractText } from '@/lib/importer';
 import { generateSignatureToken } from '@/lib/signature';
 import { calculateContractFinancials } from '@/lib/engine/financial';
+import { withOrgContext, type OrgRequestContext } from '@/lib/api-auth';
 
-export async function POST(request: Request) {
+async function importContract(request: Request, _context: unknown, auth: OrgRequestContext) {
   try {
     const formData = await request.formData();
     const file = formData.get('file') as File | null;
@@ -45,6 +46,7 @@ export async function POST(request: Request) {
     // 2. Criar ou Atualizar Cliente Automaticamente no Banco de Dados
     let client = await prisma.client.findFirst({
       where: {
+        organization_id: auth.organizationId,
         OR: [
           { document: clientData.document },
           { legal_name: { contains: clientData.legal_name, mode: 'insensitive' } },
@@ -55,6 +57,7 @@ export async function POST(request: Request) {
     if (!client) {
       client = await prisma.client.create({
         data: {
+          organization_id: auth.organizationId,
           type: clientData.document.length > 14 ? 'PJ' : 'PF',
           legal_name: clientData.legal_name,
           trade_name: clientData.trade_name || clientData.legal_name,
@@ -106,6 +109,7 @@ export async function POST(request: Request) {
 
     // 4. Gerar Número Sequencial sem Colisão
     const lastContract = await prisma.contract.findFirst({
+      where: { organization_id: auth.organizationId },
       orderBy: { created_at: 'desc' },
       select: { contract_number: true },
     });
@@ -117,7 +121,7 @@ export async function POST(request: Request) {
     }
 
     let contractNumber = String(nextNum).padStart(6, '0');
-    while (await prisma.contract.findUnique({ where: { contract_number: contractNumber } })) {
+    while (await prisma.contract.findFirst({ where: { contract_number: contractNumber, organization_id: auth.organizationId } })) {
       nextNum++;
       contractNumber = String(nextNum).padStart(6, '0');
     }
@@ -130,6 +134,7 @@ export async function POST(request: Request) {
     // 6. Criar Contrato Salva o Conteúdo Exato Importado (`imported_body`)
     const contract = await prisma.contract.create({
       data: {
+        organization_id: auth.organizationId,
         contract_number: contractNumber,
         client_id: client.id,
         template_id: template.id,
@@ -194,3 +199,5 @@ export async function POST(request: Request) {
     );
   }
 }
+
+export const POST = withOrgContext(importContract, ['OWNER', 'ADMIN']);
