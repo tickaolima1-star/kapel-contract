@@ -20,6 +20,8 @@ This file is the platform-neutral source of truth for repository work. Codex ent
 
 Never commit `.env`, `.next`, `*.tsbuildinfo`, or local database state from `prisma/dev.db`. Treat generated output as disposable and preserve unrelated user changes.
 
+- **CRITICAL DATABASE RULE:** NEVER run `--force-reset`, delete tables, or perform any destructive database action. ALWAYS ask the user in ALL CAPS (CAIXA ALTA) if they really want to alter or reset database data before executing any schema push, database write, or reset command.
+
 ## Skill-first lifecycle
 
 Inspect `.agents/skills/` before responding or acting.

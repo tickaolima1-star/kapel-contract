@@ -17,3 +17,4 @@ Run focused tests first, then `npm run typecheck`, `npm test`, and `npm run buil
 ## Safety
 
 Preserve user-owned changes. Do not install global tools, deploy, modify remote state, or perform destructive actions without the required approval.
+- **CRITICAL DATABASE RULE:** NEVER run `--force-reset`, delete tables, or perform any destructive database action. ALWAYS ask the user in ALL CAPS (CAIXA ALTA) if they really want to alter or reset database data before executing any schema push, database write, or reset command.
