@@ -7,7 +7,7 @@ import { ShieldCheck, Lock, Mail, ArrowRight, Sparkles } from 'lucide-react';
 export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState('patrick@kapel.digital');
-  const [password, setPassword] = useState('admin');
+  const [password, setPassword] = useState('admin123');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -131,7 +131,7 @@ export default function LoginPage() {
               type="button"
               onClick={() => {
                 setEmail('patrick@kapel.digital');
-                setPassword('admin');
+                setPassword('admin123');
               }}
               className="text-emerald-400 hover:underline flex items-center gap-1"
             >
