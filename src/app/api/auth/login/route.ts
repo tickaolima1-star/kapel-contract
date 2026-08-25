@@ -52,7 +52,7 @@ export async function POST(req: NextRequest) {
   } catch (error: any) {
     console.error('Erro no login:', error);
     return NextResponse.json(
-      { error: 'Erro interno ao processar login.' },
+      { error: `Erro interno ao processar login: ${error.message || String(error)}` },
       { status: 500 }
     );
   }
