@@ -372,7 +372,7 @@ function NewContractForm() {
       />
 
       {loading ? (
-        <div className="flex items-center justify-center h-64 text-slate-400">
+        <div className="flex items-center justify-center h-64 text-[#AEB4AE]">
           <div className="w-8 h-8 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin" />
         </div>
       ) : (
@@ -380,17 +380,17 @@ function NewContractForm() {
           {/* Main Configurator Area (2 Colunas) */}
           <div className="lg:col-span-2 space-y-6">
             {/* Template Selector Pills */}
-            <div className="bg-[#0f172a] border border-[#1e293b] rounded-2xl p-4 shadow-xl flex items-center justify-between">
+            <div className="bg-[#121312] border border-[rgba(242,242,237,0.1)] rounded p-4 shadow-xl flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <span className="text-xs font-semibold text-slate-400">Modelo de Contrato:</span>
+                <span className="text-xs font-semibold text-[#AEB4AE]">Modelo de Contrato:</span>
                 <div className="flex gap-2">
                   <button
                     type="button"
                     onClick={() => setTemplateType('PERFORMANCE')}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                    className={`px-3 py-1.5 rounded text-xs font-bold transition-all ${
                       templateType === 'PERFORMANCE'
-                        ? 'bg-emerald-500 text-black shadow-md shadow-emerald-500/20'
-                        : 'bg-[#131c2e] text-slate-400 hover:text-white'
+                        ? 'bg-[#1C2E24] text-black shadow-md shadow-[#1C2E24]/20'
+                        : 'bg-[#0A0A0A] text-[#AEB4AE] hover:text-white'
                     }`}
                   >
                     KAPEL Performance
@@ -398,10 +398,10 @@ function NewContractForm() {
                   <button
                     type="button"
                     onClick={() => setTemplateType('POLITICAL')}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
+                    className={`px-3 py-1.5 rounded text-xs font-bold transition-all flex items-center gap-1.5 ${
                       templateType === 'POLITICAL'
                         ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-black shadow-md shadow-amber-500/20'
-                        : 'bg-[#131c2e] text-slate-400 hover:text-white'
+                        : 'bg-[#0A0A0A] text-[#AEB4AE] hover:text-white'
                     }`}
                   >
                     <Vote className="w-3.5 h-3.5" />
@@ -409,61 +409,61 @@ function NewContractForm() {
                   </button>
                 </div>
               </div>
-              <span className="text-[11px] text-slate-500 hidden sm:inline">
+              <span className="text-[11px] text-[#8E948E] hidden sm:inline">
                 {templateType === 'POLITICAL' ? 'Regras Eleitorais / TSE' : 'Contrato Comercial Padrão'}
               </span>
             </div>
 
             {/* Step Wizard Nav */}
-            <div className="bg-[#0f172a] border border-[#1e293b] rounded-2xl p-3 shadow-lg flex items-center justify-between text-xs overflow-x-auto">
+            <div className="bg-[#121312] border border-[rgba(242,242,237,0.1)] rounded p-3 shadow-lg flex items-center justify-between text-xs overflow-x-auto">
               <button
                 onClick={() => setStep(1)}
-                className={`flex items-center gap-2 px-3 py-2 rounded-xl font-medium whitespace-nowrap transition-all ${
+                className={`flex items-center gap-2 px-3 py-2 rounded font-medium whitespace-nowrap transition-all ${
                   step === 1
-                    ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
-                    : 'text-slate-400 hover:text-slate-200'
+                    ? 'bg-[#1C2E24]/20 text-[#44755A] border border-emerald-500/30'
+                    : 'text-[#AEB4AE] hover:text-[#F2F2ED]'
                 }`}
               >
                 <Users className="w-4 h-4" />
                 <span>1. {templateType === 'POLITICAL' ? 'Candidatura & Cliente' : 'Cliente'}</span>
               </button>
 
-              <ChevronRight className="w-3.5 h-3.5 text-slate-600 shrink-0" />
+              <ChevronRight className="w-3.5 h-3.5 text-[#8E948E] shrink-0" />
 
               <button
                 onClick={() => setStep(2)}
-                className={`flex items-center gap-2 px-3 py-2 rounded-xl font-medium whitespace-nowrap transition-all ${
+                className={`flex items-center gap-2 px-3 py-2 rounded font-medium whitespace-nowrap transition-all ${
                   step === 2
-                    ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
-                    : 'text-slate-400 hover:text-slate-200'
+                    ? 'bg-[#1C2E24]/20 text-[#44755A] border border-emerald-500/30'
+                    : 'text-[#AEB4AE] hover:text-[#F2F2ED]'
                 }`}
               >
                 <Briefcase className="w-4 h-4" />
                 <span>2. Serviços & Marcos</span>
               </button>
 
-              <ChevronRight className="w-3.5 h-3.5 text-slate-600 shrink-0" />
+              <ChevronRight className="w-3.5 h-3.5 text-[#8E948E] shrink-0" />
 
               <button
                 onClick={() => setStep(3)}
-                className={`flex items-center gap-2 px-3 py-2 rounded-xl font-medium whitespace-nowrap transition-all ${
+                className={`flex items-center gap-2 px-3 py-2 rounded font-medium whitespace-nowrap transition-all ${
                   step === 3
-                    ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
-                    : 'text-slate-400 hover:text-slate-200'
+                    ? 'bg-[#1C2E24]/20 text-[#44755A] border border-emerald-500/30'
+                    : 'text-[#AEB4AE] hover:text-[#F2F2ED]'
                 }`}
               >
                 <Sliders className="w-4 h-4" />
                 <span>3. {templateType === 'POLITICAL' ? 'Mídia & Compliance' : 'Escopo & Governança'}</span>
               </button>
 
-              <ChevronRight className="w-3.5 h-3.5 text-slate-600 shrink-0" />
+              <ChevronRight className="w-3.5 h-3.5 text-[#8E948E] shrink-0" />
 
               <button
                 onClick={() => setStep(4)}
-                className={`flex items-center gap-2 px-3 py-2 rounded-xl font-medium whitespace-nowrap transition-all ${
+                className={`flex items-center gap-2 px-3 py-2 rounded font-medium whitespace-nowrap transition-all ${
                   step === 4
-                    ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
-                    : 'text-slate-400 hover:text-slate-200'
+                    ? 'bg-[#1C2E24]/20 text-[#44755A] border border-emerald-500/30'
+                    : 'text-[#AEB4AE] hover:text-[#F2F2ED]'
                 }`}
               >
                 <Calendar className="w-4 h-4" />
@@ -473,17 +473,17 @@ function NewContractForm() {
 
             {/* ETAPA 1: CLIENTE E/OU DADOS ELEITORAIS */}
             {step === 1 && (
-              <div className="bg-[#0f172a] border border-[#1e293b] rounded-2xl p-6 shadow-xl space-y-6">
-                <div className="flex items-center justify-between pb-4 border-b border-[#1e293b]">
+              <div className="bg-[#121312] border border-[rgba(242,242,237,0.1)] rounded p-6 shadow-xl space-y-6">
+                <div className="flex items-center justify-between pb-4 border-b border-[rgba(242,242,237,0.1)]">
                   <div>
                     <h2 className="text-base font-bold text-white font-display">
                       {templateType === 'POLITICAL' ? 'Etapa 1: Contratante & Dados da Campanha' : 'Etapa 1: Seleção do Cliente'}
                     </h2>
-                    <p className="text-xs text-slate-400">Qualificação completa para emissão do contrato</p>
+                    <p className="text-xs text-[#AEB4AE]">Qualificação completa para emissão do contrato</p>
                   </div>
                   <Link
                     href="/clients"
-                    className="text-xs font-semibold text-emerald-400 hover:underline flex items-center gap-1"
+                    className="text-xs font-semibold text-[#44755A] hover:underline flex items-center gap-1"
                   >
                     <Plus className="w-3.5 h-3.5" />
                     <span>Novo Cadastro</span>
@@ -492,13 +492,13 @@ function NewContractForm() {
 
                 {/* Seleção do Cliente / Agência */}
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                  <label className="block text-xs font-semibold text-[#D7D8D0] mb-1.5">
                     {templateType === 'POLITICAL' ? 'Agência ou Contratante Formal *' : 'Cliente Contratante *'}
                   </label>
                   <select
                     value={clientId}
                     onChange={(e) => setClientId(e.target.value)}
-                    className="w-full px-4 py-2.5 bg-[#131c2e] border border-[#1e293b] rounded-xl text-sm text-white focus:border-emerald-500/50"
+                    className="w-full px-4 py-2.5 bg-[#0A0A0A] border border-[rgba(242,242,237,0.1)] rounded text-sm text-white focus:border-emerald-500/50"
                   >
                     {clients.map((c) => (
                       <option key={c.id} value={c.id}>
@@ -510,7 +510,7 @@ function NewContractForm() {
 
                 {/* Se for Template Political, exibe bloco de dados de candidatura */}
                 {templateType === 'POLITICAL' && (
-                  <div className="p-4 rounded-xl bg-[#131c2e] border border-amber-500/30 space-y-4 text-xs">
+                  <div className="p-4 rounded bg-[#0A0A0A] border border-amber-500/30 space-y-4 text-xs">
                     <div className="flex items-center gap-2 text-amber-400 font-bold text-sm">
                       <Vote className="w-4 h-4" />
                       <span>Dados Eleitorais da Candidatura</span>
@@ -518,111 +518,111 @@ function NewContractForm() {
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                       <div>
-                        <label className="block text-slate-400 mb-1">Nome do(a) Candidato(a) *</label>
+                        <label className="block text-[#AEB4AE] mb-1">Nome do(a) Candidato(a) *</label>
                         <input
                           type="text"
                           required
                           value={candidateName}
                           onChange={(e) => setCandidateName(e.target.value)}
                           placeholder="Ex: Ademir José da Silva"
-                          className="w-full px-3 py-2 bg-[#0f172a] border border-[#1e293b] rounded-xl text-white font-semibold"
+                          className="w-full px-3 py-2 bg-[#121312] border border-[rgba(242,242,237,0.1)] rounded text-white font-semibold"
                         />
                       </div>
                       <div>
-                        <label className="block text-slate-400 mb-1">Número de Urna *</label>
+                        <label className="block text-[#AEB4AE] mb-1">Número de Urna *</label>
                         <input
                           type="text"
                           value={candidateNumber}
                           onChange={(e) => setCandidateNumber(e.target.value)}
                           placeholder="Ex: 15"
-                          className="w-full px-3 py-2 bg-[#0f172a] border border-[#1e293b] rounded-xl text-white font-mono font-bold"
+                          className="w-full px-3 py-2 bg-[#121312] border border-[rgba(242,242,237,0.1)] rounded text-white font-mono font-bold"
                         />
                       </div>
                       <div>
-                        <label className="block text-slate-400 mb-1">Cargo Concorrido *</label>
+                        <label className="block text-[#AEB4AE] mb-1">Cargo Concorrido *</label>
                         <input
                           type="text"
                           value={candidateRole}
                           onChange={(e) => setCandidateRole(e.target.value)}
                           placeholder="Ex: Prefeito, Vereador"
-                          className="w-full px-3 py-2 bg-[#0f172a] border border-[#1e293b] rounded-xl text-white"
+                          className="w-full px-3 py-2 bg-[#121312] border border-[rgba(242,242,237,0.1)] rounded text-white"
                         />
                       </div>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                       <div>
-                        <label className="block text-slate-400 mb-1">Partido *</label>
+                        <label className="block text-[#AEB4AE] mb-1">Partido *</label>
                         <input
                           type="text"
                           value={party}
                           onChange={(e) => setParty(e.target.value)}
                           placeholder="Ex: MDB"
-                          className="w-full px-3 py-2 bg-[#0f172a] border border-[#1e293b] rounded-xl text-white"
+                          className="w-full px-3 py-2 bg-[#121312] border border-[rgba(242,242,237,0.1)] rounded text-white"
                         />
                       </div>
                       <div>
-                        <label className="block text-slate-400 mb-1">Coligação ou Federação</label>
+                        <label className="block text-[#AEB4AE] mb-1">Coligação ou Federação</label>
                         <input
                           type="text"
                           value={federationOrCoalition}
                           onChange={(e) => setFederationOrCoalition(e.target.value)}
                           placeholder="Ex: Coligação Pra Frente SP"
-                          className="w-full px-3 py-2 bg-[#0f172a] border border-[#1e293b] rounded-xl text-white"
+                          className="w-full px-3 py-2 bg-[#121312] border border-[rgba(242,242,237,0.1)] rounded text-white"
                         />
                       </div>
                       <div>
-                        <label className="block text-slate-400 mb-1">CNPJ de Campanha *</label>
+                        <label className="block text-[#AEB4AE] mb-1">CNPJ de Campanha *</label>
                         <input
                           type="text"
                           value={campaignCnpj}
                           onChange={(e) => setCampaignCnpj(e.target.value)}
                           placeholder="00.000.000/0001-00"
-                          className="w-full px-3 py-2 bg-[#0f172a] border border-[#1e293b] rounded-xl text-white font-mono"
+                          className="w-full px-3 py-2 bg-[#121312] border border-[rgba(242,242,237,0.1)] rounded text-white font-mono"
                         />
                       </div>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                       <div>
-                        <label className="block text-slate-400 mb-1">Data Início da Campanha</label>
+                        <label className="block text-[#AEB4AE] mb-1">Data Início da Campanha</label>
                         <input
                           type="date"
                           value={campaignStartDate}
                           onChange={(e) => setCampaignStartDate(e.target.value)}
-                          className="w-full px-3 py-2 bg-[#0f172a] border border-[#1e293b] rounded-xl text-white"
+                          className="w-full px-3 py-2 bg-[#121312] border border-[rgba(242,242,237,0.1)] rounded text-white"
                         />
                       </div>
                       <div>
-                        <label className="block text-slate-400 mb-1">Data Fim da Campanha</label>
+                        <label className="block text-[#AEB4AE] mb-1">Data Fim da Campanha</label>
                         <input
                           type="date"
                           value={campaignEndDate}
                           onChange={(e) => setCampaignEndDate(e.target.value)}
-                          className="w-full px-3 py-2 bg-[#0f172a] border border-[#1e293b] rounded-xl text-white"
+                          className="w-full px-3 py-2 bg-[#121312] border border-[rgba(242,242,237,0.1)] rounded text-white"
                         />
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2 border-t border-[#1e293b]">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2 border-t border-[rgba(242,242,237,0.1)]">
                       <div>
-                        <label className="block text-slate-400 mb-1">Advogado(a) Eleitoral Responsável</label>
+                        <label className="block text-[#AEB4AE] mb-1">Advogado(a) Eleitoral Responsável</label>
                         <input
                           type="text"
                           value={electoralLawyer}
                           onChange={(e) => setElectoralLawyer(e.target.value)}
                           placeholder="Nome e OAB"
-                          className="w-full px-3 py-2 bg-[#0f172a] border border-[#1e293b] rounded-xl text-white"
+                          className="w-full px-3 py-2 bg-[#121312] border border-[rgba(242,242,237,0.1)] rounded text-white"
                         />
                       </div>
                       <div>
-                        <label className="block text-slate-400 mb-1">Contabilidade Eleitoral (Prestação de Contas)</label>
+                        <label className="block text-[#AEB4AE] mb-1">Contabilidade Eleitoral (Prestação de Contas)</label>
                         <input
                           type="text"
                           value={accountingResponsible}
                           onChange={(e) => setAccountingResponsible(e.target.value)}
                           placeholder="Escritório ou Contador"
-                          className="w-full px-3 py-2 bg-[#0f172a] border border-[#1e293b] rounded-xl text-white"
+                          className="w-full px-3 py-2 bg-[#121312] border border-[rgba(242,242,237,0.1)] rounded text-white"
                         />
                       </div>
                     </div>
@@ -633,7 +633,7 @@ function NewContractForm() {
                   <button
                     type="button"
                     onClick={() => setStep(2)}
-                    className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-semibold text-xs shadow-lg shadow-emerald-500/20"
+                    className="flex items-center gap-2 px-5 py-2.5 rounded bg-[#1C2E24] hover:bg-[#263F31] text-black font-semibold text-xs shadow-lg shadow-[#1C2E24]/20"
                   >
                     <span>Avançar para Serviços</span>
                     <ChevronRight className="w-4 h-4" />
@@ -644,15 +644,15 @@ function NewContractForm() {
 
             {/* ETAPA 2: SERVIÇOS & MARCOS INDEPENDENTES */}
             {step === 2 && (
-              <div className="bg-[#0f172a] border border-[#1e293b] rounded-2xl p-6 shadow-xl space-y-6">
-                <div className="pb-4 border-b border-[#1e293b]">
+              <div className="bg-[#121312] border border-[rgba(242,242,237,0.1)] rounded p-6 shadow-xl space-y-6">
+                <div className="pb-4 border-b border-[rgba(242,242,237,0.1)]">
                   <h2 className="text-base font-bold text-white font-display">Etapa 2: Serviços & Marcos Jurídicos Independentes</h2>
-                  <p className="text-xs text-slate-400">Cada serviço possui seu próprio valor, tipo de cobrança e marco de entrega</p>
+                  <p className="text-xs text-[#AEB4AE]">Cada serviço possui seu próprio valor, tipo de cobrança e marco de entrega</p>
                 </div>
 
                 {/* Plataformas */}
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-2">
+                  <label className="block text-xs font-semibold text-[#D7D8D0] mb-2">
                     Plataformas de Anúncios Homologadas
                   </label>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
@@ -663,14 +663,14 @@ function NewContractForm() {
                           type="button"
                           key={p}
                           onClick={() => togglePlatform(p)}
-                          className={`p-3 rounded-xl border text-xs font-medium flex items-center justify-between transition-all ${
+                          className={`p-3 rounded border text-xs font-medium flex items-center justify-between transition-all ${
                             isSelected
-                              ? 'bg-emerald-500/10 border-emerald-500/50 text-emerald-400'
-                              : 'bg-[#131c2e] border-[#1e293b] text-slate-400 hover:border-slate-700'
+                              ? 'bg-[#1C2E24]/10 border-emerald-500/50 text-[#44755A]'
+                              : 'bg-[#0A0A0A] border-[rgba(242,242,237,0.1)] text-[#AEB4AE] hover:border-[rgba(242,242,237,0.1)]'
                           }`}
                         >
                           <span>{p}</span>
-                          {isSelected && <CheckCircle2 className="w-4 h-4 text-emerald-400" />}
+                          {isSelected && <CheckCircle2 className="w-4 h-4 text-[#44755A]" />}
                         </button>
                       );
                     })}
@@ -680,7 +680,7 @@ function NewContractForm() {
                 {/* Serviços Contratados */}
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
-                    <label className="block text-xs font-semibold text-slate-300">
+                    <label className="block text-xs font-semibold text-[#D7D8D0]">
                       Serviços Contratados (Honorários KAPEL)
                     </label>
                     <select
@@ -690,7 +690,7 @@ function NewContractForm() {
                           e.target.value = '';
                         }
                       }}
-                      className="px-3 py-1.5 bg-[#131c2e] border border-[#1e293b] rounded-xl text-xs text-emerald-400 focus:border-emerald-500/50 cursor-pointer"
+                      className="px-3 py-1.5 bg-[#0A0A0A] border border-[rgba(242,242,237,0.1)] rounded text-xs text-[#44755A] focus:border-emerald-500/50 cursor-pointer"
                     >
                       <option value="">+ Adicionar do Catálogo...</option>
                       {services.map((s) => (
@@ -705,19 +705,19 @@ function NewContractForm() {
                     {items.map((item, idx) => (
                       <div
                         key={idx}
-                        className="p-4 rounded-xl bg-[#131c2e] border border-[#1e293b] space-y-3 text-xs"
+                        className="p-4 rounded bg-[#0A0A0A] border border-[rgba(242,242,237,0.1)] space-y-3 text-xs"
                       >
                         <div className="flex items-center justify-between gap-3">
                           <input
                             type="text"
                             value={item.name}
                             onChange={(e) => handleUpdateItem(idx, 'name', e.target.value)}
-                            className="font-semibold text-white bg-transparent border-b border-transparent hover:border-[#1e293b] focus:border-emerald-500 focus:outline-none w-full text-sm"
+                            className="font-semibold text-white bg-transparent border-b border-transparent hover:border-[rgba(242,242,237,0.1)] focus:border-emerald-500 focus:outline-none w-full text-sm"
                           />
                           <button
                             type="button"
                             onClick={() => handleRemoveItem(idx)}
-                            className="text-slate-500 hover:text-rose-400 p-1"
+                            className="text-[#8E948E] hover:text-rose-400 p-1"
                           >
                             <Trash2 className="w-4 h-4" />
                           </button>
@@ -725,11 +725,11 @@ function NewContractForm() {
 
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                           <div>
-                            <label className="block text-slate-400 mb-1">Modelo de Cobrança</label>
+                            <label className="block text-[#AEB4AE] mb-1">Modelo de Cobrança</label>
                             <select
                               value={item.billing_type}
                               onChange={(e) => handleUpdateItem(idx, 'billing_type', e.target.value)}
-                              className="w-full px-2.5 py-1.5 bg-[#0f172a] border border-[#1e293b] rounded-lg text-white"
+                              className="w-full px-2.5 py-1.5 bg-[#121312] border border-[rgba(242,242,237,0.1)] rounded text-white"
                             >
                               {Object.entries(BILLING_TYPE_LABELS).map(([k, label]) => (
                                 <option key={k} value={k}>
@@ -740,38 +740,38 @@ function NewContractForm() {
                           </div>
 
                           <div>
-                            <label className="block text-slate-400 mb-1">Valor do Serviço (R$)</label>
+                            <label className="block text-[#AEB4AE] mb-1">Valor do Serviço (R$)</label>
                             <input
                               type="number"
                               step="100"
                               min="0"
                               value={item.unit_price}
                               onChange={(e) => handleUpdateItem(idx, 'unit_price', parseFloat(e.target.value) || 0)}
-                              className="w-full px-2.5 py-1.5 bg-[#0f172a] border border-[#1e293b] rounded-lg text-white font-bold"
+                              className="w-full px-2.5 py-1.5 bg-[#121312] border border-[rgba(242,242,237,0.1)] rounded text-white font-bold"
                             />
                           </div>
 
                           <div>
-                            <label className="block text-slate-400 mb-1">Duração / Prazo (Dias)</label>
+                            <label className="block text-[#AEB4AE] mb-1">Duração / Prazo (Dias)</label>
                             <input
                               type="number"
                               min="1"
                               value={item.duration_days || ''}
                               onChange={(e) => handleUpdateItem(idx, 'duration_days', parseInt(e.target.value) || null)}
                               placeholder="Ex: 45 dias"
-                              className="w-full px-2.5 py-1.5 bg-[#0f172a] border border-[#1e293b] rounded-lg text-white"
+                              className="w-full px-2.5 py-1.5 bg-[#121312] border border-[rgba(242,242,237,0.1)] rounded text-white"
                             />
                           </div>
                         </div>
 
                         {/* Marco do Segundo Pagamento para 50/50 */}
                         {item.billing_type === 'PROJECT_50_50' && (
-                          <div className="p-3 rounded-lg bg-[#0f172a] border border-[#1e293b] space-y-2">
-                            <div className="flex items-center justify-between text-emerald-400 font-semibold text-[11px]">
+                          <div className="p-3 rounded bg-[#121312] border border-[rgba(242,242,237,0.1)] space-y-2">
+                            <div className="flex items-center justify-between text-[#44755A] font-semibold text-[11px]">
                               <span>Condição 50/50: 50% Entrada ({formatCurrency(item.total_price * 0.5)}) + 50% no Marco ({formatCurrency(item.total_price * 0.5)})</span>
                             </div>
                             <div>
-                              <label className="block text-slate-400 mb-1 text-[11px]">
+                              <label className="block text-[#AEB4AE] mb-1 text-[11px]">
                                 Marco Jurídico do Segundo Pagamento:
                               </label>
                               <input
@@ -779,7 +779,7 @@ function NewContractForm() {
                                 value={item.milestone_description || ''}
                                 onChange={(e) => handleUpdateItem(idx, 'milestone_description', e.target.value)}
                                 placeholder="Ex: Último dia do período contratado de campanha / Entrega do chatbot"
-                                className="w-full px-2.5 py-1.5 bg-[#131c2e] border border-[#1e293b] rounded-lg text-white text-xs"
+                                className="w-full px-2.5 py-1.5 bg-[#0A0A0A] border border-[rgba(242,242,237,0.1)] rounded text-white text-xs"
                               />
                             </div>
                           </div>
@@ -793,7 +793,7 @@ function NewContractForm() {
                   <button
                     type="button"
                     onClick={() => setStep(1)}
-                    className="flex items-center gap-2 px-4 py-2 rounded-xl text-slate-400 hover:text-white text-xs"
+                    className="flex items-center gap-2 px-4 py-2 rounded text-[#AEB4AE] hover:text-white text-xs"
                   >
                     <ChevronLeft className="w-4 h-4" />
                     <span>Voltar</span>
@@ -802,7 +802,7 @@ function NewContractForm() {
                   <button
                     type="button"
                     onClick={() => setStep(3)}
-                    className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-semibold text-xs shadow-lg shadow-emerald-500/20"
+                    className="flex items-center gap-2 px-5 py-2.5 rounded bg-[#1C2E24] hover:bg-[#263F31] text-black font-semibold text-xs shadow-lg shadow-[#1C2E24]/20"
                   >
                     <span>Avançar para Mídia & Compliance</span>
                     <ChevronRight className="w-4 h-4" />
@@ -813,27 +813,27 @@ function NewContractForm() {
 
             {/* ETAPA 3: MÍDIA INFORMATIVA, CHATBOT & COMPLIANCE */}
             {step === 3 && (
-              <div className="bg-[#0f172a] border border-[#1e293b] rounded-2xl p-6 shadow-xl space-y-6">
-                <div className="pb-4 border-b border-[#1e293b]">
+              <div className="bg-[#121312] border border-[rgba(242,242,237,0.1)] rounded p-6 shadow-xl space-y-6">
+                <div className="pb-4 border-b border-[rgba(242,242,237,0.1)]">
                   <h2 className="text-base font-bold text-white font-display">
                     Etapa 3: Orçamento de Mídia, Chatbot & Compliance
                   </h2>
-                  <p className="text-xs text-slate-400">Verba de anúncios, parametrização de chatbot e conformidade jurídica</p>
+                  <p className="text-xs text-[#AEB4AE]">Verba de anúncios, parametrização de chatbot e conformidade jurídica</p>
                 </div>
 
                 {/* Bloco de Mídia Eleitoral / Publicitária (SOMENTE INFORMATIVO) */}
-                <div className="p-4 rounded-xl bg-[#131c2e] border border-cyan-500/30 space-y-3 text-xs">
+                <div className="p-4 rounded bg-[#0A0A0A] border border-cyan-500/30 space-y-3 text-xs">
                   <div className="flex items-center gap-2 text-cyan-400 font-bold">
                     <Info className="w-4 h-4" />
                     <span>Orçamento de Mídia Planejado — SOMENTE INFORMATIVO</span>
                   </div>
-                  <p className="text-slate-400 leading-relaxed text-[11px]">
+                  <p className="text-[#AEB4AE] leading-relaxed text-[11px]">
                     Este valor é pago <strong>DIRETAMENTE</strong> pelo contratante/campanha às plataformas de anúncios (Meta Ads, Google Ads). <strong>NÃO integra os honorários, o faturamento ou o MRR da KAPEL.</strong>
                   </p>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2">
                     <div>
-                      <label className="block text-slate-400 mb-1">Verba Estimada de Mídia (R$)</label>
+                      <label className="block text-[#AEB4AE] mb-1">Verba Estimada de Mídia (R$)</label>
                       <input
                         type="number"
                         min="0"
@@ -844,15 +844,15 @@ function NewContractForm() {
                           if (templateType === 'POLITICAL') setPlannedMediaBudget(val);
                           else setEstimatedMediaBudget(val);
                         }}
-                        className="w-full px-3 py-2 bg-[#0f172a] border border-[#1e293b] rounded-xl text-white font-bold text-sm"
+                        className="w-full px-3 py-2 bg-[#121312] border border-[rgba(242,242,237,0.1)] rounded text-white font-bold text-sm"
                       />
                     </div>
                     <div>
-                      <label className="block text-slate-400 mb-1">Responsável pelo Pagamento</label>
+                      <label className="block text-[#AEB4AE] mb-1">Responsável pelo Pagamento</label>
                       <select
                         value={mediaPaymentResponsible}
                         onChange={(e) => setMediaPaymentResponsible(e.target.value)}
-                        className="w-full px-3 py-2 bg-[#0f172a] border border-[#1e293b] rounded-xl text-white"
+                        className="w-full px-3 py-2 bg-[#121312] border border-[rgba(242,242,237,0.1)] rounded text-white"
                       >
                         <option value="CAMPAIGN">Conta Bancária Oficial da Campanha (CNPJ)</option>
                         <option value="CANDIDATE">Candidato(a)</option>
@@ -865,10 +865,10 @@ function NewContractForm() {
                 </div>
 
                 {/* Bloco de Chatbot */}
-                <div className="p-4 rounded-xl bg-[#131c2e] border border-[#1e293b] space-y-4 text-xs">
+                <div className="p-4 rounded bg-[#0A0A0A] border border-[rgba(242,242,237,0.1)] space-y-4 text-xs">
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2 font-bold text-slate-200">
-                      <Bot className="w-4 h-4 text-indigo-400" />
+                    <div className="flex items-center gap-2 font-bold text-[#F2F2ED]">
+                      <Bot className="w-4 h-4 text-[#AEB4AE]" />
                       <span>Configurações do Chatbot Informativo</span>
                     </div>
                     <label className="relative inline-flex items-center cursor-pointer shrink-0">
@@ -878,19 +878,19 @@ function NewContractForm() {
                         onChange={(e) => setHasChatbotService(e.target.checked)}
                         className="sr-only peer"
                       />
-                      <div className="w-11 h-6 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-500"></div>
+                      <div className="w-11 h-6 bg-[#121312] peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#1C2E24]"></div>
                     </label>
                   </div>
 
                   {hasChatbotService && (
-                    <div className="space-y-3 pt-2 border-t border-[#1e293b]">
+                    <div className="space-y-3 pt-2 border-t border-[rgba(242,242,237,0.1)]">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                         <div>
-                          <label className="block text-slate-400 mb-1">Tipo de Chatbot</label>
+                          <label className="block text-[#AEB4AE] mb-1">Tipo de Chatbot</label>
                           <select
                             value={chatbotType}
                             onChange={(e) => setChatbotType(e.target.value as ChatbotType)}
-                            className="w-full px-3 py-2 bg-[#0f172a] border border-[#1e293b] rounded-xl text-white"
+                            className="w-full px-3 py-2 bg-[#121312] border border-[rgba(242,242,237,0.1)] rounded text-white"
                           >
                             <option value="KNOWLEDGE_BASE">Base de Conhecimento Estruturada</option>
                             <option value="RULE_BASED">Baseado em Regras e Menus</option>
@@ -899,19 +899,19 @@ function NewContractForm() {
                           </select>
                         </div>
                         <div>
-                          <label className="block text-slate-400 mb-1">Link de Atendimento Público</label>
+                          <label className="block text-[#AEB4AE] mb-1">Link de Atendimento Público</label>
                           <input
                             type="text"
                             value={chatbotPublicUrl}
                             onChange={(e) => setChatbotPublicUrl(e.target.value)}
                             placeholder="https://wa.me/5511..."
-                            className="w-full px-3 py-2 bg-[#0f172a] border border-[#1e293b] rounded-xl text-white"
+                            className="w-full px-3 py-2 bg-[#121312] border border-[rgba(242,242,237,0.1)] rounded text-white"
                           />
                         </div>
                       </div>
 
                       <div className="flex flex-wrap gap-4 pt-1">
-                        <label className="flex items-center gap-2 cursor-pointer text-slate-300">
+                        <label className="flex items-center gap-2 cursor-pointer text-[#D7D8D0]">
                           <input
                             type="checkbox"
                             checked={chatbotUsesAi}
@@ -919,12 +919,12 @@ function NewContractForm() {
                               setChatbotUsesAi(e.target.checked);
                               if (e.target.checked) setAiUsed(true);
                             }}
-                            className="accent-emerald-500"
+                            className="accent-[#335943]"
                           />
                           <span>Utiliza Inteligência Artificial</span>
                         </label>
 
-                        <label className="flex items-center gap-2 cursor-pointer text-slate-300">
+                        <label className="flex items-center gap-2 cursor-pointer text-[#D7D8D0]">
                           <input
                             type="checkbox"
                             checked={chatbotCollectsData}
@@ -932,7 +932,7 @@ function NewContractForm() {
                               setChatbotCollectsData(e.target.checked);
                               if (e.target.checked) setPersonalDataProcessed(true);
                             }}
-                            className="accent-emerald-500"
+                            className="accent-[#335943]"
                           />
                           <span>Coleta Dados Pessoais de Eleitores (LGPD)</span>
                         </label>
@@ -942,7 +942,7 @@ function NewContractForm() {
                 </div>
 
                 {/* Seção Visual de Compliance Eleitoral */}
-                <div className="p-4 rounded-xl bg-[#131c2e] border border-[#1e293b] space-y-3 text-xs">
+                <div className="p-4 rounded bg-[#0A0A0A] border border-[rgba(242,242,237,0.1)] space-y-3 text-xs">
                   <div className="flex items-center gap-2 font-bold text-amber-400">
                     <FileCheck2 className="w-4 h-4" />
                     <span>Compliance e Alertas Regulatórios</span>
@@ -950,21 +950,21 @@ function NewContractForm() {
 
                   {/* Alertas Informativos Visuais */}
                   {aiUsed && (
-                    <div className="p-3 rounded-lg bg-amber-500/10 border border-amber-500/30 flex items-start gap-2 text-amber-300">
+                    <div className="p-3 rounded bg-amber-500/10 border border-amber-500/30 flex items-start gap-2 text-amber-300">
                       <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" />
                       <span><strong>Alerta IA:</strong> Revisão eleitoral necessária para uso de IA e rotulagem transparente obrigatória perante o TSE.</span>
                     </div>
                   )}
 
                   {personalDataProcessed && (
-                    <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/30 flex items-start gap-2 text-blue-300">
+                    <div className="p-3 rounded bg-blue-500/10 border border-[#335943]/30 flex items-start gap-2 text-blue-300">
                       <Info className="w-4 h-4 shrink-0 mt-0.5" />
                       <span><strong>Alerta LGPD:</strong> Definir responsabilidades de tratamento de dados e termos de consentimento voluntário.</span>
                     </div>
                   )}
 
                   {massMessaging && (
-                    <div className="p-3 rounded-lg bg-rose-500/10 border border-rose-500/30 flex items-start gap-2 text-rose-300">
+                    <div className="p-3 rounded bg-rose-500/10 border border-rose-500/30 flex items-start gap-2 text-rose-300">
                       <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" />
                       <span><strong>Alerta de Disparo em Massa:</strong> Proibido envio massivo não consentido pela legislação eleitoral.</span>
                     </div>
@@ -972,11 +972,11 @@ function NewContractForm() {
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-2">
                     <div>
-                      <label className="block text-slate-400 mb-1">Revisão Jurídica Eleitoral</label>
+                      <label className="block text-[#AEB4AE] mb-1">Revisão Jurídica Eleitoral</label>
                       <select
                         value={electoralLegalReview}
                         onChange={(e) => setElectoralLegalReview(e.target.value as ComplianceReviewStatus)}
-                        className="w-full px-3 py-1.5 bg-[#0f172a] border border-[#1e293b] rounded-lg text-white"
+                        className="w-full px-3 py-1.5 bg-[#121312] border border-[rgba(242,242,237,0.1)] rounded text-white"
                       >
                         <option value="PENDING">Pendente</option>
                         <option value="APPROVED">Aprovada</option>
@@ -984,11 +984,11 @@ function NewContractForm() {
                     </div>
 
                     <div>
-                      <label className="block text-slate-400 mb-1">Revisão Contábil de Campanha</label>
+                      <label className="block text-[#AEB4AE] mb-1">Revisão Contábil de Campanha</label>
                       <select
                         value={accountingReview}
                         onChange={(e) => setAccountingReview(e.target.value as ComplianceReviewStatus)}
-                        className="w-full px-3 py-1.5 bg-[#0f172a] border border-[#1e293b] rounded-lg text-white"
+                        className="w-full px-3 py-1.5 bg-[#121312] border border-[rgba(242,242,237,0.1)] rounded text-white"
                       >
                         <option value="PENDING">Pendente</option>
                         <option value="APPROVED">Aprovada</option>
@@ -996,11 +996,11 @@ function NewContractForm() {
                     </div>
 
                     <div>
-                      <label className="block text-slate-400 mb-1">Aprovação de Conteúdo</label>
+                      <label className="block text-[#AEB4AE] mb-1">Aprovação de Conteúdo</label>
                       <select
                         value={campaignContentApproval}
                         onChange={(e) => setCampaignContentApproval(e.target.value as ComplianceReviewStatus)}
-                        className="w-full px-3 py-1.5 bg-[#0f172a] border border-[#1e293b] rounded-lg text-white"
+                        className="w-full px-3 py-1.5 bg-[#121312] border border-[rgba(242,242,237,0.1)] rounded text-white"
                       >
                         <option value="PENDING">Pendente</option>
                         <option value="APPROVED">Aprovada</option>
@@ -1010,10 +1010,10 @@ function NewContractForm() {
                 </div>
 
                 {/* Subcontratação Autorizada */}
-                <div className="p-4 rounded-xl bg-[#131c2e] border border-[#1e293b] flex items-start justify-between gap-4 text-xs">
+                <div className="p-4 rounded bg-[#0A0A0A] border border-[rgba(242,242,237,0.1)] flex items-start justify-between gap-4 text-xs">
                   <div>
-                    <p className="font-semibold text-slate-200">Subcontratação e Equipe Técnica da KAPEL</p>
-                    <p className="text-slate-400 mt-0.5 text-[11px]">
+                    <p className="font-semibold text-[#F2F2ED]">Subcontratação e Equipe Técnica da KAPEL</p>
+                    <p className="text-[#AEB4AE] mt-0.5 text-[11px]">
                       Permite que a KAPEL utilize equipe própria, colaboradores e especialistas sob sua coordenação sem necessidade de listá-los nominalmente no contrato.
                     </p>
                   </div>
@@ -1024,13 +1024,13 @@ function NewContractForm() {
                       onChange={(e) => setSubcontractingPermitted(e.target.checked)}
                       className="sr-only peer"
                     />
-                    <div className="w-11 h-6 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500"></div>
+                    <div className="w-11 h-6 bg-[#121312] peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#1C2E24]"></div>
                   </label>
                 </div>
 
                 {/* Particularidades */}
                 <div>
-                  <label className="block text-slate-400 mb-1 text-xs font-semibold">
+                  <label className="block text-[#AEB4AE] mb-1 text-xs font-semibold">
                     Particularidades e Observações Específicas
                   </label>
                   <textarea
@@ -1038,7 +1038,7 @@ function NewContractForm() {
                     value={particularities}
                     onChange={(e) => setParticularities(e.target.value)}
                     placeholder="Condições comerciais complementares acordadas..."
-                    className="w-full px-3 py-2 bg-[#131c2e] border border-[#1e293b] rounded-xl text-white text-xs focus:border-emerald-500/50"
+                    className="w-full px-3 py-2 bg-[#0A0A0A] border border-[rgba(242,242,237,0.1)] rounded text-white text-xs focus:border-emerald-500/50"
                   />
                 </div>
 
@@ -1046,7 +1046,7 @@ function NewContractForm() {
                   <button
                     type="button"
                     onClick={() => setStep(2)}
-                    className="flex items-center gap-2 px-4 py-2 rounded-xl text-slate-400 hover:text-white text-xs"
+                    className="flex items-center gap-2 px-4 py-2 rounded text-[#AEB4AE] hover:text-white text-xs"
                   >
                     <ChevronLeft className="w-4 h-4" />
                     <span>Voltar</span>
@@ -1055,7 +1055,7 @@ function NewContractForm() {
                   <button
                     type="button"
                     onClick={() => setStep(4)}
-                    className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-semibold text-xs shadow-lg shadow-emerald-500/20"
+                    className="flex items-center gap-2 px-5 py-2.5 rounded bg-[#1C2E24] hover:bg-[#263F31] text-black font-semibold text-xs shadow-lg shadow-[#1C2E24]/20"
                   >
                     <span>Avançar para Condições Finais</span>
                     <ChevronRight className="w-4 h-4" />
@@ -1066,15 +1066,15 @@ function NewContractForm() {
 
             {/* ETAPA 4: CONDIÇÕES FINAIS & RESUMO */}
             {step === 4 && (
-              <div className="bg-[#0f172a] border border-[#1e293b] rounded-2xl p-6 shadow-xl space-y-6">
-                <div className="pb-4 border-b border-[#1e293b]">
+              <div className="bg-[#121312] border border-[rgba(242,242,237,0.1)] rounded p-6 shadow-xl space-y-6">
+                <div className="pb-4 border-b border-[rgba(242,242,237,0.1)]">
                   <h2 className="text-base font-bold text-white font-display">Etapa 4: Finalização & Salvar Contrato</h2>
-                  <p className="text-xs text-slate-400">Verifique os valores consolidados antes de gerar o preview do documento</p>
+                  <p className="text-xs text-[#AEB4AE]">Verifique os valores consolidados antes de gerar o preview do documento</p>
                 </div>
 
-                <div className="p-4 rounded-xl bg-[#131c2e] border border-[#1e293b] space-y-3 text-xs">
-                  <p className="font-bold text-slate-200">Resumo da Estrutura Comercial:</p>
-                  <div className="space-y-1.5 text-slate-300">
+                <div className="p-4 rounded bg-[#0A0A0A] border border-[rgba(242,242,237,0.1)] space-y-3 text-xs">
+                  <p className="font-bold text-[#F2F2ED]">Resumo da Estrutura Comercial:</p>
+                  <div className="space-y-1.5 text-[#D7D8D0]">
                     <p>• <strong>Modelo:</strong> {templateType === 'POLITICAL' ? 'KAPEL Political (Campanha Eleitoral)' : 'KAPEL Performance'}</p>
                     <p>• <strong>Contratante:</strong> {selectedClient?.trade_name || selectedClient?.legal_name}</p>
                     {templateType === 'POLITICAL' && (
@@ -1091,7 +1091,7 @@ function NewContractForm() {
                   <button
                     type="button"
                     onClick={() => setStep(3)}
-                    className="flex items-center gap-2 px-4 py-2 rounded-xl text-slate-400 hover:text-white text-xs"
+                    className="flex items-center gap-2 px-4 py-2 rounded text-[#AEB4AE] hover:text-white text-xs"
                   >
                     <ChevronLeft className="w-4 h-4" />
                     <span>Voltar</span>
@@ -1102,7 +1102,7 @@ function NewContractForm() {
                       type="button"
                       onClick={() => handleSaveContract('DRAFT')}
                       disabled={saving}
-                      className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-semibold text-xs border border-slate-700 transition-all"
+                      className="px-4 py-2.5 rounded bg-[#121312] hover:bg-[#1B1D1B] text-white font-semibold text-xs border border-[rgba(242,242,237,0.1)] transition-all"
                     >
                       Salvar como Rascunho
                     </button>
@@ -1110,7 +1110,7 @@ function NewContractForm() {
                       type="button"
                       onClick={() => handleSaveContract('FINALIZED')}
                       disabled={saving}
-                      className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-semibold text-xs shadow-lg shadow-emerald-500/20 transition-all"
+                      className="flex items-center gap-2 px-6 py-2.5 rounded bg-[#1C2E24] hover:bg-[#263F31] text-black font-semibold text-xs shadow-lg shadow-[#1C2E24]/20 transition-all"
                     >
                       <Eye className="w-4 h-4" />
                       <span>Visualizar Contrato A4</span>
@@ -1123,38 +1123,38 @@ function NewContractForm() {
 
           {/* Sticky Live Summary Sidebar (Fixo no Desktop) */}
           <div className="lg:col-span-1">
-            <div className="sticky top-6 bg-[#0f172a] border border-[#1e293b] rounded-2xl p-6 shadow-2xl space-y-6">
-              <div className="flex items-center justify-between pb-4 border-b border-[#1e293b]">
+            <div className="sticky top-6 bg-[#121312] border border-[rgba(242,242,237,0.1)] rounded p-6 shadow-2xl space-y-6">
+              <div className="flex items-center justify-between pb-4 border-b border-[rgba(242,242,237,0.1)]">
                 <div className="flex items-center gap-2">
-                  <DollarSign className="w-5 h-5 text-emerald-400" />
+                  <DollarSign className="w-5 h-5 text-[#44755A]" />
                   <h3 className="font-bold text-white font-display text-sm">Honorários KAPEL</h3>
                 </div>
-                <span className="text-[10px] uppercase font-bold text-emerald-400 bg-emerald-950/60 border border-emerald-800/40 px-2 py-0.5 rounded">
+                <span className="text-[10px] uppercase font-bold text-[#44755A] bg-emerald-950/60 border border-emerald-800/40 px-2 py-0.5 rounded">
                   Tempo Real
                 </span>
               </div>
 
               {/* Total dos Serviços KAPEL */}
-              <div className="p-4 rounded-xl bg-[#131c2e] border border-[#1e293b]">
-                <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block">
+              <div className="p-4 rounded bg-[#0A0A0A] border border-[rgba(242,242,237,0.1)]">
+                <span className="text-[11px] font-semibold text-[#AEB4AE] uppercase tracking-wider block">
                   Total dos Serviços KAPEL
                 </span>
-                <span className="text-2xl font-bold text-emerald-400 font-display block mt-1">
+                <span className="text-2xl font-bold text-[#44755A] font-display block mt-1">
                   {formatCurrency(financials.total_service_value || (financials.initial_payment + financials.future_milestones))}
                 </span>
               </div>
 
               {/* Grid: Inicial e Futuros */}
               <div className="grid grid-cols-2 gap-3 text-xs">
-                <div className="p-3 rounded-xl bg-[#131c2e] border border-[#1e293b]">
-                  <span className="text-[10px] text-slate-400 block font-medium">Pagamento Inicial</span>
+                <div className="p-3 rounded bg-[#0A0A0A] border border-[rgba(242,242,237,0.1)]">
+                  <span className="text-[10px] text-[#AEB4AE] block font-medium">Pagamento Inicial</span>
                   <span className="text-sm font-bold text-white font-display block mt-1">
                     {formatCurrency(financials.initial_payment)}
                   </span>
                 </div>
 
-                <div className="p-3 rounded-xl bg-[#131c2e] border border-[#1e293b]">
-                  <span className="text-[10px] text-slate-400 block font-medium">Pagamentos Futuros</span>
+                <div className="p-3 rounded bg-[#0A0A0A] border border-[rgba(242,242,237,0.1)]">
+                  <span className="text-[10px] text-[#AEB4AE] block font-medium">Pagamentos Futuros</span>
                   <span className="text-sm font-bold text-cyan-400 font-display block mt-1">
                     {formatCurrency(financials.future_milestones)}
                   </span>
@@ -1163,24 +1163,24 @@ function NewContractForm() {
 
               {/* Discriminação dos Marcos Futuros */}
               {financials.future_milestone_items && financials.future_milestone_items.length > 0 && (
-                <div className="p-3 rounded-xl bg-[#131c2e] border border-[#1e293b] text-[11px] space-y-2">
-                  <span className="font-bold text-slate-300 block">Marcos Futuros Discriminados:</span>
+                <div className="p-3 rounded bg-[#0A0A0A] border border-[rgba(242,242,237,0.1)] text-[11px] space-y-2">
+                  <span className="font-bold text-[#D7D8D0] block">Marcos Futuros Discriminados:</span>
                   {financials.future_milestone_items.map((m, i) => (
-                    <div key={i} className="space-y-0.5 pb-1 border-b border-[#1e293b] last:border-0">
-                      <div className="flex justify-between font-semibold text-slate-200">
+                    <div key={i} className="space-y-0.5 pb-1 border-b border-[rgba(242,242,237,0.1)] last:border-0">
+                      <div className="flex justify-between font-semibold text-[#F2F2ED]">
                         <span className="truncate pr-2">{m.service_name}</span>
                         <span className="text-cyan-400">{formatCurrency(m.amount)}</span>
                       </div>
-                      <p className="text-[10px] text-slate-400 truncate">Marco: {m.milestone_description}</p>
+                      <p className="text-[10px] text-[#AEB4AE] truncate">Marco: {m.milestone_description}</p>
                     </div>
                   ))}
                 </div>
               )}
 
               {/* Orçamento de Mídia Informativo */}
-              <div className="p-3 rounded-xl bg-cyan-950/20 border border-cyan-800/40 text-xs space-y-1">
+              <div className="p-3 rounded bg-cyan-950/20 border border-cyan-800/40 text-xs space-y-1">
                 <div className="flex items-center justify-between">
-                  <span className="text-slate-400">Orçamento de Mídia:</span>
+                  <span className="text-[#AEB4AE]">Orçamento de Mídia:</span>
                   <span className="font-bold text-cyan-300 font-display">
                     {formatCurrency(financials.media_budget_informative)}
                   </span>
@@ -1192,9 +1192,9 @@ function NewContractForm() {
 
               {/* MRR se houver */}
               {financials.recurrent_mrr > 0 && (
-                <div className="flex items-center justify-between text-xs text-slate-300">
-                  <span className="text-slate-400">Recorrência Mensal:</span>
-                  <span className="font-bold text-emerald-400">{formatCurrency(financials.recurrent_mrr)}/mês</span>
+                <div className="flex items-center justify-between text-xs text-[#D7D8D0]">
+                  <span className="text-[#AEB4AE]">Recorrência Mensal:</span>
+                  <span className="font-bold text-[#44755A]">{formatCurrency(financials.recurrent_mrr)}/mês</span>
                 </div>
               )}
 
@@ -1203,7 +1203,7 @@ function NewContractForm() {
                 type="button"
                 onClick={() => handleSaveContract('FINALIZED')}
                 disabled={saving}
-                className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-xs shadow-lg shadow-emerald-500/20 transition-all hover:shadow-emerald-500/30"
+                className="w-full flex items-center justify-center gap-2 py-3 rounded bg-[#1C2E24] hover:bg-[#263F31] text-black font-bold text-xs shadow-lg shadow-[#1C2E24]/20 transition-all hover:shadow-emerald-500/30"
               >
                 {saving ? (
                   <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin" />
@@ -1224,7 +1224,7 @@ function NewContractForm() {
 
 export default function NewContractPage() {
   return (
-    <Suspense fallback={<div className="p-8 text-slate-400">Carregando configurador de contrato...</div>}>
+    <Suspense fallback={<div className="p-8 text-[#AEB4AE]">Carregando configurador de contrato...</div>}>
       <NewContractForm />
     </Suspense>
   );

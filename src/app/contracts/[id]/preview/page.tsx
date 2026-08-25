@@ -223,7 +223,7 @@ export default function ContractPreviewPage() {
   if (loading || !data) {
     return (
       <AdminLayout>
-        <div className="flex items-center justify-center h-64 text-slate-400">
+        <div className="flex items-center justify-center h-64 text-[#AEB4AE]">
           <div className="w-8 h-8 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin" />
         </div>
       </AdminLayout>
@@ -251,7 +251,7 @@ export default function ContractPreviewPage() {
                 value={contract.status}
                 onChange={(e) => handleUpdateStatus(e.target.value)}
                 disabled={savingStatus}
-                className="px-3 py-2 bg-[#131c2e] border border-[#1e293b] rounded-xl text-xs font-semibold text-white focus:border-emerald-500/50 cursor-pointer"
+                className="px-3 py-2 bg-[#0A0A0A] border border-[rgba(242,242,237,0.1)] rounded text-xs font-semibold text-white focus:border-emerald-500/50 cursor-pointer"
               >
                 <option value="DRAFT">Rascunho</option>
                 <option value="READY">Pronto</option>
@@ -265,7 +265,7 @@ export default function ContractPreviewPage() {
                   href={`/verify/${contract.audit_hash}`}
                   target="_blank"
                   rel="noreferrer"
-                  className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 border border-emerald-500/40 font-semibold text-xs transition-all"
+                  className="flex items-center gap-1.5 px-4 py-2 rounded bg-[#1C2E24]/20 hover:bg-[#1C2E24]/30 text-[#44755A] border border-emerald-500/40 font-semibold text-xs transition-all"
                 >
                   <ShieldCheck className="w-4 h-4" />
                   <span>KAPEL VERIFIED</span>
@@ -274,7 +274,7 @@ export default function ContractPreviewPage() {
                 <button
                   type="button"
                   onClick={() => setIsSignModalOpen(true)}
-                  className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-blue-600/20 hover:bg-blue-600/30 text-blue-400 border border-blue-500/40 font-semibold text-xs transition-all"
+                  className="flex items-center gap-1.5 px-4 py-2 rounded bg-[#1C2E24]/20 hover:bg-[#1C2E24]/30 text-[#AEB4AE] border border-[#335943]/40 font-semibold text-xs transition-all"
                 >
                   <ShieldCheck className="w-4 h-4" />
                   <span>Link do Cliente</span>
@@ -283,7 +283,7 @@ export default function ContractPreviewPage() {
                 <button
                   type="button"
                   onClick={() => setIsSignModalOpen(true)}
-                  className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs shadow-lg shadow-blue-600/20 transition-all"
+                  className="flex items-center gap-1.5 px-4 py-2 rounded bg-[#1C2E24] hover:bg-[#263F31] text-white font-semibold text-xs shadow-lg shadow-[#1C2E24]/20 transition-all"
                 >
                   <ShieldCheck className="w-4 h-4" />
                   <span>Assinar como KAPEL</span>
@@ -293,17 +293,17 @@ export default function ContractPreviewPage() {
               {/* Botão Duplicar */}
               <button
                 onClick={handleDuplicate}
-                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#131c2e] hover:bg-[#1e293b] text-slate-300 border border-[#1e293b] font-medium text-xs transition-colors"
+                className="flex items-center gap-2 px-4 py-2 rounded bg-[#0A0A0A] hover:bg-[rgba(242,242,237,0.1)] text-[#D7D8D0] border border-[rgba(242,242,237,0.1)] font-medium text-xs transition-colors"
                 title="Duplicar este contrato"
               >
-                <Copy className="w-4 h-4 text-slate-400" />
+                <Copy className="w-4 h-4 text-[#AEB4AE]" />
                 <span>Duplicar</span>
               </button>
 
               {/* Botão Imprimir / Salvar PDF */}
               <button
                 onClick={handlePrint}
-                className="flex items-center gap-2 px-5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-semibold text-xs shadow-lg shadow-emerald-500/20 transition-all"
+                className="flex items-center gap-2 px-5 py-2 rounded bg-[#1C2E24] hover:bg-[#263F31] text-black font-semibold text-xs shadow-lg shadow-[#1C2E24]/20 transition-all"
               >
                 <Printer className="w-4 h-4 text-black" />
                 <span>Exportar PDF / Imprimir</span>
@@ -336,7 +336,7 @@ export default function ContractPreviewPage() {
                 ? 'CONTRATO DE PRESTAÇÃO DE SERVIÇOS DE ESTRATÉGIA DIGITAL E TRÁFEGO ELEITORAL'
                 : 'CONTRATO DE PRESTAÇÃO DE SERVIÇOS DE INTELIGÊNCIA COMERCIAL E PERFORMANCE DIGITAL'}
             </h1>
-            <p className="text-[10pt] text-slate-600 mt-1 font-serif">
+            <p className="text-[10pt] text-[#8E948E] mt-1 font-serif">
               Instrumento Particular de Prestação de Serviços nº {contract.contract_number}
             </p>
           </div>
@@ -389,7 +389,7 @@ export default function ContractPreviewPage() {
                         setClauseTitle(clause.title);
                         setClauseText(clause.content);
                       }}
-                      className="no-print opacity-0 group-hover:opacity-100 p-1 text-slate-500 hover:text-emerald-600 transition-opacity"
+                      className="no-print opacity-0 group-hover:opacity-100 p-1 text-[#8E948E] hover:text-emerald-600 transition-opacity"
                       title="Personalizar esta cláusula"
                     >
                       <Edit className="w-3.5 h-3.5" />
@@ -419,24 +419,24 @@ export default function ContractPreviewPage() {
               <div className="text-center">
                 <div className="border-t border-slate-900 pt-2 font-serif text-[10pt]">
                   <p className="font-bold">{company.legal_name}</p>
-                  <p className="text-[9pt] text-slate-600">Representante: {company.legal_representative}</p>
-                  <p className="text-[9pt] text-slate-500">CONTRATADA (KAPEL)</p>
+                  <p className="text-[9pt] text-[#8E948E]">Representante: {company.legal_representative}</p>
+                  <p className="text-[9pt] text-[#8E948E]">CONTRATADA (KAPEL)</p>
                 </div>
               </div>
 
               <div className="text-center">
                 <div className="border-t border-slate-900 pt-2 font-serif text-[10pt]">
                   <p className="font-bold">{contract.client.legal_name}</p>
-                  <p className="text-[9pt] text-slate-600">
+                  <p className="text-[9pt] text-[#8E948E]">
                     {contract.client.representative_name || 'Representante Legal'}
                   </p>
-                  <p className="text-[9pt] text-slate-500">CONTRATANTE</p>
+                  <p className="text-[9pt] text-[#8E948E]">CONTRATANTE</p>
                 </div>
               </div>
             </div>
 
             {/* Testemunhas */}
-            <div className="grid grid-cols-2 gap-12 pt-10 text-[9pt] text-slate-600">
+            <div className="grid grid-cols-2 gap-12 pt-10 text-[9pt] text-[#8E948E]">
               <div>
                 <div className="border-t border-slate-400 pt-1">
                   <p>Testemunha 1: _______________________________</p>
@@ -457,15 +457,15 @@ export default function ContractPreviewPage() {
       {/* Modal de Edição Controlada de Cláusula */}
       {editingClause && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm no-print">
-          <div className="bg-[#0f172a] border border-[#1e293b] rounded-2xl w-full max-w-2xl shadow-2xl p-6 text-xs">
-            <div className="flex items-center justify-between pb-4 border-b border-[#1e293b] mb-4">
+          <div className="bg-[#121312] border border-[rgba(242,242,237,0.1)] rounded w-full max-w-2xl shadow-2xl p-6 text-xs">
+            <div className="flex items-center justify-between pb-4 border-b border-[rgba(242,242,237,0.1)] mb-4">
               <div>
                 <h3 className="text-base font-bold text-white font-display">Personalizar Cláusula</h3>
-                <p className="text-slate-400">Esta alteração afetará apenas este contrato e será registrada em auditoria.</p>
+                <p className="text-[#AEB4AE]">Esta alteração afetará apenas este contrato e será registrada em auditoria.</p>
               </div>
               <button
                 onClick={() => setEditingClause(null)}
-                className="p-1 rounded-lg text-slate-400 hover:text-white"
+                className="p-1 rounded text-[#AEB4AE] hover:text-white"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -473,37 +473,37 @@ export default function ContractPreviewPage() {
 
             <div className="space-y-4">
               <div>
-                <label className="block text-slate-400 mb-1">Título da Cláusula</label>
+                <label className="block text-[#AEB4AE] mb-1">Título da Cláusula</label>
                 <input
                   type="text"
                   value={clauseTitle}
                   onChange={(e) => setClauseTitle(e.target.value)}
-                  className="w-full px-3 py-2 bg-[#131c2e] border border-[#1e293b] rounded-xl text-white font-semibold"
+                  className="w-full px-3 py-2 bg-[#0A0A0A] border border-[rgba(242,242,237,0.1)] rounded text-white font-semibold"
                 />
               </div>
 
               <div>
-                <label className="block text-slate-400 mb-1">Texto Jurídico da Cláusula</label>
+                <label className="block text-[#AEB4AE] mb-1">Texto Jurídico da Cláusula</label>
                 <textarea
                   rows={8}
                   value={clauseText}
                   onChange={(e) => setClauseText(e.target.value)}
-                  className="w-full px-3 py-2 bg-[#131c2e] border border-[#1e293b] rounded-xl text-white font-mono leading-relaxed"
+                  className="w-full px-3 py-2 bg-[#0A0A0A] border border-[rgba(242,242,237,0.1)] rounded text-white font-mono leading-relaxed"
                 />
               </div>
 
-              <div className="pt-4 border-t border-[#1e293b] flex justify-end gap-3">
+              <div className="pt-4 border-t border-[rgba(242,242,237,0.1)] flex justify-end gap-3">
                 <button
                   type="button"
                   onClick={() => setEditingClause(null)}
-                  className="px-4 py-2 rounded-xl text-slate-400 hover:text-white"
+                  className="px-4 py-2 rounded text-[#AEB4AE] hover:text-white"
                 >
                   Cancelar
                 </button>
                 <button
                   type="button"
                   onClick={handleSaveCustomClause}
-                  className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-semibold shadow-lg shadow-emerald-500/20"
+                  className="flex items-center gap-2 px-5 py-2.5 rounded bg-[#1C2E24] hover:bg-[#263F31] text-black font-semibold shadow-lg shadow-[#1C2E24]/20"
                 >
                   <Save className="w-4 h-4" />
                   <span>Salvar Personalização</span>

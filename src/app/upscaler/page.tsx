@@ -131,7 +131,7 @@ export default function UpscalerPage() {
                 setUpscaledSrc(null);
                 setErrorMsg(null);
               }}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs transition-all shadow-md"
+              className="flex items-center gap-2 px-4 py-2 rounded bg-[#121312] hover:bg-[#1B1D1B] text-[#D7D8D0] font-semibold text-xs transition-all shadow-md"
             >
               <RefreshCw className="w-4 h-4" />
               <span>Nova Imagem</span>
@@ -141,7 +141,7 @@ export default function UpscalerPage() {
       />
 
       {errorMsg && (
-        <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-2xl flex items-center gap-3 text-sm text-red-400">
+        <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded flex items-center gap-3 text-sm text-red-400">
           <AlertCircle className="w-5 h-5 shrink-0" />
           <span>{errorMsg}</span>
         </div>
@@ -155,10 +155,10 @@ export default function UpscalerPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-4">
             {processing ? (
-              <div className="h-[500px] rounded-2xl bg-slate-900 border border-slate-800 flex flex-col items-center justify-center text-slate-400 space-y-3">
+              <div className="h-[500px] rounded bg-[#121312] border border-[rgba(242,242,237,0.1)] flex flex-col items-center justify-center text-[#AEB4AE] space-y-3">
                 <div className="w-8 h-8 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin" />
-                <span className="text-sm font-medium text-slate-300">Processando super-resolução em tempo real...</span>
-                <span className="text-xs text-slate-500">Calculando interpolação e nitidez localmente na GPU</span>
+                <span className="text-sm font-medium text-[#D7D8D0]">Processando super-resolução em tempo real...</span>
+                <span className="text-xs text-[#8E948E]">Calculando interpolação e nitidez localmente na GPU</span>
               </div>
             ) : upscaledSrc ? (
               <BeforeAfterSlider

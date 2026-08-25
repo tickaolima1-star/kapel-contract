@@ -56,18 +56,18 @@ export default function TemplatesPage() {
         {templates.map((tpl) => (
           <div
             key={tpl.id}
-            className="bg-[#0f172a] border border-[#1e293b] rounded-2xl p-6 shadow-xl flex flex-col justify-between hover:border-slate-700 transition-all"
+            className="bg-[#121312] border border-[rgba(242,242,237,0.1)] rounded p-6 shadow-xl flex flex-col justify-between hover:border-[rgba(242,242,237,0.1)] transition-all"
           >
             <div>
               <div className="flex items-center justify-between mb-3">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-400 bg-emerald-950/60 border border-emerald-800/40 px-2 py-0.5 rounded">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-[#44755A] bg-emerald-950/60 border border-emerald-800/40 px-2 py-0.5 rounded">
                   Tipo: {tpl.type}
                 </span>
                 <span
                   className={`text-[10px] font-bold px-2 py-0.5 rounded ${
                     tpl.status === 'ATIVO'
-                      ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40'
-                      : 'bg-slate-800 text-slate-400'
+                      ? 'bg-[#1C2E24]/20 text-[#44755A] border border-emerald-500/40'
+                      : 'bg-[#121312] text-[#AEB4AE]'
                   }`}
                 >
                   {tpl.status}
@@ -75,10 +75,10 @@ export default function TemplatesPage() {
               </div>
 
               <h3 className="text-base font-bold text-white font-display mt-1">{tpl.name}</h3>
-              <p className="text-xs text-slate-400 mt-2 leading-relaxed">{tpl.description}</p>
+              <p className="text-xs text-[#AEB4AE] mt-2 leading-relaxed">{tpl.description}</p>
             </div>
 
-            <div className="mt-6 pt-4 border-t border-[#1e293b] flex items-center justify-between text-xs text-slate-500">
+            <div className="mt-6 pt-4 border-t border-[rgba(242,242,237,0.1)] flex items-center justify-between text-xs text-[#8E948E]">
               <span>Versão: v{tpl.version}</span>
               <span>{tpl.clauses_count} blocos de cláusulas</span>
             </div>

@@ -181,7 +181,7 @@ export default function SettingsPage() {
 
       <div className="max-w-3xl space-y-6">
         {/* Banner de Conformidade Jurídica */}
-        <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-start gap-3 text-xs text-amber-300">
+        <div className="p-4 rounded bg-amber-500/10 border border-amber-500/20 flex items-start gap-3 text-xs text-amber-300">
           <ShieldAlert className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
           <div className="space-y-1">
             <p className="font-semibold text-amber-200">Atenção à Qualificação Jurídica da KAPEL</p>
@@ -192,152 +192,152 @@ export default function SettingsPage() {
         </div>
 
         {success && (
-          <div className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center gap-3 text-xs text-emerald-400 shadow-lg">
-            <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
+          <div className="p-4 rounded bg-[#1C2E24]/10 border border-emerald-500/20 flex items-center gap-3 text-xs text-[#44755A] shadow-lg">
+            <CheckCircle2 className="w-5 h-5 text-[#44755A] shrink-0" />
             <span>Dados da KAPEL atualizados e salvos com sucesso no banco de dados!</span>
           </div>
         )}
 
         {settingsError && (
-          <div className="p-4 rounded-2xl bg-red-500/10 border border-red-500/20 flex items-center gap-3 text-xs text-red-400 shadow-lg">
+          <div className="p-4 rounded bg-red-500/10 border border-red-500/20 flex items-center gap-3 text-xs text-red-400 shadow-lg">
             <AlertCircle className="w-5 h-5 text-red-400 shrink-0" />
             <span>{settingsError}</span>
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="bg-[#0f172a] border border-[#1e293b] rounded-2xl p-6 shadow-xl space-y-5 text-xs">
-          <div className="flex items-center gap-2 pb-4 border-b border-[#1e293b]">
-            <Building2 className="w-5 h-5 text-emerald-400" />
-            <h2 className="font-bold text-slate-100 text-sm">Dados da Pessoa Jurídica CONTRATADA</h2>
+        <form onSubmit={handleSubmit} className="bg-[#121312] border border-[rgba(242,242,237,0.1)] rounded p-6 shadow-xl space-y-5 text-xs">
+          <div className="flex items-center gap-2 pb-4 border-b border-[rgba(242,242,237,0.1)]">
+            <Building2 className="w-5 h-5 text-[#44755A]" />
+            <h2 className="font-bold text-[#F2F2ED] text-sm">Dados da Pessoa Jurídica CONTRATADA</h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-slate-400 mb-1">Razão Social (Nome Empresarial) *</label>
+              <label className="block text-[#AEB4AE] mb-1">Razão Social (Nome Empresarial) *</label>
               <input
                 type="text"
                 required
                 value={formData.legal_name}
                 onChange={(e) => setFormData({ ...formData, legal_name: e.target.value })}
-                className="w-full px-3 py-2 bg-[#131c2e] border border-[#1e293b] rounded-xl text-white focus:border-emerald-500/50"
+                className="w-full px-3 py-2 bg-[#0A0A0A] border border-[rgba(242,242,237,0.1)] rounded text-white focus:border-emerald-500/50"
               />
             </div>
             <div>
-              <label className="block text-slate-400 mb-1">Nome Fantasia (Marca)</label>
+              <label className="block text-[#AEB4AE] mb-1">Nome Fantasia (Marca)</label>
               <input
                 type="text"
                 value={formData.trade_name}
                 onChange={(e) => setFormData({ ...formData, trade_name: e.target.value })}
-                className="w-full px-3 py-2 bg-[#131c2e] border border-[#1e293b] rounded-xl text-white focus:border-emerald-500/50"
+                className="w-full px-3 py-2 bg-[#0A0A0A] border border-[rgba(242,242,237,0.1)] rounded text-white focus:border-emerald-500/50"
               />
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-slate-400 mb-1">CNPJ *</label>
+              <label className="block text-[#AEB4AE] mb-1">CNPJ *</label>
               <input
                 type="text"
                 required
                 value={formData.cnpj}
                 onChange={(e) => setFormData({ ...formData, cnpj: formatDocument(e.target.value) })}
-                className="w-full px-3 py-2 bg-[#131c2e] border border-[#1e293b] rounded-xl text-white focus:border-emerald-500/50 font-mono"
+                className="w-full px-3 py-2 bg-[#0A0A0A] border border-[rgba(242,242,237,0.1)] rounded text-white focus:border-emerald-500/50 font-mono"
               />
             </div>
             <div>
-              <label className="block text-slate-400 mb-1">Representante Legal *</label>
+              <label className="block text-[#AEB4AE] mb-1">Representante Legal *</label>
               <input
                 type="text"
                 required
                 value={formData.legal_representative}
                 onChange={(e) => setFormData({ ...formData, legal_representative: e.target.value })}
-                className="w-full px-3 py-2 bg-[#131c2e] border border-[#1e293b] rounded-xl text-white focus:border-emerald-500/50"
+                className="w-full px-3 py-2 bg-[#0A0A0A] border border-[rgba(242,242,237,0.1)] rounded text-white focus:border-emerald-500/50"
               />
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-slate-400 mb-1">CPF do Representante *</label>
+              <label className="block text-[#AEB4AE] mb-1">CPF do Representante *</label>
               <input
                 type="text"
                 required
                 value={formData.rep_cpf}
                 onChange={(e) => setFormData({ ...formData, rep_cpf: formatDocument(e.target.value) })}
-                className="w-full px-3 py-2 bg-[#131c2e] border border-[#1e293b] rounded-xl text-white focus:border-emerald-500/50 font-mono"
+                className="w-full px-3 py-2 bg-[#0A0A0A] border border-[rgba(242,242,237,0.1)] rounded text-white focus:border-emerald-500/50 font-mono"
               />
             </div>
             <div>
-              <label className="block text-slate-400 mb-1">E-mail Comercial *</label>
+              <label className="block text-[#AEB4AE] mb-1">E-mail Comercial *</label>
               <input
                 type="email"
                 required
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className="w-full px-3 py-2 bg-[#131c2e] border border-[#1e293b] rounded-xl text-white focus:border-emerald-500/50"
+                className="w-full px-3 py-2 bg-[#0A0A0A] border border-[rgba(242,242,237,0.1)] rounded text-white focus:border-emerald-500/50"
               />
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="md:col-span-2">
-              <label className="block text-slate-400 mb-1">Endereço Comercial</label>
+              <label className="block text-[#AEB4AE] mb-1">Endereço Comercial</label>
               <input
                 type="text"
                 value={formData.address}
                 onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                className="w-full px-3 py-2 bg-[#131c2e] border border-[#1e293b] rounded-xl text-white focus:border-emerald-500/50"
+                className="w-full px-3 py-2 bg-[#0A0A0A] border border-[rgba(242,242,237,0.1)] rounded text-white focus:border-emerald-500/50"
               />
             </div>
             <div>
-              <label className="block text-slate-400 mb-1">Bairro</label>
+              <label className="block text-[#AEB4AE] mb-1">Bairro</label>
               <input
                 type="text"
                 value={formData.neighborhood}
                 onChange={(e) => setFormData({ ...formData, neighborhood: e.target.value })}
-                className="w-full px-3 py-2 bg-[#131c2e] border border-[#1e293b] rounded-xl text-white focus:border-emerald-500/50"
+                className="w-full px-3 py-2 bg-[#0A0A0A] border border-[rgba(242,242,237,0.1)] rounded text-white focus:border-emerald-500/50"
               />
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <label className="block text-slate-400 mb-1">CEP</label>
+              <label className="block text-[#AEB4AE] mb-1">CEP</label>
               <input
                 type="text"
                 value={formData.zip_code}
                 onChange={(e) => setFormData({ ...formData, zip_code: e.target.value })}
-                className="w-full px-3 py-2 bg-[#131c2e] border border-[#1e293b] rounded-xl text-white focus:border-emerald-500/50"
+                className="w-full px-3 py-2 bg-[#0A0A0A] border border-[rgba(242,242,237,0.1)] rounded text-white focus:border-emerald-500/50"
               />
             </div>
             <div>
-              <label className="block text-slate-400 mb-1">Cidade do Foro de Eleição *</label>
+              <label className="block text-[#AEB4AE] mb-1">Cidade do Foro de Eleição *</label>
               <input
                 type="text"
                 required
                 value={formData.jurisdiction_city}
                 onChange={(e) => setFormData({ ...formData, jurisdiction_city: e.target.value })}
-                className="w-full px-3 py-2 bg-[#131c2e] border border-[#1e293b] rounded-xl text-white focus:border-emerald-500/50"
+                className="w-full px-3 py-2 bg-[#0A0A0A] border border-[rgba(242,242,237,0.1)] rounded text-white focus:border-emerald-500/50"
               />
             </div>
             <div>
-              <label className="block text-slate-400 mb-1">UF do Foro *</label>
+              <label className="block text-[#AEB4AE] mb-1">UF do Foro *</label>
               <input
                 type="text"
                 required
                 maxLength={2}
                 value={formData.jurisdiction_state}
                 onChange={(e) => setFormData({ ...formData, jurisdiction_state: e.target.value })}
-                className="w-full px-3 py-2 bg-[#131c2e] border border-[#1e293b] rounded-xl text-white uppercase focus:border-emerald-500/50"
+                className="w-full px-3 py-2 bg-[#0A0A0A] border border-[rgba(242,242,237,0.1)] rounded text-white uppercase focus:border-emerald-500/50"
               />
             </div>
           </div>
 
-          <div className="pt-5 border-t border-[#1e293b] flex items-center justify-end">
+          <div className="pt-5 border-t border-[rgba(242,242,237,0.1)] flex items-center justify-end">
             <button
               type="submit"
               disabled={saving}
-              className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-semibold text-xs shadow-lg shadow-emerald-500/20 transition-all disabled:opacity-50"
+              className="flex items-center gap-2 px-6 py-2.5 rounded bg-[#1C2E24] hover:bg-[#263F31] text-black font-semibold text-xs shadow-lg shadow-[#1C2E24]/20 transition-all disabled:opacity-50"
             >
               {saving ? (
                 <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin" />
@@ -352,22 +352,22 @@ export default function SettingsPage() {
         </form>
 
         {/* Card de Alteração de Senha & Segurança */}
-        <form onSubmit={handlePasswordSubmit} className="bg-[#0f172a] border border-[#1e293b] rounded-2xl p-6 shadow-xl space-y-5 text-xs">
-          <div className="flex items-center justify-between pb-4 border-b border-[#1e293b]">
+        <form onSubmit={handlePasswordSubmit} className="bg-[#121312] border border-[rgba(242,242,237,0.1)] rounded p-6 shadow-xl space-y-5 text-xs">
+          <div className="flex items-center justify-between pb-4 border-b border-[rgba(242,242,237,0.1)]">
             <div className="flex items-center gap-2">
-              <KeyRound className="w-5 h-5 text-emerald-400" />
-              <h2 className="font-bold text-slate-100 text-sm">Segurança & Alteração de Senha</h2>
+              <KeyRound className="w-5 h-5 text-[#44755A]" />
+              <h2 className="font-bold text-[#F2F2ED] text-sm">Segurança & Alteração de Senha</h2>
             </div>
-            <span className="text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded-full flex items-center gap-1">
+            <span className="text-[10px] font-semibold bg-[#1C2E24]/10 text-[#44755A] border border-emerald-500/20 px-2 py-0.5 rounded-full flex items-center gap-1">
               <Lock className="w-3 h-3" /> Hash Bcrypt + JWT 256
             </span>
           </div>
 
           {passwordStatus && (
             <div
-              className={`p-4 rounded-2xl flex items-center gap-3 text-xs border ${
+              className={`p-4 rounded flex items-center gap-3 text-xs border ${
                 passwordStatus.type === 'success'
-                  ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
+                  ? 'bg-[#1C2E24]/10 border-emerald-500/20 text-[#44755A]'
                   : 'bg-red-500/10 border-red-500/20 text-red-400'
               }`}
             >
@@ -382,20 +382,20 @@ export default function SettingsPage() {
 
           <div className="space-y-4">
             <div>
-              <label className="block text-slate-400 mb-1">Senha Atual *</label>
+              <label className="block text-[#AEB4AE] mb-1">Senha Atual *</label>
               <input
                 type="password"
                 required
                 placeholder="Informe sua senha atual"
                 value={passwordData.currentPassword}
                 onChange={(e) => setPasswordData({ ...passwordData, currentPassword: e.target.value })}
-                className="w-full px-3 py-2 bg-[#131c2e] border border-[#1e293b] rounded-xl text-white focus:border-emerald-500/50"
+                className="w-full px-3 py-2 bg-[#0A0A0A] border border-[rgba(242,242,237,0.1)] rounded text-white focus:border-emerald-500/50"
               />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-slate-400 mb-1">Nova Senha (Mínimo 8 caracteres) *</label>
+                <label className="block text-[#AEB4AE] mb-1">Nova Senha (Mínimo 8 caracteres) *</label>
                 <input
                   type="password"
                   required
@@ -403,12 +403,12 @@ export default function SettingsPage() {
                   placeholder="Nova senha forte"
                   value={passwordData.newPassword}
                   onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })}
-                  className="w-full px-3 py-2 bg-[#131c2e] border border-[#1e293b] rounded-xl text-white focus:border-emerald-500/50"
+                  className="w-full px-3 py-2 bg-[#0A0A0A] border border-[rgba(242,242,237,0.1)] rounded text-white focus:border-emerald-500/50"
                 />
               </div>
 
               <div>
-                <label className="block text-slate-400 mb-1">Confirmar Nova Senha *</label>
+                <label className="block text-[#AEB4AE] mb-1">Confirmar Nova Senha *</label>
                 <input
                   type="password"
                   required
@@ -416,17 +416,17 @@ export default function SettingsPage() {
                   placeholder="Repita a nova senha"
                   value={passwordData.confirmPassword}
                   onChange={(e) => setPasswordData({ ...passwordData, confirmPassword: e.target.value })}
-                  className="w-full px-3 py-2 bg-[#131c2e] border border-[#1e293b] rounded-xl text-white focus:border-emerald-500/50"
+                  className="w-full px-3 py-2 bg-[#0A0A0A] border border-[rgba(242,242,237,0.1)] rounded text-white focus:border-emerald-500/50"
                 />
               </div>
             </div>
           </div>
 
-          <div className="pt-5 border-t border-[#1e293b] flex items-center justify-end">
+          <div className="pt-5 border-t border-[rgba(242,242,237,0.1)] flex items-center justify-end">
             <button
               type="submit"
               disabled={passwordSaving}
-              className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-semibold text-xs shadow-lg shadow-emerald-500/20 transition-all disabled:opacity-50"
+              className="flex items-center gap-2 px-6 py-2.5 rounded bg-[#1C2E24] hover:bg-[#263F31] text-black font-semibold text-xs shadow-lg shadow-[#1C2E24]/20 transition-all disabled:opacity-50"
             >
               {passwordSaving ? (
                 <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin" />

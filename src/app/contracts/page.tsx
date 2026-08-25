@@ -98,20 +98,20 @@ export default function ContractsPage() {
         title="Gestão de Contratos"
         subtitle="Gerador, histórico e versionamento de contratos comerciais da KAPEL."
         actions={
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <button
               type="button"
               onClick={() => setIsImportModalOpen(true)}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs shadow-lg shadow-blue-600/20 transition-all"
+              className="flex items-center gap-2 px-4 py-2.5 rounded bg-[#121312] hover:bg-[#1B1D1B] border border-[rgba(242,242,237,0.1)] text-[#D7D8D0] hover:text-[#F2F2ED] font-bold text-[11px] font-mono tracking-wider uppercase transition-all"
             >
               <UploadCloud className="w-4 h-4" />
-              <span>Importar Contrato (PDF / DOCX)</span>
+              <span>Importar Contrato PDF / DOCX</span>
             </button>
             <Link
               href="/contracts/new"
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-semibold text-xs shadow-lg shadow-emerald-500/20 transition-all"
+              className="flex items-center gap-2 px-4 py-2.5 rounded bg-[#1C2E24] hover:bg-[#263F31] text-[#F2F2ED] border border-[#335943] font-bold text-[11px] font-mono tracking-wider uppercase transition-all shadow-lg shadow-[#1C2E24]/20"
             >
-              <PlusCircle className="w-4 h-4 text-black" />
+              <PlusCircle className="w-4 h-4 text-[#F2F2ED]" />
               <span>Novo Contrato</span>
             </Link>
           </div>
@@ -119,27 +119,27 @@ export default function ContractsPage() {
       />
 
       {/* Filter and Search Bar */}
-      <div className="bg-[#0f172a] border border-[#1e293b] rounded-2xl p-4 mb-6 flex flex-col md:flex-row gap-3 items-center justify-between shadow-lg">
+      <div className="bg-[#0A0A0A] border border-[rgba(242,242,237,0.1)] rounded p-3 mb-6 flex flex-col md:flex-row gap-3 items-center justify-between shadow-lg">
         <div className="relative w-full md:w-96">
-          <Search className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
+          <Search className="w-4 h-4 text-[#8E948E] absolute left-3 top-1/2 -translate-y-1/2" />
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Buscar por cliente, documento ou número (#000001)..."
-            className="w-full pl-10 pr-4 py-2 bg-[#131c2e] border border-[#1e293b] rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500/50"
+            className="w-full pl-9 pr-4 py-2 bg-[#121312] border border-[rgba(242,242,237,0.1)] rounded text-xs text-white placeholder-[#8E948E] focus:outline-none focus:border-[#335943] focus:bg-[#1C2E24]/20 transition-all font-mono"
           />
         </div>
 
-        <div className="flex items-center gap-2 w-full md:w-auto overflow-x-auto pb-1 md:pb-0">
+        <div className="flex items-center gap-2 w-full md:w-auto overflow-x-auto pb-1 md:pb-0 font-mono">
           {['ALL', 'DRAFT', 'READY', 'FINALIZED', 'CANCELLED'].map((st) => (
             <button
               key={st}
               onClick={() => setStatusFilter(st)}
-              className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all ${
+              className={`px-3 py-1.5 rounded text-[11px] font-bold tracking-wider uppercase transition-all ${
                 statusFilter === st
-                  ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
-                  : 'text-slate-400 hover:text-slate-200 bg-[#131c2e] border border-[#1e293b]'
+                  ? 'bg-[#1C2E24] text-[#44755A] border border-[#335943]/40'
+                  : 'text-[#AEB4AE] hover:text-[#F2F2ED] bg-[#121312] border border-[rgba(242,242,237,0.1)]'
               }`}
             >
               {st === 'ALL' ? 'Todos os Status' : CONTRACT_STATUS_LABELS[st]?.label || st}
@@ -150,40 +150,40 @@ export default function ContractsPage() {
 
       {/* Contracts Table */}
       {loading ? (
-        <div className="bg-[#0f172a] border border-[#1e293b] rounded-2xl p-12 text-center text-slate-500">
-          <div className="w-8 h-8 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
-          <p className="text-sm">Carregando contratos da KAPEL...</p>
+        <div className="bg-[#121312] border border-[rgba(242,242,237,0.1)] rounded p-12 text-center text-[#AEB4AE]">
+          <div className="w-8 h-8 border-2 border-[#335943] border-t-transparent rounded-full animate-spin mx-auto mb-3" />
+          <p className="text-sm font-mono">Carregando contratos da KAPEL...</p>
         </div>
       ) : filteredContracts.length === 0 ? (
-        <div className="bg-[#0f172a] border border-[#1e293b] rounded-2xl p-12 text-center text-slate-500 shadow-xl">
-          <FileText className="w-12 h-12 text-slate-600 mx-auto mb-3" />
-          <p className="text-sm font-semibold text-slate-300">Nenhum contrato encontrado</p>
-          <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
+        <div className="bg-[#121312] border border-[rgba(242,242,237,0.1)] rounded p-12 text-center text-[#AEB4AE] shadow-xl">
+          <FileText className="w-12 h-12 text-[#8E948E] mx-auto mb-3" />
+          <p className="text-sm font-semibold text-white">Nenhum contrato encontrado</p>
+          <p className="text-xs text-[#8E948E] mt-1 max-w-sm mx-auto font-mono">
             Você pode criar um novo contrato comercial ou subir um contrato já assinado em PDF/DOCX.
           </p>
-          <div className="mt-4 flex items-center justify-center gap-3">
+          <div className="mt-6 flex items-center justify-center gap-3">
             <button
               onClick={() => setIsImportModalOpen(true)}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-medium text-xs shadow-lg shadow-blue-600/20 transition-all"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded bg-[#121312] hover:bg-[#1B1D1B] border border-[rgba(242,242,237,0.1)] text-[#D7D8D0] hover:text-[#F2F2ED] font-mono text-xs uppercase font-bold"
             >
               <UploadCloud className="w-4 h-4" />
               <span>Importar PDF / DOCX</span>
             </button>
             <Link
               href="/contracts/new"
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-semibold text-xs shadow-lg shadow-emerald-500/20 transition-all"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded bg-[#1C2E24] hover:bg-[#263F31] text-[#F2F2ED] border border-[#335943] font-bold text-xs font-mono uppercase tracking-wider transition-all"
             >
-              <PlusCircle className="w-4 h-4 text-black" />
+              <PlusCircle className="w-4 h-4 text-[#F2F2ED]" />
               <span>Criar Novo Contrato</span>
             </Link>
           </div>
         </div>
       ) : (
-        <div className="bg-[#0f172a] border border-[#1e293b] rounded-2xl shadow-xl overflow-hidden">
+        <div className="bg-[#121312] border border-[rgba(242,242,237,0.1)] rounded shadow-xl overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse text-xs">
               <thead>
-                <tr className="border-b border-[#1e293b] bg-[#131c2e]/50 text-slate-400 font-semibold uppercase tracking-wider">
+                <tr className="border-b border-[rgba(242,242,237,0.1)] bg-[#0A0A0A] text-[#AEB4AE] font-bold uppercase tracking-wider font-mono">
                   <th className="py-4 px-6">Contrato</th>
                   <th className="py-4 px-6">Cliente (Contratante)</th>
                   <th className="py-4 px-6">Tipo / Modelo</th>
@@ -193,25 +193,25 @@ export default function ContractsPage() {
                   <th className="py-4 px-6 text-right">Ações</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#1e293b] text-slate-300">
+              <tbody className="divide-y divide-[rgba(242,242,237,0.1)] text-[#AEB4AE]">
                 {filteredContracts.map((c) => (
-                  <tr key={c.id} className="hover:bg-[#131c2e]/30 transition-colors">
-                    <td className="py-4 px-6 font-mono font-bold text-emerald-400">
+                  <tr key={c.id} className="hover:bg-[#1B1D1B]/30 transition-colors">
+                    <td className="py-4 px-6 font-mono font-bold text-[#44755A]">
                       #{c.contract_number}
                     </td>
 
                     <td className="py-4 px-6">
-                      <div className="font-semibold text-slate-100">{c.client?.legal_name}</div>
-                      <div className="text-[11px] text-slate-500 font-mono">
+                      <div className="font-semibold text-[#F2F2ED]">{c.client?.legal_name}</div>
+                      <div className="text-[11px] text-[#8E948E] font-mono">
                         {formatDocument(c.client?.document || '')}
                       </div>
                     </td>
 
                     <td className="py-4 px-6">
-                      <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold ${
+                      <span className={`inline-flex items-center gap-1.5 font-mono text-[10px] tracking-wider uppercase px-2 py-0.5 border ${
                         c.template?.type === 'POLITICAL'
-                          ? 'bg-purple-500/10 text-purple-400 border border-purple-500/20'
-                          : 'bg-blue-500/10 text-blue-400 border border-blue-500/20'
+                          ? 'border-purple-500/20 bg-purple-500/10 text-purple-400'
+                          : 'border-blue-500/20 bg-blue-500/10 text-blue-400'
                       }`}>
                         {c.template?.type === 'POLITICAL' ? 'POLITICAL' : 'PERFORMANCE'}
                       </span>
@@ -220,25 +220,25 @@ export default function ContractsPage() {
                     <td className="py-4 px-6 font-medium">
                       {c.calculated_mrr > 0 ? (
                         <div>
-                          <span className="text-emerald-400 font-bold">{formatCurrency(c.calculated_mrr)}</span>
-                          <span className="text-[10px] text-slate-500 block">/mês recorrente</span>
+                          <span className="text-[#44755A] font-bold font-mono">{formatCurrency(c.calculated_mrr)}</span>
+                          <span className="text-[10px] text-[#8E948E] block font-mono">/mês recorrente</span>
                         </div>
                       ) : (
                         <div>
-                          <span className="text-slate-100 font-bold">{formatCurrency(c.calculated_total_one_time || 0)}</span>
-                          <span className="text-[10px] text-slate-500 block">Projeto (50/50)</span>
+                          <span className="text-[#F2F2ED] font-bold font-mono">{formatCurrency(c.calculated_total_one_time || 0)}</span>
+                          <span className="text-[10px] text-[#8E948E] block font-mono">Projeto (50/50)</span>
                         </div>
                       )}
                     </td>
 
                     <td className="py-4 px-6">
                       <div className="flex flex-col gap-1">
-                        <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold w-fit ${
+                        <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-[10px] font-bold w-fit border ${
                           c.status === 'FINALIZED'
-                            ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
+                            ? 'bg-[#1C2E24] text-[#44755A] border-[#335943]/40'
                             : c.status === 'READY'
-                            ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20'
-                            : 'bg-slate-800 text-slate-400'
+                            ? 'bg-amber-500/10 text-amber-400 border-amber-500/20'
+                            : 'bg-[#121312] text-[#8E948E] border-[rgba(242,242,237,0.1)]'
                         }`}>
                           {c.status === 'FINALIZED' && <CheckCircle className="w-3 h-3" />}
                           {c.status === 'READY' && <Clock className="w-3 h-3" />}
@@ -246,14 +246,14 @@ export default function ContractsPage() {
                         </span>
 
                         {c.signed_at && (
-                          <span className="text-[10px] text-slate-500">
+                          <span className="text-[10px] text-[#8E948E] font-mono">
                             Assinado em {formatDateBR(c.signed_at)}
                           </span>
                         )}
                       </div>
                     </td>
 
-                    <td className="py-4 px-6 text-slate-400">
+                    <td className="py-4 px-6 text-[#8E948E] font-mono">
                       {formatDateBR(c.created_at)}
                     </td>
 
@@ -264,10 +264,10 @@ export default function ContractsPage() {
                             type="button"
                             onClick={() => handleCopyLink(c.signature_token, c.id)}
                             title="Copiar Link de Assinatura Pública para WhatsApp"
-                            className={`p-2 rounded-xl border transition-all ${
+                            className={`p-2 border transition-all ${
                               copiedId === c.id
-                                ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30'
-                                : 'bg-[#131c2e] hover:bg-[#1e293b] text-slate-400 hover:text-slate-200 border-[#1e293b]'
+                                ? 'bg-[#1C2E24] text-[#44755A] border-[#335943]/40'
+                                : 'bg-[#121312] hover:bg-[#1B1D1B] text-[#AEB4AE] hover:text-[#F2F2ED] border-[rgba(242,242,237,0.1)]'
                             }`}
                           >
                             <Send className="w-3.5 h-3.5" />
@@ -277,7 +277,7 @@ export default function ContractsPage() {
                         <Link
                           href={`/contracts/${c.id}/preview`}
                           title="Visualizar Contrato / Assinatura"
-                          className="p-2 bg-[#131c2e] hover:bg-[#1e293b] text-slate-400 hover:text-slate-200 border border-[#1e293b] rounded-xl transition-all"
+                          className="p-2 bg-[#121312] hover:bg-[#1B1D1B] text-[#AEB4AE] hover:text-[#F2F2ED] border border-[rgba(242,242,237,0.1)] rounded transition-all"
                         >
                           <Eye className="w-3.5 h-3.5" />
                         </Link>
@@ -286,7 +286,7 @@ export default function ContractsPage() {
                           type="button"
                           onClick={() => handleDelete(c.id)}
                           title="Excluir Contrato"
-                          className="p-2 bg-[#131c2e] hover:bg-red-500/20 text-slate-400 hover:text-red-400 border border-[#1e293b] rounded-xl transition-all"
+                          className="p-2 bg-[#121312] hover:bg-red-500/20 text-[#AEB4AE] hover:text-red-400 border border-[rgba(242,242,237,0.1)] rounded transition-all"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>
@@ -302,12 +302,12 @@ export default function ContractsPage() {
 
       {/* Modal de Importação de Contrato PDF ou DOCX */}
       {isImportModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-          <div className="relative w-full max-w-lg bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl overflow-hidden">
-            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-800 bg-slate-950/50">
-              <div className="flex items-center gap-2 text-slate-100 font-semibold text-sm">
-                <UploadCloud className="w-5 h-5 text-blue-400" />
-                Importar Contrato Existente (PDF ou DOCX)
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4 animate-in fade-in duration-200 no-print">
+          <div className="relative w-full max-w-lg bg-[#0A0A0A] border border-[rgba(242,242,237,0.1)] rounded shadow-2xl overflow-hidden">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-[rgba(242,242,237,0.1)] bg-[#050505]/50">
+              <div className="flex items-center gap-2 text-[#F2F2ED] font-black uppercase font-display text-xs tracking-tight">
+                <UploadCloud className="w-5 h-5 text-[#44755A]" />
+                Importar Contrato Existente
               </div>
               <button
                 onClick={() => {
@@ -315,25 +315,25 @@ export default function ContractsPage() {
                   setImportFile(null);
                   setImportError(null);
                 }}
-                className="text-slate-400 hover:text-slate-200 p-1 rounded-lg hover:bg-slate-800"
+                className="text-[#AEB4AE] hover:text-[#F2F2ED] p-1 rounded hover:bg-[#121312] border border-transparent hover:border-[rgba(242,242,237,0.1)] transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             <div className="p-6 space-y-4">
-              <p className="text-xs text-slate-400">
-                Selecione o arquivo do contrato (<strong className="text-slate-200">.PDF</strong> ou <strong className="text-slate-200">.DOCX</strong>). O sistema reconhecerá automaticamente a <strong>Razão Social, CNPJ/CPF, Representante, Endereço e Valores</strong>, cadastrando o Cliente e registrando o contrato no seu painel!
+              <p className="text-xs text-[#AEB4AE] font-mono leading-relaxed">
+                Selecione o arquivo do contrato (<strong className="text-[#F2F2ED]">.PDF</strong> ou <strong className="text-[#F2F2ED]">.DOCX</strong>). O sistema reconhecerá automaticamente os dados cadastrais e financeiros!
               </p>
 
               {importError && (
-                <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-xl text-xs text-red-400 flex items-center gap-2">
+                <div className="p-3 bg-red-500/10 border border-red-500/20 rounded text-xs text-red-400 flex items-center gap-2 font-mono">
                   <AlertCircle className="w-4 h-4 shrink-0" />
                   <span>{importError}</span>
                 </div>
               )}
 
-              <div className="border-2 border-dashed border-slate-800 hover:border-blue-500/50 rounded-2xl p-6 text-center transition-colors bg-slate-950/50">
+              <div className="border-2 border-dashed border-[rgba(242,242,237,0.1)] hover:border-[#335943]/50 rounded p-6 text-center transition-colors bg-[#121312]">
                 <input
                   type="file"
                   id="contractFile"
@@ -342,29 +342,29 @@ export default function ContractsPage() {
                   className="hidden"
                 />
                 <label htmlFor="contractFile" className="cursor-pointer flex flex-col items-center space-y-2">
-                  <div className="w-12 h-12 bg-blue-600/10 border border-blue-500/30 rounded-2xl flex items-center justify-center text-blue-400">
+                  <div className="w-12 h-12 bg-[#1C2E24]/10 border border-[#335943]/30 rounded flex items-center justify-center text-[#44755A]">
                     <FileCheck className="w-6 h-6" />
                   </div>
                   <div>
-                    <span className="text-sm font-semibold text-slate-200 block">
+                    <span className="text-sm font-semibold text-[#F2F2ED] block font-mono">
                       {importFile ? importFile.name : 'Clique para selecionar o PDF ou DOCX'}
                     </span>
-                    <span className="text-xs text-slate-500">Formatos suportados: .PDF, .DOCX</span>
+                    <span className="text-xs text-[#8E948E] font-mono">Formatos suportados: .PDF, .DOCX</span>
                   </div>
                 </label>
               </div>
 
               {/* Opção de Contrato Já Assinado */}
-              <label className="flex items-start gap-3 p-3 bg-slate-800/40 rounded-xl border border-slate-800 cursor-pointer">
+              <label className="flex items-start gap-3 p-3 bg-[#121312] rounded border border-[rgba(242,242,237,0.1)] cursor-pointer">
                 <input
                   type="checkbox"
                   checked={alreadySigned}
                   onChange={(e) => setAlreadySigned(e.target.checked)}
-                  className="mt-0.5 w-4 h-4 accent-emerald-500 rounded bg-slate-900 border-slate-700"
+                  className="mt-0.5 w-4 h-4 accent-[#335943] rounded"
                 />
                 <div className="text-xs">
-                  <span className="font-semibold text-slate-200 block">Este contrato já foi assinado pelo cliente</span>
-                  <span className="text-slate-400 text-[11px]">
+                  <span className="font-bold text-[#F2F2ED] block uppercase font-mono text-[10px] tracking-wider">Este contrato já foi assinado pelo cliente</span>
+                  <span className="text-[#AEB4AE] text-[11px]">
                     Cadastrará o cliente e marcará o contrato como <strong>Finalizado / Ativo</strong> no seu histórico.
                   </span>
                 </div>
@@ -378,7 +378,7 @@ export default function ContractsPage() {
                     setImportFile(null);
                     setImportError(null);
                   }}
-                  className="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-medium transition-colors"
+                  className="px-4 py-2.5 bg-transparent hover:bg-[#121312] text-[#AEB4AE] hover:text-[#F2F2ED] rounded font-mono text-xs uppercase font-bold transition-colors"
                 >
                   Cancelar
                 </button>
@@ -414,10 +414,10 @@ export default function ContractsPage() {
                       setImporting(false);
                     }
                   }}
-                  className="flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-semibold shadow-lg shadow-blue-600/20 transition-all disabled:opacity-50"
+                  className="flex items-center gap-2 px-5 py-2.5 bg-[#1C2E24] hover:bg-[#263F31] text-[#F2F2ED] border border-[#335943] rounded font-mono text-xs uppercase font-bold tracking-wider transition-all disabled:opacity-50"
                 >
-                  {importing && <Loader2 className="w-4 h-4 animate-spin" />}
-                  <span>Processar & Cadastrar Cliente</span>
+                  {importing && <Loader2 className="w-4 h-4 animate-spin text-[#44755A]" />}
+                  <span>Processar & Cadastrar</span>
                 </button>
               </div>
             </div>

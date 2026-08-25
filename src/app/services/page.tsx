@@ -136,7 +136,7 @@ export default function ServicesPage() {
         actions={
           <button
             onClick={handleOpenNew}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-semibold text-sm shadow-lg shadow-emerald-500/20 transition-all"
+            className="flex items-center gap-2 px-4 py-2.5 rounded bg-[#1C2E24] hover:bg-[#263F31] text-black font-semibold text-sm shadow-lg shadow-[#1C2E24]/20 transition-all"
           >
             <Plus className="w-4 h-4 text-black" />
             <span>Adicionar Serviço</span>
@@ -148,10 +148,10 @@ export default function ServicesPage() {
       <div className="flex flex-wrap gap-2 mb-8">
         <button
           onClick={() => setSelectedCategory('')}
-          className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
+          className={`px-4 py-2 rounded text-xs font-semibold transition-all ${
             selectedCategory === ''
-              ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40'
-              : 'bg-[#0f172a] text-slate-400 border border-[#1e293b] hover:bg-[#131c2e]'
+              ? 'bg-[#1C2E24]/20 text-[#44755A] border border-emerald-500/40'
+              : 'bg-[#121312] text-[#AEB4AE] border border-[rgba(242,242,237,0.1)] hover:bg-[#0A0A0A]'
           }`}
         >
           Todas as Categorias ({services.length})
@@ -160,10 +160,10 @@ export default function ServicesPage() {
           <button
             key={cat.id}
             onClick={() => setSelectedCategory(cat.id)}
-            className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
+            className={`px-4 py-2 rounded text-xs font-semibold transition-all ${
               selectedCategory === cat.id
-                ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40'
-                : 'bg-[#0f172a] text-slate-400 border border-[#1e293b] hover:bg-[#131c2e]'
+                ? 'bg-[#1C2E24]/20 text-[#44755A] border border-emerald-500/40'
+                : 'bg-[#121312] text-[#AEB4AE] border border-[rgba(242,242,237,0.1)] hover:bg-[#0A0A0A]'
             }`}
           >
             {cat.name} ({cat.services?.length || 0})
@@ -173,28 +173,28 @@ export default function ServicesPage() {
 
       {/* Services Grid */}
       {loading ? (
-        <div className="flex items-center justify-center h-64 text-slate-400">
+        <div className="flex items-center justify-center h-64 text-[#AEB4AE]">
           <div className="w-8 h-8 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin" />
         </div>
       ) : services.length === 0 ? (
-        <div className="bg-[#0f172a] border border-[#1e293b] rounded-2xl p-12 text-center text-slate-400">
-          <Briefcase className="w-12 h-12 text-slate-600 mx-auto mb-3" />
-          <p className="text-base font-semibold text-slate-300">Nenhum serviço encontrado</p>
+        <div className="bg-[#121312] border border-[rgba(242,242,237,0.1)] rounded p-12 text-center text-[#AEB4AE]">
+          <Briefcase className="w-12 h-12 text-[#8E948E] mx-auto mb-3" />
+          <p className="text-base font-semibold text-[#D7D8D0]">Nenhum serviço encontrado</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {services.map((srv) => (
             <div
               key={srv.id}
-              className="bg-[#0f172a] border border-[#1e293b] rounded-2xl p-6 shadow-xl flex flex-col justify-between hover:border-slate-700 transition-all group"
+              className="bg-[#121312] border border-[rgba(242,242,237,0.1)] rounded p-6 shadow-xl flex flex-col justify-between hover:border-[rgba(242,242,237,0.1)] transition-all group"
             >
               <div>
                 <div className="flex items-start justify-between gap-3 mb-3">
                   <div>
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-400 bg-emerald-950/60 border border-emerald-800/40 px-2 py-0.5 rounded">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-[#44755A] bg-emerald-950/60 border border-emerald-800/40 px-2 py-0.5 rounded">
                       {srv.category?.name || 'Geral'}
                     </span>
-                    <h3 className="text-base font-bold text-slate-100 font-display mt-1.5">
+                    <h3 className="text-base font-bold text-[#F2F2ED] font-display mt-1.5">
                       {srv.name}
                     </h3>
                   </div>
@@ -202,14 +202,14 @@ export default function ServicesPage() {
                   <div className="flex items-center gap-1 opacity-80 group-hover:opacity-100 transition-opacity">
                     <button
                       onClick={() => handleOpenEdit(srv)}
-                      className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+                      className="p-1.5 rounded text-[#AEB4AE] hover:text-white hover:bg-[#121312] transition-colors"
                       title="Editar Serviço"
                     >
                       <Edit2 className="w-4 h-4" />
                     </button>
                     <button
                       onClick={() => handleDelete(srv.id)}
-                      className="p-1.5 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors"
+                      className="p-1.5 rounded text-[#AEB4AE] hover:text-rose-400 hover:bg-rose-500/10 transition-colors"
                       title="Excluir Serviço"
                     >
                       <Trash2 className="w-4 h-4" />
@@ -217,21 +217,21 @@ export default function ServicesPage() {
                   </div>
                 </div>
 
-                <p className="text-xs text-slate-400 mb-4 line-clamp-3 leading-relaxed">
+                <p className="text-xs text-[#AEB4AE] mb-4 line-clamp-3 leading-relaxed">
                   {srv.description || 'Sem descrição cadastrada.'}
                 </p>
               </div>
 
-              <div className="pt-4 border-t border-[#1e293b] space-y-2">
+              <div className="pt-4 border-t border-[rgba(242,242,237,0.1)] space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs text-slate-400">Preço Padrão:</span>
-                  <span className="text-base font-bold text-emerald-400 font-display">
+                  <span className="text-xs text-[#AEB4AE]">Preço Padrão:</span>
+                  <span className="text-base font-bold text-[#44755A] font-display">
                     {formatCurrency(srv.default_price)}
                   </span>
                 </div>
                 <div className="flex items-center justify-between text-xs">
-                  <span className="text-slate-400">Modelo:</span>
-                  <span className="text-slate-300 font-medium bg-[#131c2e] px-2 py-0.5 rounded border border-[#1e293b]">
+                  <span className="text-[#AEB4AE]">Modelo:</span>
+                  <span className="text-[#D7D8D0] font-medium bg-[#0A0A0A] px-2 py-0.5 rounded border border-[rgba(242,242,237,0.1)]">
                     {BILLING_TYPE_LABELS[srv.billing_type] || srv.billing_type}
                   </span>
                 </div>
@@ -244,14 +244,14 @@ export default function ServicesPage() {
       {/* Modal Novo / Editar Serviço */}
       {modalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
-          <div className="bg-[#0f172a] border border-[#1e293b] rounded-2xl w-full max-w-lg shadow-2xl p-6">
-            <div className="flex items-center justify-between pb-4 border-b border-[#1e293b] mb-5">
+          <div className="bg-[#121312] border border-[rgba(242,242,237,0.1)] rounded w-full max-w-lg shadow-2xl p-6">
+            <div className="flex items-center justify-between pb-4 border-b border-[rgba(242,242,237,0.1)] mb-5">
               <h2 className="text-lg font-bold text-white font-display">
                 {editingService ? 'Editar Serviço' : 'Novo Serviço no Catálogo'}
               </h2>
               <button
                 onClick={() => setModalOpen(false)}
-                className="p-1 rounded-lg text-slate-400 hover:text-white"
+                className="p-1 rounded text-[#AEB4AE] hover:text-white"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -259,23 +259,23 @@ export default function ServicesPage() {
 
             <form onSubmit={handleSubmit} className="space-y-4 text-xs">
               <div>
-                <label className="block text-slate-400 mb-1">Nome do Serviço *</label>
+                <label className="block text-[#AEB4AE] mb-1">Nome do Serviço *</label>
                 <input
                   type="text"
                   required
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   placeholder="Ex: Gestão de Tráfego Pago"
-                  className="w-full px-3 py-2 bg-[#131c2e] border border-[#1e293b] rounded-xl text-white focus:border-emerald-500/50"
+                  className="w-full px-3 py-2 bg-[#0A0A0A] border border-[rgba(242,242,237,0.1)] rounded text-white focus:border-emerald-500/50"
                 />
               </div>
 
               <div>
-                <label className="block text-slate-400 mb-1">Categoria *</label>
+                <label className="block text-[#AEB4AE] mb-1">Categoria *</label>
                 <select
                   value={formData.category_id}
                   onChange={(e) => setFormData({ ...formData, category_id: e.target.value })}
-                  className="w-full px-3 py-2 bg-[#131c2e] border border-[#1e293b] rounded-xl text-white focus:border-emerald-500/50"
+                  className="w-full px-3 py-2 bg-[#0A0A0A] border border-[rgba(242,242,237,0.1)] rounded text-white focus:border-emerald-500/50"
                 >
                   {categories.map((cat) => (
                     <option key={cat.id} value={cat.id}>
@@ -287,7 +287,7 @@ export default function ServicesPage() {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-slate-400 mb-1">Preço Padrão (R$) *</label>
+                  <label className="block text-[#AEB4AE] mb-1">Preço Padrão (R$) *</label>
                   <input
                     type="number"
                     step="0.01"
@@ -295,15 +295,15 @@ export default function ServicesPage() {
                     required
                     value={formData.default_price}
                     onChange={(e) => setFormData({ ...formData, default_price: parseFloat(e.target.value) || 0 })}
-                    className="w-full px-3 py-2 bg-[#131c2e] border border-[#1e293b] rounded-xl text-white focus:border-emerald-500/50"
+                    className="w-full px-3 py-2 bg-[#0A0A0A] border border-[rgba(242,242,237,0.1)] rounded text-white focus:border-emerald-500/50"
                   />
                 </div>
                 <div>
-                  <label className="block text-slate-400 mb-1">Tipo de Cobrança *</label>
+                  <label className="block text-[#AEB4AE] mb-1">Tipo de Cobrança *</label>
                   <select
                     value={formData.billing_type}
                     onChange={(e) => setFormData({ ...formData, billing_type: e.target.value })}
-                    className="w-full px-3 py-2 bg-[#131c2e] border border-[#1e293b] rounded-xl text-white focus:border-emerald-500/50"
+                    className="w-full px-3 py-2 bg-[#0A0A0A] border border-[rgba(242,242,237,0.1)] rounded text-white focus:border-emerald-500/50"
                   >
                     {Object.entries(BILLING_TYPE_LABELS).map(([k, label]) => (
                       <option key={k} value={k}>
@@ -315,27 +315,27 @@ export default function ServicesPage() {
               </div>
 
               <div>
-                <label className="block text-slate-400 mb-1">Descrição do Escopo</label>
+                <label className="block text-[#AEB4AE] mb-1">Descrição do Escopo</label>
                 <textarea
                   rows={3}
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   placeholder="Detalhamento das atividades incluídas..."
-                  className="w-full px-3 py-2 bg-[#131c2e] border border-[#1e293b] rounded-xl text-white focus:border-emerald-500/50"
+                  className="w-full px-3 py-2 bg-[#0A0A0A] border border-[rgba(242,242,237,0.1)] rounded text-white focus:border-emerald-500/50"
                 />
               </div>
 
-              <div className="pt-4 border-t border-[#1e293b] flex items-center justify-end gap-3">
+              <div className="pt-4 border-t border-[rgba(242,242,237,0.1)] flex items-center justify-end gap-3">
                 <button
                   type="button"
                   onClick={() => setModalOpen(false)}
-                  className="px-4 py-2 rounded-xl text-slate-400 hover:text-white"
+                  className="px-4 py-2 rounded text-[#AEB4AE] hover:text-white"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-semibold shadow-lg shadow-emerald-500/20"
+                  className="px-5 py-2.5 rounded bg-[#1C2E24] hover:bg-[#263F31] text-black font-semibold shadow-lg shadow-[#1C2E24]/20"
                 >
                   {editingService ? 'Salvar Alterações' : 'Cadastrar Serviço'}
                 </button>

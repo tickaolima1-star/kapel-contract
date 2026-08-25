@@ -105,10 +105,10 @@ export default function ClausesPage() {
           <button
             key={cat}
             onClick={() => setSelectedCategory(cat)}
-            className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
+            className={`px-4 py-2 rounded text-xs font-semibold transition-all ${
               selectedCategory === cat
-                ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40'
-                : 'bg-[#0f172a] text-slate-400 border border-[#1e293b] hover:bg-[#131c2e]'
+                ? 'bg-[#1C2E24]/20 text-[#44755A] border border-emerald-500/40'
+                : 'bg-[#121312] text-[#AEB4AE] border border-[rgba(242,242,237,0.1)] hover:bg-[#0A0A0A]'
             }`}
           >
             {cat === 'ALL' ? 'Todas as Cláusulas' : cat}
@@ -120,20 +120,20 @@ export default function ClausesPage() {
         {filtered.map((clause) => (
           <div
             key={clause.code}
-            className="bg-[#0f172a] border border-[#1e293b] rounded-2xl p-5 shadow-xl space-y-3 hover:border-slate-700 transition-all"
+            className="bg-[#121312] border border-[rgba(242,242,237,0.1)] rounded p-5 shadow-xl space-y-3 hover:border-[rgba(242,242,237,0.1)] transition-all"
           >
             <div className="flex items-start justify-between gap-3">
               <div>
-                <span className="text-[10px] font-mono font-bold text-emerald-400 bg-emerald-950/60 border border-emerald-800/40 px-2 py-0.5 rounded">
+                <span className="text-[10px] font-mono font-bold text-[#44755A] bg-emerald-950/60 border border-emerald-800/40 px-2 py-0.5 rounded">
                   {clause.code}
                 </span>
-                <h3 className="font-bold text-slate-100 text-sm mt-2">{clause.title}</h3>
+                <h3 className="font-bold text-[#F2F2ED] text-sm mt-2">{clause.title}</h3>
               </div>
-              <span className="text-[10px] font-semibold text-slate-500 uppercase bg-[#131c2e] px-2 py-1 rounded border border-[#1e293b]">
+              <span className="text-[10px] font-semibold text-[#8E948E] uppercase bg-[#0A0A0A] px-2 py-1 rounded border border-[rgba(242,242,237,0.1)]">
                 {clause.category}
               </span>
             </div>
-            <p className="text-xs text-slate-400 leading-relaxed">{clause.description}</p>
+            <p className="text-xs text-[#AEB4AE] leading-relaxed">{clause.description}</p>
           </div>
         ))}
       </div>
