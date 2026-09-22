@@ -17,6 +17,8 @@ import {
   Menu,
   X,
   Sparkles,
+  Compass,
+  Crosshair,
 } from 'lucide-react';
 
 export function Sidebar() {
@@ -30,6 +32,8 @@ export function Sidebar() {
   }, [pathname]);
 
   const navItems = [
+    { label: 'Life RPG (Pilot)', href: '/pilot', icon: Compass },
+    { label: 'Command Room', href: '/command', icon: Crosshair },
     { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
     { label: 'Clientes', href: '/clients', icon: Users },
     { label: 'Contratos', href: '/contracts', icon: FileText },
